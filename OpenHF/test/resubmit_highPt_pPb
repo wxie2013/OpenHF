@@ -1,0 +1,60 @@
+crab -status   -c crab_HeavyFlavor_highPt_crab_pPb_0
+crab -status   -c crab_HeavyFlavor_highPt_crab_pPb_1
+crab -status   -c crab_HeavyFlavor_highPt_crab_pPb_2
+crab -status   -c crab_HeavyFlavor_highPt_crab_pPb_3
+crab -status   -c crab_HeavyFlavor_highPt_crab_pPb_4
+crab -status   -c crab_HeavyFlavor_highPt_crab_pPb_5
+
+crab -get all   -c crab_HeavyFlavor_highPt_crab_pPb_0
+crab -get all   -c crab_HeavyFlavor_highPt_crab_pPb_1
+crab -get all   -c crab_HeavyFlavor_highPt_crab_pPb_2
+crab -get all   -c crab_HeavyFlavor_highPt_crab_pPb_3
+crab -get all   -c crab_HeavyFlavor_highPt_crab_pPb_4
+crab -get all   -c crab_HeavyFlavor_highPt_crab_pPb_5
+
+crab -resubmit bad   -c crab_HeavyFlavor_highPt_crab_pPb_0
+crab -resubmit bad   -c crab_HeavyFlavor_highPt_crab_pPb_1
+crab -resubmit bad   -c crab_HeavyFlavor_highPt_crab_pPb_2
+crab -resubmit bad   -c crab_HeavyFlavor_highPt_crab_pPb_3
+crab -resubmit bad   -c crab_HeavyFlavor_highPt_crab_pPb_4
+crab -resubmit bad   -c crab_HeavyFlavor_highPt_crab_pPb_5
+
+crab -submit 1-500      -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_0
+crab -submit 501-1000   -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_0
+crab -submit 1001-1500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_0
+crab -submit 1501-2000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_0
+
+crab -submit 1-500      -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_1
+crab -submit 501-1000   -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_1
+crab -submit 1001-1500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_1
+crab -submit 1501-2000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_1
+crab -submit 2001-2500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_1
+crab -submit 2501-3000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_1
+
+crab -submit 1-500      -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_2
+crab -submit 501-1000   -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_2
+crab -submit 1001-1500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_2
+crab -submit 1501-2000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_2
+crab -submit 2001-2500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_2
+crab -submit 2501-3000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_2
+
+crab -submit 1-500      -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_3
+crab -submit 501-1000   -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_3
+crab -submit 1001-1500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_3
+crab -submit 1501-2000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_3
+crab -submit 2001-2500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_3
+crab -submit 2501-3000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_3
+
+crab -submit 1-500      -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_4
+crab -submit 501-1000   -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_4
+crab -submit 1001-1500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_4
+crab -submit 1501-2000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_4
+crab -submit 2001-2500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_4
+crab -submit 2501-3000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_4
+
+crab -submit 1-500      -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_5
+crab -submit 501-1000   -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_5
+crab -submit 1001-1500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_5
+crab -submit 1501-2000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_5
+crab -submit 2001-2500  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_5
+crab -submit 2501-3000  -GRID.max_cpu_time=500 -GRID.se_black_list=T1_US_FNAL -c crab_HeavyFlavor_highPt_crab_pPb_5

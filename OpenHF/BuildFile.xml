@@ -1,0 +1,33 @@
+<use   name="FWCore/Framework"/>
+<use   name="FWCore/PluginManager"/>
+<use   name="FWCore/ParameterSet"/>
+<use   name="DataFormats/TrackReco"/>
+<use   name="DataFormats/VertexReco"/>
+<use   name="Geometry/TrackerGeometryBuilder"/>
+<use   name="Geometry/TrackerNumberingBuilder"/>
+<use   name="Geometry/Records"/>
+<use   name="DataFormats/TrackerRecHit2D"/>
+<use   name="DataFormats/TrackingRecHit"/>
+<use   name="CondFormats/DataRecord"/>
+<use   name="TrackingTools/TransientTrack"/>
+<use   name="TrackingTools/TrackFitters"/>
+<use   name="TrackingTools/TrajectoryState"/>
+<use   name="TrackingTools/IPTools"/>
+<use   name="RecoVertex/KinematicFit"/>
+<use   name="RecoVertex/KinematicFitPrimitives"/>
+<use   name="RecoVertex/AdaptiveVertexFit"/>
+<use   name="DataFormats/TrajectorySeed"/>
+<use   name="Alignment/OfflineValidation"/>
+<use   name="CommonTools/UtilAlgos"/>
+# for lumi
+<use   name="DataFormats/Luminosity"/>
+<use   name="pythia6"/>
+<use   name="clhep"/>
+<use   name="boost"/>
+<use   name="root"/>
+<use   name="rootrflx"/>
+<use   name="DataFormats/Common"/>
+
+<export>
+  <lib   name="1"/>
+</export>
