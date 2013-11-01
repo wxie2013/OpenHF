@@ -28,21 +28,21 @@ process.GlobalTag.globaltag = "GR_P_V43D::All"
 process.source = cms.Source("PoolSource",
         skipEvents = cms.untracked.uint32(0),
         fileNames  = cms.untracked.vstring(
-                'file:/afs/cern.ch/work/w/wxie/public/2A54599E-DB74-E211-9D29-5404A63886AD.root'
+                '/store/hidata/HIRun2013/PAHighPt/RECO/PromptReco-v1/000/210/534/00000/865432B8-1E65-E211-BF13-001D09F24FEC.root'
             )
         )
 
 process.maxEvents = cms.untracked.PSet(
-        input = cms.untracked.int32(-1)
+        input = cms.untracked.int32(100)
         )
 
-rootFileName = "HeavyFlavor.root"
+#rootFileName = "HeavyFlavor.root"
 
 process.tree = cms.EDAnalyzer(
     "HFTree",
     verbose      = cms.untracked.int32(1),
     printFrequency = cms.untracked.int32(1),
-    fileName     = cms.untracked.string(rootFileName),
+    #fileName     = cms.untracked.string(rootFileName),
     requireCand  =  cms.untracked.bool(True)
     )
 

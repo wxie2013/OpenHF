@@ -9,8 +9,11 @@
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+
+
 #include <TROOT.h>
-#include <TFile.h>
 #include <TTree.h>
 #include <TH1.h>
 
@@ -21,15 +24,14 @@
 
 // -- Yikes!
 TAna01Event  *gHFEvent;
-TFile        *gHFFile;
 
 using namespace::std;
+using namespace::edm;
 
 // ----------------------------------------------------------------------
 HFTree::HFTree(const edm::ParameterSet& iConfig) :
   fRequireCand(iConfig.getUntrackedParameter<bool>("requireCand", true)), 
   fFullGenBlock(iConfig.getUntrackedParameter<bool>("fullGenBlock", false)), 
-  fFileName(iConfig.getUntrackedParameter<string>("fileName", string("hfa.root"))), 
   fTreeName(iConfig.getUntrackedParameter<string>("treeName", string("T1"))), 
   fVerbose(iConfig.getUntrackedParameter<int>("verbose", 1)),
   fPrintFrequency(iConfig.getUntrackedParameter<int>("printFrequency", 1000)) {
@@ -38,18 +40,14 @@ HFTree::HFTree(const edm::ParameterSet& iConfig) :
   cout << "--- HFTree constructor" << endl;
   cout << "---  verbose:                         " << fVerbose << endl;
   cout << "---  printFrequency:                  " << fPrintFrequency << endl;
-  cout << "---  fileName:                        " << fFileName << endl; 
   cout << "---  treeName:                        " << fTreeName << endl; 
   cout << "---  requireCand:                     " << (fRequireCand?"true":"false") << endl; 
   cout << "---  fullGenBlock:                    " << (fFullGenBlock?"true":"false") << endl; 
   cout << "----------------------------------------------------------------------" << endl;
-  fFile = TFile::Open(fFileName.c_str(), "RECREATE");
-  fTree = new TTree(fTreeName.c_str(), "CMSSW HF tree");
-  fEvent = new TAna01Event(0);
-  fTree->Branch("TAna01Event", "TAna01Event", &fEvent, 256000/8, 1);
 
+
+  fEvent = new TAna01Event(0);
   gHFEvent = fEvent;
-  gHFFile  = fFile;
 
   fEventCounter = -1; 
 }
@@ -58,12 +56,6 @@ HFTree::HFTree(const edm::ParameterSet& iConfig) :
 // ----------------------------------------------------------------------
 HFTree::~HFTree() {
   
-  // -- Save output
-  fFile->cd();
-  //  fTree->Write();
-  fFile->Write();
-  fFile->Close();
-  delete fFile;
 }
 
 
@@ -110,6 +102,10 @@ void HFTree::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 // ------------ method called once each job just before starting event loop  ------------
 void  HFTree::beginJob() {
+  edm::Service<TFileService> fs;
+  fTree = fs->make<TTree>("fTree" , "heavy flavor original tree");
+  fTree->Branch("TAna01Event", "TAna01Event", &fEvent, 256000/8, 1);
+
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
