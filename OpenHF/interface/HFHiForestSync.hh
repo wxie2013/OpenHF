@@ -49,6 +49,9 @@ class HFHiForestSync : public edm::EDAnalyzer {
         string filename;
         string path_file; //.. directory path to the data file
 
+        float cut_ffls3d;
+        float cut_falpha0;
+
     private:
         edm::Service<TFileService> fs;
 

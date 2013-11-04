@@ -8,10 +8,13 @@ HFHiForestSync::HFHiForestSync(const edm::ParameterSet& iConfig)
 {
     nameOfMapRunLumiFile = iConfig.getUntrackedParameter<string>("nameOfMapRunLumiFile");
     pathOfhftree = iConfig.getUntrackedParameter<string>("pathOfhftree");
+    cut_ffls3d = iConfig.getUntrackedParameter<double>("cut_ffls3d");
+    cut_falpha0 = iConfig.getUntrackedParameter<double>("cut_falpha0");
 
     hftree = fs->make<TTree>("hftree" , "heavy flavor reduced tree");
     ana = new candAna;
     ana->Init(hftree);
+    ana->set_cut(cut_ffls3d, cut_falpha0);
 
     hftree = 0;
     T1 = 0;
