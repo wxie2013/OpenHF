@@ -26,7 +26,7 @@ class mapRunLumiHfTreeFile : public TNamed
         string pathname; //.. directory path to the data file
         string path_file; //.. directory path to the data file
     private:
-        void Init(int startFile, int endFile);
+        void Init(int startFile, int endFile, char* trgName);
         void get_infor(float& min, float& max, int lumi);
         void write_infor(map_info* infor, int run, int min, int max, string& fname);
 
@@ -36,7 +36,7 @@ class mapRunLumiHfTreeFile : public TNamed
 
         //..
         void set_pathname(string& in) {pathname = in;}
-        void LoopOverFile(int startFile, int endFile, char *filelist);
+        void LoopOverFile(int startFile, int endFile, char *filelist, char* trgName);
 
         ClassDef(mapRunLumiHfTreeFile, 1)
 };

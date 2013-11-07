@@ -18,8 +18,8 @@ candAna::candAna()
     cut_falpha0 = 999;
 
     ncand = 0;
-    hfcandidate = new hfcand_v0;
-    fpEvt = new TAna01Event(0);
+    hfcandidate = 0;
+    fpEvt = 0;
 
     fTree = 0;
 }
@@ -36,6 +36,9 @@ void candAna::Init(TTree* treeIn)
         fTree = new TTree("hftree", "heavy flavor reduced tree ");
     else 
         fTree = treeIn;
+
+    hfcandidate = new hfcand_v0;
+    fpEvt = new TAna01Event(0);
 
     fTree->Branch("hfcandidate", &hfcandidate);
 }
@@ -741,14 +744,14 @@ void candAna::LoopOverFile(int startFile, int endFile, char *filelist)
 
         cout<<filename<<endl;
 
-        //.. I disabled the ROOT recover by putting "TFile.Recover: 0" in ".rootrc" 
-        //.. file at home directory. After that, any file not properly closed is 
-        //.. treated as a Zombie file by ROOT.
         TFile f(filename);
         if(f.IsZombie()) 
             continue;
 
-        TTree *T1 = (TTree*)f.Get("T1");
+        TTree* T1 = 0;
+        if(!(T1 = (TTree*) f.Get("T1")))
+            T1 = (TTree*) f.Get("tree/fTree");
+
 
 
         LoopOverEvt(T1);

@@ -98,7 +98,10 @@ HFHiForestSync::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                     cout<<"!! The file: "<<filename<<" is a Zombie"<<endl;
                     return;
                 }
-                T1 = (TTree*)f->Get("T1");
+
+                TTree* T1 = 0;
+                if(!(T1 = (TTree*) f->Get("T1")))
+                    T1 = (TTree*) f->Get("tree/fTree");
 
                 cout<<" --> found file: "<<path_file<<endl;
                 break;

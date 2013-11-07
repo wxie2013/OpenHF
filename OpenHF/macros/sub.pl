@@ -1,9 +1,9 @@
 #!/usr/local/bin/perl
 
-#e.g. sub.pl 10 dstar charm.lis cut_file.lis
-
 $njobs = $ARGV[0];
-$filelist = $ARGV[1];
+$start_from = $ARGV[1];
+$filelist = $ARGV[2];
+$trg = $ARGV[3];
 
 open(FILE, "$filelist");
 @lines = <FILE>;
@@ -24,10 +24,16 @@ for ($ifile = 0; $ifile < $njobs ; $ifile ++) {
     if($iend > $itotal) {
         $iend = $itotal
     }
+
+    if($istart < $start_from) {
+        next;
+    }
+
     if($istart >= $itotal) {
         last;
     }
 
+    $to = "_";
     print $istart, " ", $iend, "\n";
-    system("./run_mapRunLumiHfTreeFile.csh $istart $iend $filelist");
+    system("./run_mapRunLumiHfTreeFile.csh $istart $iend $filelist $trg > out_$istart$to$iend$to$trg\&");
 }

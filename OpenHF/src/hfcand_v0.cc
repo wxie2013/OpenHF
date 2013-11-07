@@ -10,8 +10,8 @@ ClassImp(hfcand_v0)
     //_________________
 hfcand_v0::hfcand_v0()
 {
-    nhfcand = 0;
     HFcand  = new TClonesArray("snglhfcand_v0",NCAND);
+    Reset();
 }
 
 //_________________

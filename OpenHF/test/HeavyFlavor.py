@@ -3,6 +3,9 @@ import FWCore.ParameterSet.Config as cms
 
 process = cms.Process("HFA")
 
+# breakdown time cost
+#process.Timing = cms.Service("Timing");
+
 # ----------------------------------------------------------------------
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.threshold = 'INFO'

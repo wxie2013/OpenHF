@@ -18,10 +18,10 @@ mapRunLumiHfTreeFile::mapRunLumiHfTreeFile()
 }
 
 //--------------------------
-void mapRunLumiHfTreeFile::Init(int startFile, int endFile)
+void mapRunLumiHfTreeFile::Init(int startFile, int endFile, char* trgName)
 {
     char outname[200];
-    sprintf(outname, "%s%d%s%d%s", "mapRunLumiHfTreeFile_", startFile, "To", endFile, ".root");
+    sprintf(outname, "%s%s%s%d%s%d%s", "mapRunLumiHfTreeFile_", trgName, "_", startFile, "To", endFile, ".root");
     outfile = new TFile(outname, "recreate");
 
     infor = new map_info;
@@ -35,9 +35,9 @@ void mapRunLumiHfTreeFile::Init(int startFile, int endFile)
 
 }
 //--------------------------
-void mapRunLumiHfTreeFile::LoopOverFile(int startFile, int endFile, char *filelist)
+void mapRunLumiHfTreeFile::LoopOverFile(int startFile, int endFile, char *filelist, char* trgName)
 {
-    Init(startFile, endFile);
+    Init(startFile, endFile, trgName);
 
     //..
     ifstream file_stream(filelist);
@@ -64,7 +64,10 @@ void mapRunLumiHfTreeFile::LoopOverFile(int startFile, int endFile, char *fileli
             continue;
         }
 
-        TTree* T1 = (TTree*) f->Get("T1");
+        TTree* T1 = 0; 
+        if(!(T1 = (TTree*) f->Get("T1")))
+                T1 = (TTree*) f->Get("tree/fTree");
+
         fpEvt->Clear();
 
         TBranch* b_flumi = T1->GetBranch("fLumiSection");
