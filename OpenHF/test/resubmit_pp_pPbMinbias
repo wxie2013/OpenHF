@@ -1,0 +1,15 @@
+crab -status -c crab_HeavyFlavor_highPt_crab_pp
+crab -status -c crab_HeavyFlavor_minbias1_crab_pPb
+crab -status -c crab_HeavyFlavor_minbias2_crab_pPb
+crab -status -c crab_HeavyFlavor_minbias_crab_pp
+
+crab -get all -c crab_HeavyFlavor_highPt_crab_pp
+crab -get all -c crab_HeavyFlavor_minbias1_crab_pPb
+crab -get all -c crab_HeavyFlavor_minbias2_crab_pPb
+crab -get all -c crab_HeavyFlavor_minbias_crab_pp
+
+crab -resubmit bad -c crab_HeavyFlavor_highPt_crab_pp
+crab -resubmit bad -c crab_HeavyFlavor_minbias1_crab_pPb
+crab -resubmit bad -c crab_HeavyFlavor_minbias2_crab_pPb
+crab -resubmit bad -c crab_HeavyFlavor_minbias_crab_pp
+
