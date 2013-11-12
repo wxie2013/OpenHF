@@ -766,6 +766,10 @@ void candAna::LoopOverFile(int startFile, int endFile, char *filelist)
 void candAna::LoopOverEvt(TTree* T1, Long64_t& run_hifst, Long64_t& evt_hifst) 
 {
     hfcandidate->Reset();
+    if(!T1) {
+        fTree->Fill();  //.. no D candidate. Fill in an empty object for that event.
+        return;
+    }
 
     int maxEvents = (int)T1->GetEntries();
 
@@ -792,8 +796,10 @@ void candAna::LoopOverEvt(TTree* T1, Long64_t& run_hifst, Long64_t& evt_hifst)
             return;
         } 
     }
-    if(!match)
+    if(!match) {
+        cout<<" --> no matching hftree for this event <--"<<endl;
         fTree->Fill();  //.. no D candidate. Fill in an empty object for that event.
+    }
 }
 // ----------------------------------------------------------------------
 void candAna::LoopOverEvt(TTree* T1) 

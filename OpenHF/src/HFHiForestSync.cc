@@ -75,8 +75,10 @@ HFHiForestSync::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     pair<multimap<int, map_info>::iterator, multimap<int, map_info>::iterator> iter;
     iter = listOfHFTreeFile.equal_range(runNum);
 
-    bool match = false;
     if(!(lumi>=lumi_min_last && lumi <=lumi_max_last)) {
+
+        bool match = false;
+
         for (multimap<int, map_info>::iterator it = iter.first; it != iter.second; ++it) {
             int lumi_min = (*it).second.get_lumi_min(); 
             int lumi_max = (*it).second.get_lumi_max(); 
@@ -96,10 +98,11 @@ HFHiForestSync::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 }
                 if(f->IsZombie()) {
                     cout<<"!! The file: "<<filename<<" is a Zombie"<<endl;
-                    return;
+                    match = false;
+                    break;
                 }
 
-                TTree* T1 = 0;
+                T1 = 0;
                 if(!(T1 = (TTree*) f->Get("T1")))
                     T1 = (TTree*) f->Get("tree/fTree");
 
@@ -114,7 +117,6 @@ HFHiForestSync::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     if(!T1) {
         cout<<" !! did not find HFTree file for run: "<<runNum<<" evt: "<<evtNum<<endl;
-        return;
     }
 
     ana->LoopOverEvt(T1, runNum, evtNum);
