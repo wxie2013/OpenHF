@@ -99,7 +99,15 @@ void read_hftree(int startFile, int endFile, char *filelist, int type,
 
         //..the files are in dcache ..
         TFile *f = TFile::Open(filename);
-        TTree *hftree = (TTree*)f->Get("hftree");
+        if(!f) 
+            continue;
+
+        TTree *hftree = 0;
+        if(!(hftree = (TTree*)f->Get("hftree")))
+            hftree = (TTree*)f->Get("OpenHfTree/hftree");
+
+        if(!hftree) 
+            continue;
 
         hftree->SetBranchAddress("hfcandidate", &hfcandidate);
 

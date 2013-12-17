@@ -39,8 +39,17 @@ void CompareTrees(int startFile, int endFile, char *filelist)
 
 
         TFile *f = TFile::Open(filename);
+        if(!f) {
+            cout<<"==> empty file <=="<<endl;
+            continue;
+        }
         TTree *HiTree  = (TTree*)f->Get("hiEvtAnalyzer/HiTree");
         TTree *hftree = (TTree*)f->Get("OpenHfTree/hftree");
+
+        if(!HiTree || !hftree) {
+            cout<<"==> empty tree <=="<<endl;
+            continue;
+        }
 
         long int runNum, evtNum;
         HiTree->SetBranchAddress("run",&run);
@@ -69,6 +78,8 @@ void CompareTrees(int startFile, int endFile, char *filelist)
                          hfcandidate->get_hfcand(ic)->get_fm());
             }
         }
+
+        f->Close();
     }
 
     result.cd();
