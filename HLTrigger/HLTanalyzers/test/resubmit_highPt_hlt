@@ -1,0 +1,3 @@
+crab -status -c crab_hlt_wxie
+crab -get all -c crab_hlt_wxie
+crab -resubmit bad -c crab_hlt_wxie
