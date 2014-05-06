@@ -11,15 +11,13 @@
 #include "../interface/hfcand_v0.hh"
 #include "../interface/ana_hfforest.hh"
 
-const char* mesonName[nch] = {"Dstar2D0Pi", "D02KPi", "Ds2PhiPi", "Ds2KstarK", "Dpm2KPiPi"};
+const char* MesonName[NCH] = {"Dstar2D0Pi", "D02KPi", "Ds2PhiPi", "Ds2KstarK", "Dpm2KPiPi"};
 
 ClassImp(ana_hfforest)
 
-//
+    //
 ana_hfforest::ana_hfforest()
 {
-    n_HLT_OR = 0;
-    n_FinalPath = 0;
 }
 
 //
@@ -29,30 +27,73 @@ ana_hfforest::~ana_hfforest()
     delete result;
     delete hfcandidate;
 
-    /* the following crash code  and not sure why
-    //.. all triggers 
-    for(short ich = 0; ich<nch; ich++) {
-        for(short i = 0; i<npt; i++) {
-            delete hfg_tot[ich][i];
-            delete hfgdiff_tot[ich][i];
-            delete hbgdiff_tot[ich][i];
+    for(short iy = 0; iy<NY; iy++) 
+        for(short ich = 0; ich<NCH; ich++) 
+            for(short it = 0; it<NTRG; it++) 
+                for(short i = 0; i<NPT; i++) 
+                    delete hfg[iy][ich][it][i];
 
-        }
-    }
-
-    //.. each triggers
-    for(short ich = 0; ich<nch; ich++) {
-        for(short it = 0; it<ntrg; it++) {
-            for(short i = 0; i<npt; i++) {
-                delete hfg[ich][it][i];
-                delete hfgdiff[ich][it][i];
-                delete hbgdiff[ich][it][i];
+    for(short iy = 0; iy<NY; iy++) 
+        for(short it = 0; it<NTRG; it++) 
+            for(short i = 0; i<NPT; i++) {
+                delete hfgdiff[iy][it][i];
+                delete hbgdiff[iy][it][i];
 
             }
+
+    for(int i = 0; i<NTRG; i++) 
+        delete trg_obj[i];
+
+    for(short iy = 0; iy<NY; iy++) 
+        for(short ich = 0; ich<NCH; ich++) 
+            for(short i = 0; i<NPT; i++) {
+                delete hfg_ZBiasSglTrkPt0_12_raw[iy][ich][i];
+                delete hfg_ZBiasSglTrkPt0_12[iy][ich][i];
+
+                delete hfg_TrkTrgPt12_20_raw[iy][ich][i];
+                delete hfg_TrkTrgPt12_20[iy][ich][i];
+
+                delete hfg_TrkTrgPt20_30_raw[iy][ich][i];
+                delete hfg_TrkTrgPt20_30[iy][ich][i];
+
+                delete hfg_TrkTrgPt30above_raw[iy][ich][i];
+                delete hfg_TrkTrgPt30above[iy][ich][i];
+            }
+
+    //
+    for(short iy = 0; iy<NY; iy++) 
+        for(short i = 0; i<NPT; i++) {
+            delete hfgdiff_ZBiasSglTrkPt0_12_raw[iy][i];
+            delete hfgdiff_ZBiasSglTrkPt0_12[iy][i];
+
+            delete hfgdiff_TrkTrgPt12_20_raw[iy][i];
+            delete hfgdiff_TrkTrgPt12_20[iy][i];
+
+            delete hfgdiff_TrkTrgPt20_30_raw[iy][i];
+            delete hfgdiff_TrkTrgPt20_30[iy][i];
+
+            delete hfgdiff_TrkTrgPt30above_raw[iy][i];
+            delete hfgdiff_TrkTrgPt30above[iy][i];
+
+            delete hbgdiff_ZBiasSglTrkPt0_12_raw[iy][i];
+            delete hbgdiff_ZBiasSglTrkPt0_12[iy][i];
+
+            delete hbgdiff_TrkTrgPt12_20_raw[iy][i];
+            delete hbgdiff_TrkTrgPt12_20[iy][i];
+
+            delete hbgdiff_TrkTrgPt20_30_raw[iy][i];
+            delete hbgdiff_TrkTrgPt20_30[iy][i];
+
+            delete hbgdiff_TrkTrgPt30above_raw[iy][i];
+            delete hbgdiff_TrkTrgPt30above[iy][i];
         }
-    }
-    */
+
+        for(short i = 0; i<NPT; i++) {
+            delete hMatchWin[i];
+            delete hRecoTrgPtDiff[i];
+        }
 }
+
 //
 void ana_hfforest::Init(int startFile, int endFile, char *filelist)
 {//.. called right after constructor 
@@ -68,73 +109,210 @@ void ana_hfforest::Init(int startFile, int endFile, char *filelist)
     //
     hfcandidate = new hfcand_v0;
 
+    //HiTree = 0;
     HltTree = 0;
     hftree = 0;
+
+    //.. trigger object ...
+    for(int i = 0; i<NTRG; i++) {
+        trg_obj[i] = new trigO;
+    }
 }
 
 //
 void ana_hfforest::book_hist()
 {
+    float pt_low = 0, pt_high = 0;
     char hname[100], pt_range[1000];
-    //... all trigger 
-    for(short ich = 0; ich<nch; ich++) {
-        for(short i = 0; i<npt; i++) {
-            float pt_low = i*delta_pt;
-            float pt_high = pt_low +  delta_pt;
 
-            sprintf(pt_range, "ch: %s,  pt: %f %f", mesonName[ich], pt_low, pt_high);
+    //
+    for(short i = 0; i<NPT; i++) {
+        get_pt_range(i, pt_low, pt_high);
+        sprintf(pt_range, "pt: %f %f", pt_low, pt_high);
 
-            sprintf(hname, "hfg_tot%d_%d", ich, i);
-            hfg_tot[ich][i] = new TH1F(hname, pt_range, npt, cut_m_low[ich], cut_m_high[ich]);
+        sprintf(hname, "hMatchWin%d", i);
+        hMatchWin[i] = new TH1F(hname, pt_range, NBIN, -1, 1);
 
-            sprintf(hname, "hfgdiff_tot%d_%d", ich, i);
-            hfgdiff_tot[ich][i] = new TH1F(hname, pt_range, npt, 0.135, 0.154);
+        sprintf(hname, "hRecoTrgPtDiff%d", i);
+        hRecoTrgPtDiff[i] = new TH1F(hname, pt_range, NBIN, -1, 1);
 
-            sprintf(hname, "hbgdiff_tot%d_%d", ich, i);
-            hbgdiff_tot[ich][i] = new TH1F(hname, pt_range, npt, 0.135, 0.154);
-
-            //.. track error ...
-            hfg_tot[ich][i]->Sumw2();
-            hfgdiff_tot[ich][i]->Sumw2();
-            hbgdiff_tot[ich][i]->Sumw2();
-
-            //.. specific interesting triggers
-            sprintf(hname, "HLT_tot%d_%d", ich, i);
-            HLT_tot[ich][i] = new TH1F(hname, pt_range, npt, cut_m_low[ich], cut_m_high[ich]);
-
-            for(int j = 0; j<nhist; j++) {
-                sprintf(hname, "h%d_%d_%d", j, ich, i);
-                h[j][ich][i] = new TH1F(hname, pt_range, npt, cut_m_low[ich], cut_m_high[ich]);
-            }
-        }
+        hMatchWin[i]->Sumw2();
+        hRecoTrgPtDiff[i]->Sumw2();
     }
 
-    //.. each trigger 
-    for(short ich = 0; ich<nch; ich++) {
-        for(short it = 0; it<ntrg; it++) {
-            for(short i = 0; i<npt; i++) {
-                float pt_low = i*delta_pt;
-                float pt_high = pt_low +  delta_pt;
+    //
+    for(short iy = 0; iy<NY; iy++) 
+        for(short ich = 0; ich<NCH; ich++) 
+            for(short it = 0; it<NTRG; it++) 
+                for(short i = 0; i<NPT; i++) {
 
-                sprintf(pt_range, "ch: %s, trg: %s,  pt: %f %f", mesonName[ich], trg_name[it], pt_low, pt_high);
+                    get_pt_range(i, pt_low, pt_high);
 
-                //
-                sprintf(hname, "hfg%d_%d_%d", ich, it, i);
-                hfg[ich][it][i] = new TH1F(hname, pt_range, npt, cut_m_low[ich], cut_m_high[ich]);
+                    sprintf(pt_range, "ch: %s, rapidity:%d, trg: %s,  pt: %f %f", MesonName[ich], iy, trg_name[it], pt_low, pt_high);
 
-                sprintf(hname, "hfgdiff%d_%d_%d", ich, it, i);
-                hfgdiff[ich][it][i] = new TH1F(hname, pt_range, npt, 0.135, 0.154);
+                    //
+                    sprintf(hname, "hfg%d_%d_%d_%d", iy, ich, it, i);
+                    hfg[iy][ich][it][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
 
-                sprintf(hname, "hbgdiff%d_%d_%d", ich, it, i);
-                hbgdiff[ich][it][i] = new TH1F(hname, pt_range, npt, 0.135, 0.154);
+                    //.. track error ...
+                    hfg[iy][ich][it][i]->Sumw2();
+                }
+
+    //
+    for(short iy = 0; iy<NY; iy++) 
+        for(short it = 0; it<NTRG; it++) 
+            for(short i = 0; i<NPT; i++) {
+
+                get_pt_range(i, pt_low, pt_high);
+
+                sprintf(pt_range, "D*, rapidity: %d, trg: %s,  pt: %f %f", iy, trg_name[it], pt_low, pt_high);
+
+                sprintf(hname, "hfgdiff%d_%d_%d", iy, it, i);
+                hfgdiff[iy][it][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+
+                sprintf(hname, "hbgdiff%d_%d_%d", iy, it, i);
+                hbgdiff[iy][it][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
 
                 //.. track error ...
-                hfg[ich][it][i]->Sumw2();
-                hfgdiff[ich][it][i]->Sumw2();
-                hbgdiff[ich][it][i]->Sumw2();
+                hfgdiff[iy][it][i]->Sumw2();
+                hbgdiff[iy][it][i]->Sumw2();
             }
+
+    // components for trigger combination ..
+    for(short iy = 0; iy<NY; iy++) 
+        for(short ich = 0; ich<NCH; ich++) 
+            for(short i = 0; i<NPT; i++) {
+
+                get_pt_range(i, pt_low, pt_high);
+
+                sprintf(pt_range, "ch: %s, rapidity:%d, pt: %f %f", MesonName[ich], iy, pt_low, pt_high);
+
+                sprintf(hname, "hfg_ZBiasSglTrkPt0_12_raw%d_%d_%d", iy, ich, i);
+                hfg_ZBiasSglTrkPt0_12_raw[iy][ich][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+                sprintf(hname, "hfg_ZBiasSglTrkPt0_12%d_%d_%d", iy, ich, i);
+                hfg_ZBiasSglTrkPt0_12[iy][ich][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+                sprintf(hname, "hfg_TrkTrgPt12_20_raw%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt12_20_raw[iy][ich][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+                sprintf(hname, "hfg_TrkTrgPt12_20%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt12_20[iy][ich][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+                sprintf(hname, "hfg_TrkTrgPt20_30_raw%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt20_30_raw[iy][ich][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+                sprintf(hname, "hfg_TrkTrgPt20_30%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt20_30[iy][ich][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+                sprintf(hname, "hfg_TrkTrgPt30above_raw%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt30above_raw[iy][ich][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+                sprintf(hname, "hfg_TrkTrgPt30above%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt30above[iy][ich][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+                //.. track error ...
+                hfg_ZBiasSglTrkPt0_12_raw[iy][ich][i]->Sumw2();
+                hfg_ZBiasSglTrkPt0_12[iy][ich][i]->Sumw2();
+
+                hfg_TrkTrgPt12_20_raw[iy][ich][i]->Sumw2();
+                hfg_TrkTrgPt12_20[iy][ich][i]->Sumw2();
+
+                hfg_TrkTrgPt20_30_raw[iy][ich][i]->Sumw2();
+                hfg_TrkTrgPt20_30[iy][ich][i]->Sumw2();
+
+                hfg_TrkTrgPt30above_raw[iy][ich][i]->Sumw2();
+                hfg_TrkTrgPt30above[iy][ich][i]->Sumw2();
+            }
+
+    //
+    for(short iy = 0; iy<NY; iy++) 
+        for(short i = 0; i<NPT; i++) {
+
+            get_pt_range(i, pt_low, pt_high);
+
+            sprintf(pt_range, "D*, rapidity: %d, pt: %f %f", iy, pt_low, pt_high);
+
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12_raw%d_%d", iy, i);
+            hfgdiff_ZBiasSglTrkPt0_12_raw[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12%d_%d", iy, i);
+            hfgdiff_ZBiasSglTrkPt0_12[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+
+            sprintf(hname, "hfgdiff_TrkTrgPt12_20_raw%d_%d", iy, i);
+            hfgdiff_TrkTrgPt12_20_raw[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+            sprintf(hname, "hfgdiff_TrkTrgPt12_20%d_%d", iy, i);
+            hfgdiff_TrkTrgPt12_20[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+
+            sprintf(hname, "hfgdiff_TrkTrgPt20_30_raw%d_%d", iy, i);
+            hfgdiff_TrkTrgPt20_30_raw[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+            sprintf(hname, "hfgdiff_TrkTrgPt20_30%d_%d", iy, i);
+            hfgdiff_TrkTrgPt20_30[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+
+            sprintf(hname, "hfgdiff_TrkTrgPt30above_raw%d_%d", iy, i);
+            hfgdiff_TrkTrgPt30above_raw[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+            sprintf(hname, "hfgdiff_TrkTrgPt30above%d_%d", iy, i);
+            hfgdiff_TrkTrgPt30above[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+
+
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12_raw%d_%d", iy, i);
+            hbgdiff_ZBiasSglTrkPt0_12_raw[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12%d_%d", iy, i);
+            hbgdiff_ZBiasSglTrkPt0_12[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+
+            sprintf(hname, "hbgdiff_TrkTrgPt12_20_raw%d_%d", iy, i);
+            hbgdiff_TrkTrgPt12_20_raw[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+            sprintf(hname, "hbgdiff_TrkTrgPt12_20%d_%d", iy, i);
+            hbgdiff_TrkTrgPt12_20[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+
+            sprintf(hname, "hbgdiff_TrkTrgPt20_30_raw%d_%d", iy, i);
+            hbgdiff_TrkTrgPt20_30_raw[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+            sprintf(hname, "hbgdiff_TrkTrgPt20_30%d_%d", iy, i);
+            hbgdiff_TrkTrgPt20_30[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+
+            sprintf(hname, "hbgdiff_TrkTrgPt30above_raw%d_%d", iy, i);
+            hbgdiff_TrkTrgPt30above_raw[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+            sprintf(hname, "hbgdiff_TrkTrgPt30above%d_%d", iy, i);
+            hbgdiff_TrkTrgPt30above[iy][i] = new TH1F(hname, pt_range, NBIN, 0.135, 0.154);
+
+            //.. track error ...
+            hfgdiff_ZBiasSglTrkPt0_12_raw[iy][i]->Sumw2();
+            hfgdiff_ZBiasSglTrkPt0_12[iy][i]->Sumw2();
+
+            hfgdiff_TrkTrgPt12_20_raw[iy][i]->Sumw2();
+            hfgdiff_TrkTrgPt12_20[iy][i]->Sumw2();
+
+            hfgdiff_TrkTrgPt20_30_raw[iy][i]->Sumw2();
+            hfgdiff_TrkTrgPt20_30[iy][i]->Sumw2();
+
+            hfgdiff_TrkTrgPt30above_raw[iy][i]->Sumw2();
+            hfgdiff_TrkTrgPt30above[iy][i]->Sumw2();
+
+            //
+            hbgdiff_ZBiasSglTrkPt0_12_raw[iy][i]->Sumw2();
+            hbgdiff_ZBiasSglTrkPt0_12[iy][i]->Sumw2();
+
+            hbgdiff_TrkTrgPt12_20_raw[iy][i]->Sumw2();
+            hbgdiff_TrkTrgPt12_20[iy][i]->Sumw2();
+
+            hbgdiff_TrkTrgPt20_30_raw[iy][i]->Sumw2();
+            hbgdiff_TrkTrgPt20_30[iy][i]->Sumw2();
+
+            hbgdiff_TrkTrgPt30above_raw[iy][i]->Sumw2();
+            hbgdiff_TrkTrgPt30above[iy][i]->Sumw2();
         }
-    }
+}
+
+//
+int ana_hfforest::get_pt_bin_num(float pt)
+{
+    int ipt = pt/dPt;
+    if(ipt >= NPT)
+        ipt = NPT - 1;  //.. the last bin include all higher pT region...
+
+    return ipt;
+}
+
+//
+void ana_hfforest::get_pt_range(int i, float& pt_low, float& pt_high)
+{
+    pt_low = i*dPt;
+    pt_high = pt_low +  dPt;
 }
 
 //
@@ -166,62 +344,113 @@ void ana_hfforest::LoopOverFile(int startFile, int endFile, char *filelist)
             cout<<"==> empty file <=="<<endl;
             continue;
         }
-        HltTree  = (TTree*)f->Get("hltanalysis/HltTree");
-        hftree = (TTree*)f->Get("OpenHfTree/hftree");
 
-        if(!hftree || !HltTree) {
-            cout<<"==> empty tree <=="<<endl;
-            continue;
-        }
-
-        HltTree->AddFriend(hftree);
-
-        hftree->SetBranchAddress("hfcandidate", &hfcandidate);
-        get_trg_info(HltTree);
+        if(!GetTreeInfo(f)) continue;
 
         //
         LoopOverEvt(HltTree);
-        cout<<"n_HLT_OR: "<<n_HLT_OR<<endl;
-        cout<<"n_FinalPath: "<<n_FinalPath<<endl;
 
         //
         f->Close();
     }
 
-    cout<<"--> Sum of n_HLT_OR: "<<n_HLT_OR<<endl;
-    cout<<"--> Sum of n_FinalPath: "<<n_FinalPath<<endl;
-
     write();
 }
+
+//
+bool ana_hfforest::GetTreeInfo(TFile* f)
+{
+    //HiTree  = (TTree*)f->Get("hiEvtAnalyzer/HiTree");
+    HltTree  = (TTree*)f->Get("hltanalysis/HltTree");
+    hftree = (TTree*)f->Get("OpenHfTree/hftree");
+
+    //if(!hftree || !HltTree || !HiTree) {
+    if(!hftree || !HltTree) {
+        cout<<"==> missing hftree or HltTree <=="<<endl;
+        return false;
+    }
+
+    HltTree->AddFriend(hftree);
+    //HltTree->AddFriend(HiTree);
+
+    hftree->SetBranchAddress("hfcandidate", &hfcandidate);
+
+    get_trg_info(HltTree);
+
+    return true;
+}
+
 //
 void ana_hfforest::write()
 {//.. results 
     result->cd();
 
-    //.. all triggers 
-    for(short ich = 0; ich<nch; ich++) {
-        for(short i = 0; i<npt; i++) {
-            hfg_tot[ich][i]->Write();
-            hfgdiff_tot[ich][i]->Write();
-            hbgdiff_tot[ich][i]->Write();
-
-            HLT_tot[ich][i]->Write();
-            for(int j = 0; j<nhist; j++) {
-                h[j][ich][i]->Write();
-            }
-        }
-    }
-
     //.. each triggers
-    for(short ich = 0; ich<nch; ich++) {
-        for(short it = 0; it<ntrg; it++) {
-            for(short i = 0; i<npt; i++) {
-                hfg[ich][it][i]->Write();
-                hfgdiff[ich][it][i]->Write();
-                hbgdiff[ich][it][i]->Write();
+    for(short iy = 0; iy<NY; iy++) 
+        for(short ich = 0; ich<NCH; ich++) 
+            for(short it = 0; it<NTRG; it++) 
+                for(short i = 0; i<NPT; i++) 
+                    hfg[iy][ich][it][i]->Write();
+
+    for(short iy = 0; iy<NY; iy++) 
+        for(short it = 0; it<NTRG; it++) 
+            for(short i = 0; i<NPT; i++) {
+                hfgdiff[iy][it][i]->Write();
+                hbgdiff[iy][it][i]->Write();
             }
+
+    for(short iy = 0; iy<NY; iy++) 
+        for(short ich = 0; ich<NCH; ich++) 
+            for(short i = 0; i<NPT; i++) {
+
+                hfg_ZBiasSglTrkPt0_12_raw[iy][ich][i]->Write();
+                hfg_ZBiasSglTrkPt0_12[iy][ich][i]->Write();
+
+                hfg_TrkTrgPt12_20_raw[iy][ich][i]->Write();
+                hfg_TrkTrgPt12_20[iy][ich][i]->Write();
+
+                hfg_TrkTrgPt20_30_raw[iy][ich][i]->Write();
+                hfg_TrkTrgPt20_30[iy][ich][i]->Write();
+
+                hfg_TrkTrgPt30above_raw[iy][ich][i]->Write();
+                hfg_TrkTrgPt30above[iy][ich][i]->Write();
+            }
+
+    //
+    for(short iy = 0; iy<NY; iy++) 
+        for(short i = 0; i<NPT; i++) {
+
+            hfgdiff_ZBiasSglTrkPt0_12_raw[iy][i]->Write();
+            hfgdiff_ZBiasSglTrkPt0_12[iy][i]->Write();
+
+            hfgdiff_TrkTrgPt12_20_raw[iy][i]->Write();
+            hfgdiff_TrkTrgPt12_20[iy][i]->Write();
+
+            hfgdiff_TrkTrgPt20_30_raw[iy][i]->Write();
+            hfgdiff_TrkTrgPt20_30[iy][i]->Write();
+
+            hfgdiff_TrkTrgPt30above_raw[iy][i]->Write();
+            hfgdiff_TrkTrgPt30above[iy][i]->Write();
+
+            //
+            hbgdiff_ZBiasSglTrkPt0_12_raw[iy][i]->Write();
+            hbgdiff_ZBiasSglTrkPt0_12[iy][i]->Write();
+
+            hbgdiff_TrkTrgPt12_20_raw[iy][i]->Write();
+            hbgdiff_TrkTrgPt12_20[iy][i]->Write();
+
+            hbgdiff_TrkTrgPt20_30_raw[iy][i]->Write();
+            hbgdiff_TrkTrgPt20_30[iy][i]->Write();
+
+            hbgdiff_TrkTrgPt30above_raw[iy][i]->Write();
+            hbgdiff_TrkTrgPt30above[iy][i]->Write();
         }
+    //
+    for(short i = 0; i<NPT; i++) {
+        hMatchWin[i]->Write();
+        hRecoTrgPtDiff[i]->Write();
     }
+
     result->Close();
 }
 
@@ -235,13 +464,15 @@ void ana_hfforest::get_trg_info(TTree* T)
     TBranch* branch = 0;
     while ((branch = (TBranch *)branch_iter.Next())) {  
         TString branch_name = branch->GetName();
-        for(int it = 0; it<ntrg; it++) {
+        for(int it = 0; it<NTRG; it++) {
             if (branch_name.Contains(trg_name[it])){
                 if(branch_name.Contains("Prescl")) {
                     T->SetBranchAddress(branch_name.Data(), &prscl[it]);
+                } else if(branch_name.Contains("trigObject")) {
+                    T->SetBranchAddress(branch_name.Data(), &trg_obj[it]);
                 } else {
                     T->SetBranchAddress(branch_name.Data(), &trg[it]);
-                }
+                } 
 
                 break;
             } 
@@ -249,12 +480,14 @@ void ana_hfforest::get_trg_info(TTree* T)
     }
 }
 
+
 //
 void ana_hfforest::reset_trg()
 {//.. reset trigger decision every event
-    for(int i = 0; i<ntrg; i++) {
+    for(int i = 0; i<NTRG; i++) {
         prscl[i] = 0;
         trg[i] = 0;
+        trg_obj[i]->clear();
     }
 }
 
@@ -266,23 +499,30 @@ void ana_hfforest::LoopOverEvt(TTree* T)
         reset_trg();
         T->GetEntry(i);
 
-        LoopOverHFCandidate(T);
-        CheckTriggerCounts();
+        LoopOverHFCandidate();
     }
 }
+
 //
-void ana_hfforest::CheckTriggerCounts()
-{//.. check if the sum of all HLT OR is equal to HLTriggerFinalPath
+bool ana_hfforest::GetRapidity(float m, float pt, float eta, int& iY)
+{
+    float theta = 2*atan(exp(-eta));
+    float p = pt/sin(theta);
+    float E = sqrt(m*m + p*p);
+    float pz = pt/tan(theta);
+    float Y = 0.5*log((E+pz)/(E-pz));
 
-    if(HLT_OR()) 
-        n_HLT_OR++;
 
-    if(trg[167]) 
-        n_FinalPath++;
+    if(Y<=Ymin || Y>=Ymin+NY*dY) 
+        return false;
+
+    iY = (Y-Ymin)/dY; 
+
+    return true;
 }
 
 //
-void ana_hfforest::LoopOverHFCandidate(TTree* T)
+void ana_hfforest::LoopOverHFCandidate()
 {//.. loop over Heavy Flavor candidate in a event 
     for(int i = 0; i<hfcandidate->get_nhfcand(); i++) {
         snglhfcand* cand = hfcandidate->get_hfcand(i);
@@ -296,12 +536,13 @@ void ana_hfforest::LoopOverHFCandidate(TTree* T)
 //
 void ana_hfforest::FillMassHisto(snglhfcand* cand)
 {//.. fill the histogram of mass distribution ..
-    for(int ich = 0; ich < nch; ich++) {
+    for(int ich = 0; ich < NCH; ich++) {
 
         if(cand->get_type() != ich+1) continue;
 
         float mass = cand->get_fm();
         float fpt = cand->get_fpt();
+        float feta = cand->get_feta();
         float ffls3d = cand->get_ffls3d();
         float alpha = cand->get_falpha0();
         float fprob = cand->get_fprob();
@@ -309,10 +550,19 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand)
         float fchi2 = cand->get_fchi2();
         float mass_dau = cand->get_fmdau1();
 
-        //.. which pt bin
-        int ipt = fpt/delta_pt;
-        if(ipt >= npt)
-            ipt = npt - 1;  //.. the last bin include all higher pT region...
+        //.. input for trigger matching ...
+        float fetadau2 = cand->get_fetadau2(); 
+        float fphidau2 = cand->get_fphidau2(); 
+        float feta1 = cand->get_feta1(); 
+        float fphi1 = cand->get_fphi1(); 
+        float feta2 = cand->get_feta2(); 
+        float fphi2 = cand->get_fphi2(); 
+        //
+
+        int ipt = get_pt_bin_num(fpt);
+
+        int iy = -1;
+        if(!GetRapidity(mass, fpt, feta, iy)) continue;
 
         if(mass > cut_m_low[ich] && mass < cut_m_high[ich] && 
                 ffls3d > cut_ffls3d[ich] && alpha < cut_falpha0[ich] && 
@@ -320,33 +570,40 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand)
 
             //.. forground ..
             if(ich==1) { //D0 has no daughter mass, treat separately. ...
-                hfg_tot[ich][ipt]->Fill(mass);
-
-                for(int itrg = 0; itrg<ntrg; itrg++) {
-                    if(trg[itrg]) {
-                        hfg[ich][itrg][ipt]->Fill(mass);
-                    }
+                for(int itrg = 0; itrg<NTRG; itrg++) {
+                    if(trg[itrg]) 
+                        hfg[iy][ich][itrg][ipt]->Fill(mass);
                 }
-                FillSpecialInterestTrigger(ich, ipt, mass);
+
+                FillTrgCombine(0, fetadau2, fphidau2, feta1, fphi1, feta2, fphi2, 
+                        ich, ipt, iy, mass, mass_dau, fpt);
 
             } else {
                 if(mass_dau > cut_m_dau_low[ich] && mass_dau < cut_m_dau_high[ich]) {
-                    hfg_tot[ich][ipt]->Fill(mass);
-                    hfgdiff_tot[ich][ipt]->Fill(mass-mass_dau);
-
-                    for(int itrg = 0; itrg<ntrg; itrg++) {
+                    for(int itrg = 0; itrg<NTRG; itrg++) {
                         if(trg[itrg]) {
-                            hfg[ich][itrg][ipt]->Fill(mass);
-                            hfgdiff[ich][itrg][ipt]->Fill(mass-mass_dau);
+                            hfg[iy][ich][itrg][ipt]->Fill(mass);
+
+                            if(ich==0) 
+                                hfgdiff[iy][itrg][ipt]->Fill(mass-mass_dau);
                         }
                     }
-                    FillSpecialInterestTrigger(ich, ipt, mass);
+
+                    FillTrgCombine(0, fetadau2, fphidau2, feta1, fphi1, feta2, fphi2, 
+                            ich, ipt, iy, mass, mass_dau, fpt);
+                    if(ich==0)
+                        FillTrgCombine(1, fetadau2, fphidau2, feta1, fphi1, feta2, fphi2, 
+                                ich, ipt, iy, mass, mass_dau, fpt);
+
                 } else { //.. background through side band ...
-                    hbgdiff_tot[ich][ipt]->Fill(mass);
-                    for(int itrg = 0; itrg<ntrg; itrg++) {
-                        if(trg[itrg]) 
-                            hbgdiff[ich][itrg][ipt]->Fill(mass-mass_dau);
+                    for(int itrg = 0; itrg<NTRG; itrg++) {
+                        if(trg[itrg] && ich==0) 
+                            hbgdiff[iy][itrg][ipt]->Fill(mass-mass_dau);
                     }
+
+                    if(ich==0)
+                        FillTrgCombine(2, fetadau2, fphidau2, feta1, fphi1, feta2, fphi2, 
+                                ich, ipt, iy, mass, mass_dau, fpt);
                 }
             }
         }
@@ -354,171 +611,127 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand)
 }
 
 //
-void ana_hfforest::FillSpecialInterestTrigger(int ich, int ipt, float mass)
-{
-    bool trg_OR[nhist] = {false};
+void ana_hfforest::FillTrgCombine(int id, float eta0, float phi0, float eta1, 
+        float phi1, float eta2, float phi2, int ich, int ipt, int iy, float mass, float mass_dau, float pt)
+{//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
-    if(trg[55] ||  //"HLT_PAFullTrack12"
-            trg[56] ||  //"HLT_PAFullTrack20"
-            trg[57] ||  //"HLT_PAFullTrack30"
-            trg[58])  //"HLT_PAFullTrack50"
-        trg_OR[0]=true;
+    float trgPt0 = -1, trgPt1 = -1,trgPt2 = -1;
 
-    if(trg[67] ||  //"HLT_PAJet100_NoJetID"
-            trg[68] ||  //"HLT_PAJet120_NoJetID"
-            trg[69] ||  //"HLT_PAJet20_NoJetID"
-            trg[71] ||  //"HLT_PAJet40_NoJetID"
-            trg[73] ||  //"HLT_PAJet60_NoJetID"
-            trg[74]) //"HLT_PAJet80_NoJetID"
-        trg_OR[1]=true;
+    if(trg[0]) {
 
-    if(trg[108] ||    //"HLT_PAPhoton10_NoCaloIdVL"
-            trg[114] ||    //"HLT_PAPhoton15_NoCaloIdVL"
-            trg[119] ||    //"HLT_PAPhoton20_NoCaloIdVL"
-            trg[125] ||    //"HLT_PAPhoton30_NoCaloIdVL"
-            trg[129] ||    //"HLT_PAPhoton40_NoCaloIdVL"
-            trg[131])    //"HLT_PAPhoton60_NoCaloIdVL"
-        trg_OR[2]=true;
+        if(matchTrgObj(ipt, pt, 0, eta0, phi0, trgPt0) ||
+           matchTrgObj(ipt, pt, 0, eta1, phi1, trgPt1) ||
+           matchTrgObj(ipt, pt, 0, eta2, phi2, trgPt2)) {
 
+            float maxTrgPt = TMath::Max(trgPt0, TMath::Max(trgPt1, trgPt2));
 
+            if(maxTrgPt < 12) {
+                if(id==0) {
+                    hfg_ZBiasSglTrkPt0_12_raw[iy][ich][ipt]->Fill(mass);
+                    hfg_ZBiasSglTrkPt0_12[iy][ich][ipt]->Fill(mass, prscl[0]*prscl[4]);
+                } else if(id==1) {
+                    hfgdiff_ZBiasSglTrkPt0_12_raw[iy][ipt]->Fill(mass-mass_dau);
+                    hfgdiff_ZBiasSglTrkPt0_12[iy][ipt]->Fill(mass-mass_dau, prscl[0]*prscl[4]);
+                } else if(id==2) {
+                    hbgdiff_ZBiasSglTrkPt0_12_raw[iy][ipt]->Fill(mass-mass_dau);
+                    hbgdiff_ZBiasSglTrkPt0_12[iy][ipt]->Fill(mass-mass_dau, prscl[0]*prscl[4]);
+                }
+            }
+        }
+    }
 
-    if(trg[45] || // "HLT_PAForJet100Eta2"
-            trg[46] || // "HLT_PAForJet100Eta3"
-            trg[47] || // "HLT_PAForJet20Eta2"
-            trg[48] || // "HLT_PAForJet20Eta3"
-            trg[49] || // "HLT_PAForJet40Eta2"
-            trg[50] || // "HLT_PAForJet40Eta3"
-            trg[51] || // "HLT_PAForJet60Eta2"
-            trg[52] || // "HLT_PAForJet60Eta3"
-            trg[53] || // "HLT_PAForJet80Eta2"
-            trg[54]) // "HLT_PAForJet80Eta3"
-        trg_OR[3] = true;
+    if(trg[1]) {
+        if(matchTrgObj(ipt, pt, 1, eta0, phi0, trgPt0) ||
+           matchTrgObj(ipt, pt, 1, eta1, phi1, trgPt1) ||
+           matchTrgObj(ipt, pt, 1, eta2, phi2, trgPt2)) {
 
-    if(trg[8] || // "AlCa_PAEcalEtaEBonly"
-            trg[10]|| // "AlCa_PAEcalPi0EBonly"
-            trg[11]) // "AlCa_PAEcalPi0EEonly"
-        trg_OR[4]=true;
+            float maxTrgPt = TMath::Max(trgPt0, TMath::Max(trgPt1, trgPt2));
 
-    if(trg[153] || // "HLT_PATripleJet20_20_20"
-            trg[154] || // "HLT_PATripleJet40_20_20"
-            trg[155] || // "HLT_PATripleJet60_20_20"
-            trg[156] || // "HLT_PATripleJet80_20_20"
-            trg[152] ) // "HLT_PATripleJet100_20_20"
-        trg_OR[5]=true;
+            if(maxTrgPt >=12 && maxTrgPt < 20) {
+                if(id==0) {
+                    hfg_TrkTrgPt12_20_raw[iy][ich][ipt]->Fill(mass);
+                    hfg_TrkTrgPt12_20[iy][ich][ipt]->Fill(mass, prscl[1]); //.. L1 base prescale 1
+                } else if(id==1) {
+                    hfgdiff_TrkTrgPt12_20_raw[iy][ipt]->Fill(mass-mass_dau);
+                    hfgdiff_TrkTrgPt12_20[iy][ipt]->Fill(mass-mass_dau, prscl[1]); //.. L1 base prescale 1
+                } else if(id==2) {
+                    hbgdiff_TrkTrgPt12_20_raw[iy][ipt]->Fill(mass-mass_dau);
+                    hbgdiff_TrkTrgPt12_20[iy][ipt]->Fill(mass-mass_dau, prscl[1]); //.. L1 base prescale 1
+                }
+            }
+        }
+    }
 
-    if(
-            //trg[133] || // "HLT_PAPixelTrackMultiplicity100_L2DoubleMu3"
-            //trg[135] || // "HLT_PAPixelTrackMultiplicity140_Jet80_NoJetID"
-            trg[134] || // "HLT_PAPixelTrackMultiplicity130_FullTrack12"
-            trg[132] || // "HLT_PAPixelTrackMultiplicity100_FullTrack12"
-            trg[136] || // "HLT_PAPixelTrackMultiplicity160_FullTrack12"
-            trg[141] || // "HLT_PAPixelTracks_Multiplicity220"
-            trg[138] || // "HLT_PAPixelTracks_Multiplicity130"
-            trg[139] || // "HLT_PAPixelTracks_Multiplicity160"
-            trg[140] || // "HLT_PAPixelTracks_Multiplicity190"
-            trg[137] ) // "HLT_PAPixelTracks_Multiplicity100"
-        trg_OR[6]=true;
+    if(trg[2])  {
+        if(matchTrgObj(ipt, pt, 2, eta0, phi0, trgPt0) ||
+           matchTrgObj(ipt, pt, 2, eta1, phi1, trgPt1) ||
+           matchTrgObj(ipt, pt, 2, eta2, phi2, trgPt2)) {
 
-    if(
-            trg[124] || // "HLT_PAPhoton20_TightCaloIdVL"
-            //trg[120] || // "HLT_PAPhoton20_Photon15_NoCaloIdVL"
-            trg[118] || // "HLT_PAPhoton15_TightCaloIdVL"
-            //trg[115] || // "HLT_PAPhoton15_Photon10_NoCaloIdVL"
-            trg[113]) // "HLT_PAPhoton10_TightCaloIdVL"
-        //trg[109] ) // "HLT_PAPhoton10_Photon10_NoCaloIdVL"
-        trg_OR[7] = true;
+            float maxTrgPt = TMath::Max(trgPt0, TMath::Max(trgPt1, trgPt2));
 
-    if(trg[103] || // "HLT_PAMu3PFJet40"
-            trg[102] || // "HLT_PAMu3PFJet20"
-            trg[104] ) // "HLT_PAMu3"
-        trg_OR[8] = true;
+            if(maxTrgPt >=20 && maxTrgPt < 30) {
+                if(id==0) {
+                    hfg_TrkTrgPt20_30_raw[iy][ich][ipt]->Fill(mass);
+                    hfg_TrkTrgPt20_30[iy][ich][ipt]->Fill(mass, prscl[2]); //.. L1 base prescale 1
+                } else if(id==1) {
+                    hfgdiff_TrkTrgPt20_30_raw[iy][ipt]->Fill(mass-mass_dau);
+                    hfgdiff_TrkTrgPt20_30[iy][ipt]->Fill(mass-mass_dau, prscl[2]); //.. L1 base prescale 1
+                } else if(id==2) {
+                    hbgdiff_TrkTrgPt20_30_raw[iy][ipt]->Fill(mass-mass_dau);
+                    hbgdiff_TrkTrgPt20_30[iy][ipt]->Fill(mass-mass_dau, prscl[2]); //.. L1 base prescale 1
+                }
+            }
+        }
+    }
 
-    if(trg[87] ) // "HLT_PAL1SingleJet36"
-        trg_OR[9] = true;
+    if(trg[3]) {
+        if(matchTrgObj(ipt, pt, 3, eta0, phi0, trgPt0) ||
+           matchTrgObj(ipt, pt, 3, eta1, phi1, trgPt1) ||
+           matchTrgObj(ipt, pt, 3, eta2, phi2, trgPt2)) {
 
-    if(trg[72] || // "HLT_PAJet60ETM30"
-            trg[70] ) //"HLT_PAJet40ETM30"
-        trg_OR[10] = true;
+            float maxTrgPt = TMath::Max(trgPt0, TMath::Max(trgPt1, trgPt2));
 
-    if(trg[18]) // "DST_Physics"
-        trg_OR[11] = true;
-
-    if(trg[60] || // "HLT_PAHFSumET100"
-            trg[61] || // "HLT_PAHFSumET140"
-            trg[62] ) // "HLT_PAHFSumET170"
-        trg_OR[12] = true;
-
-    //.. I plotted the mass distr for each channel per trigger and check which 
-    //.. has some non-negligible counts. Then OR them to see if they acoount for all 
-    //.. D signals. Then reduce those that overlap with others through trigger name and 
-    //.. a few iterations of try and errors. The following are the useful triggers out 
-    //.. of the 172 for this analysis
-
-    /*
-       for(int j = 0; j<nhist; j++) {
-       if(trg_OR[j])
-       h[j][ich][ipt]->Fill(mass);
-       }
-     */
-
-    if(trg_OR[0] || trg_OR[1])
-        h[0][ich][ipt]->Fill(mass);
-    if(trg_OR[0] || trg_OR[2])
-        h[1][ich][ipt]->Fill(mass);
-    if(trg_OR[1] || trg_OR[2])
-        h[2][ich][ipt]->Fill(mass);
-    if(trg_OR[0] || trg_OR[1] || trg_OR[2])
-        h[3][ich][ipt]->Fill(mass);
-    if(trg_OR[0] || trg_OR[1] || trg_OR[2] || trg_OR[3])
-        h[4][ich][ipt]->Fill(mass);
-    if(trg_OR[6])
-        h[5][ich][ipt]->Fill(mass);
-    if(trg_OR[0] || trg_OR[1] || trg_OR[2] || trg_OR[3] || trg_OR[6])
-        h[6][ich][ipt]->Fill(mass);
-    if(trg_OR[7])
-        h[7][ich][ipt]->Fill(mass);
-    if(trg_OR[0] || trg_OR[1] || trg_OR[2] || trg_OR[3] || trg_OR[6] || trg_OR[7])
-        h[8][ich][ipt]->Fill(mass);
-    if(trg_OR[12])
-        h[9][ich][ipt]->Fill(mass);
-    if(trg_OR[0] || trg_OR[1] || trg_OR[2] || trg_OR[3] || trg_OR[6] || trg_OR[7] || trg_OR[12])
-        h[10][ich][ipt]->Fill(mass);
-    if(trg_OR[0] || trg_OR[1] || trg_OR[2] || trg_OR[6] || trg_OR[7] || trg_OR[12])
-        h[11][ich][ipt]->Fill(mass);
-    if(trg_OR[0] || trg_OR[1] || trg_OR[2] || trg_OR[3] || trg_OR[6] || trg_OR[12])
-        h[12][ich][ipt]->Fill(mass);
-    if(trg_OR[0] || trg_OR[1] || trg_OR[2] || trg_OR[6] || trg_OR[12])
-        h[13][ich][ipt]->Fill(mass);
-
-
-    if(
-            trg_OR[0] || 
-            trg_OR[1] || 
-            trg_OR[2] || 
-            trg_OR[3] || 
-            trg_OR[4] || 
-            trg_OR[5] || 
-            trg_OR[6] || 
-            trg_OR[7] ||
-            trg_OR[8] ||
-            trg_OR[9] ||
-            trg_OR[10] ||
-            trg_OR[11] || 
-            trg_OR[12])
-        HLT_tot[ich][ipt]->Fill(mass);
+            if(maxTrgPt >=20 && maxTrgPt < 30) {
+                if(id==0) {
+                    hfg_TrkTrgPt30above_raw[iy][ich][ipt]->Fill(mass);
+                    hfg_TrkTrgPt30above[iy][ich][ipt]->Fill(mass, prscl[3]);// L1 base prescale 1
+                } else if(id==1) {
+                    hfgdiff_TrkTrgPt30above_raw[iy][ipt]->Fill(mass-mass_dau);
+                    hfgdiff_TrkTrgPt30above[iy][ipt]->Fill(mass-mass_dau, prscl[3]);// L1 base prescale 1
+                } else if(id==2) {
+                    hfgdiff_TrkTrgPt30above_raw[iy][ipt]->Fill(mass-mass_dau);
+                    hfgdiff_TrkTrgPt30above[iy][ipt]->Fill(mass-mass_dau, prscl[3]);// L1 base prescale 1
+                }
+            }
+        }
+    }
 }
 
 //
-bool ana_hfforest::HLT_OR()
+bool ana_hfforest::matchTrgObj(int ipt, float pt, int tid, float eta, float phi, float& trgPt)
 {
-    for(int i = 0; i<ntrg; i++) {
-        if(!strcmp(trg_name[i], "HLTriggerFinalPath")) {
-            //..HLTriggerFinalPath fired everything...
-            //cout<<" HLTriggerFinalPath rejected"<<endl;
-            continue;
-        }
+    trgPt = -1;
+    float min = 999;
+    int io = -1;
 
-        if(trg[i]) return true;
+    //.. find the min distance 
+    for(unsigned int i = 0; i<trg_obj[tid]->size(); i++) {
+        float dist = sqrt(pow((eta - trg_obj[tid]->at(i).eta()),2) + pow((phi - trg_obj[tid]->at(i).phi()), 2)); 
+
+        if(dist < min) {
+            min = dist;
+            io = i;
+        }
+    }     
+
+    hMatchWin[ipt]->Fill(min);
+
+    if(min < matchWindow) {
+        trgPt = trg_obj[tid]->at(io).pt();
+
+        hRecoTrgPtDiff[ipt]->Fill((pt-trgPt)/pt);
+
+        return true;
     }
 
     return false;
@@ -587,183 +800,54 @@ void ana_hfforest::define_cuts()
 //
 void ana_hfforest::get_trg_name()
 {//.. this code is made by: ./make_code_to_read_hlt_name_pscl.txt.pl
- //.. all Run2013 pPb triggers. Most are useless. Here is to check which
- //.. one has most of the D mesons. 
- //.. trigger list is from, e.g. 
- //.. https://cmswbm.web.cern.ch/cmswbm/cmsdb/servlet/HLTSummary?RUN=211631&KEY=28422
+    //.. all Run2013 pPb triggers. Most are useless. Here is to check which
+    //.. one has most of the D mesons. 
+    //.. trigger list is from, e.g. 
+    //.. https://cmswbm.web.cern.ch/cmswbm/cmsdb/servlet/HLTSummary?RUN=211631&KEY=28422
 
-    trg_name[0]= "ALCALUMIPIXELSOutput";
-    trg_name[1]= "ALCAP0Output";
-    trg_name[2]= "ALCAPHISYMOutput";
-    trg_name[3]= "AOutput";
-    trg_name[4]= "AlCa_EcalPhiSym";
-    trg_name[5]= "AlCa_LumiPixels_Random";
-    trg_name[6]= "AlCa_LumiPixels_ZeroBias";
-    trg_name[7]= "AlCa_LumiPixels";
-    trg_name[8]= "AlCa_PAEcalEtaEBonly";
-    trg_name[9]= "AlCa_PAEcalEtaEEonly";
-    trg_name[10]= "AlCa_PAEcalPi0EBonly";
-    trg_name[11]= "AlCa_PAEcalPi0EEonly";
-    trg_name[12]= "AlCa_RPCMuonNoHits";
-    trg_name[13]= "AlCa_RPCMuonNoTriggers";
-    trg_name[14]= "AlCa_RPCMuonNormalisation";
-    trg_name[15]= "CalibrationOutput";
-    trg_name[16]= "DQMOutput";
-    trg_name[17]= "DQM_FEDIntegrity";
-    trg_name[18]= "DST_Physics";
-    trg_name[19]= "EcalCalibrationOutput";
-    trg_name[20]= "ExpressOutput";
-    trg_name[21]= "HLTDQMOutput";
-    trg_name[22]= "HLT_Activity_Ecal_SC7";
-    trg_name[23]= "HLT_BeamGas_HF_Beam1";
-    trg_name[24]= "HLT_BeamGas_HF_Beam2";
-    trg_name[25]= "HLT_BeamHalo";
-    trg_name[26]= "HLT_DTCalibration";
-    trg_name[27]= "HLT_EcalCalibration";
-    trg_name[28]= "HLT_GlobalRunHPDNoise";
-    trg_name[29]= "HLT_HcalCalibration";
-    trg_name[30]= "HLT_L1SingleMuOpen_AntiBPTX";
-    trg_name[31]= "HLT_L1TrackerCosmics";
-    trg_name[32]= "HLT_LogMonitor";
-    trg_name[33]= "HLT_PABTagMu_Jet20_Mu4";
-    trg_name[34]= "HLT_PABptxMinusNotBptxPlus";
-    trg_name[35]= "HLT_PABptxPlusNotBptxMinus";
-    trg_name[36]= "HLT_PACastorEmNotHfCoincidencePm";
-    trg_name[37]= "HLT_PACastorEmNotHfSingleChannel";
-    trg_name[38]= "HLT_PACastorEmTotemLowMultiplicity";
-    trg_name[39]= "HLT_PADimuon0_NoVertexing";
-    trg_name[40]= "HLT_PADoubleEle6_CaloIdT_TrkIdVL";
-    trg_name[41]= "HLT_PADoubleEle8_CaloIdT_TrkIdVL";
-    trg_name[42]= "HLT_PADoubleJet20_ForwardBackward";
-    trg_name[43]= "HLT_PADoubleMu4_Acoplanarity03";
-    trg_name[44]= "HLT_PAExclDijet35_HFAND";
-    trg_name[45]= "HLT_PAForJet100Eta2";
-    trg_name[46]= "HLT_PAForJet100Eta3";
-    trg_name[47]= "HLT_PAForJet20Eta2";
-    trg_name[48]= "HLT_PAForJet20Eta3";
-    trg_name[49]= "HLT_PAForJet40Eta2";
-    trg_name[50]= "HLT_PAForJet40Eta3";
-    trg_name[51]= "HLT_PAForJet60Eta2";
-    trg_name[52]= "HLT_PAForJet60Eta3";
-    trg_name[53]= "HLT_PAForJet80Eta2";
-    trg_name[54]= "HLT_PAForJet80Eta3";
-    trg_name[55]= "HLT_PAFullTrack12";
-    trg_name[56]= "HLT_PAFullTrack20";
-    trg_name[57]= "HLT_PAFullTrack30";
-    trg_name[58]= "HLT_PAFullTrack50";
-    trg_name[59]= "HLT_PAHFOR_SingleTrack";
-    trg_name[60]= "HLT_PAHFSumET100";
-    trg_name[61]= "HLT_PAHFSumET140";
-    trg_name[62]= "HLT_PAHFSumET170";
-    trg_name[63]= "HLT_PAHFSumET210";
-    trg_name[64]= "HLT_PAHcalNZS";
-    trg_name[65]= "HLT_PAHcalPhiSym";
-    trg_name[66]= "HLT_PAHcalUTCA";
-    trg_name[67]= "HLT_PAJet100_NoJetID";
-    trg_name[68]= "HLT_PAJet120_NoJetID";
-    trg_name[69]= "HLT_PAJet20_NoJetID";
-    trg_name[70]= "HLT_PAJet40ETM30";
-    trg_name[71]= "HLT_PAJet40_NoJetID";
-    trg_name[72]= "HLT_PAJet60ETM30";
-    trg_name[73]= "HLT_PAJet60_NoJetID";
-    trg_name[74]= "HLT_PAJet80_NoJetID";
-    trg_name[75]= "HLT_PAL1CastorTotalTotemLowMultiplicity";
-    trg_name[76]= "HLT_PAL1DoubleEG3_FwdVeto";
-    trg_name[77]= "HLT_PAL1DoubleEG5DoubleEle6_CaloIdT_TrkIdVL";
-    trg_name[78]= "HLT_PAL1DoubleEG5_TotemDiffractive";
-    trg_name[79]= "HLT_PAL1DoubleJet20_TotemDiffractive";
-    trg_name[80]= "HLT_PAL1DoubleJetC36_TotemDiffractive";
-    trg_name[81]= "HLT_PAL1DoubleMu0_HighQ";
-    trg_name[82]= "HLT_PAL1DoubleMu0";
-    trg_name[83]= "HLT_PAL1DoubleMu5_TotemDiffractive";
-    trg_name[84]= "HLT_PAL1DoubleMuOpen";
-    trg_name[85]= "HLT_PAL1SingleEG20_TotemDiffractive";
-    trg_name[86]= "HLT_PAL1SingleJet16";
-    trg_name[87]= "HLT_PAL1SingleJet36";
-    trg_name[88]= "HLT_PAL1SingleJet52_TotemDiffractive";
-    trg_name[89]= "HLT_PAL1SingleMu20_TotemDiffractive";
-    trg_name[90]= "HLT_PAL1Tech53_MB_SingleTrack";
-    trg_name[91]= "HLT_PAL1Tech53_MB";
-    trg_name[92]= "HLT_PAL1Tech54_ZeroBias";
-    trg_name[93]= "HLT_PAL1Tech63_CASTORHaloMuon";
-    trg_name[94]= "HLT_PAL1Tech_HBHEHO_totalOR";
-    trg_name[95]= "HLT_PAL2DoubleMu3";
-    trg_name[96]= "HLT_PAMinBiasBHC_OR";
-    trg_name[97]= "HLT_PAMinBiasBHC";
-    trg_name[98]= "HLT_PAMinBiasHF_OR";
-    trg_name[99]= "HLT_PAMinBiasHF";
-    trg_name[100]= "HLT_PAMinBiasHfOrBHC";
-    trg_name[101]= "HLT_PAMu12";
-    trg_name[102]= "HLT_PAMu3PFJet20";
-    trg_name[103]= "HLT_PAMu3PFJet40";
-    trg_name[104]= "HLT_PAMu3";
-    trg_name[105]= "HLT_PAMu7PFJet20";
-    trg_name[106]= "HLT_PAMu7_Ele7_CaloIdT_CaloIsoVL";
-    trg_name[107]= "HLT_PAMu7";
-    trg_name[108]= "HLT_PAPhoton10_NoCaloIdVL";
-    trg_name[109]= "HLT_PAPhoton10_Photon10_NoCaloIdVL";
-    trg_name[110]= "HLT_PAPhoton10_Photon10_TightCaloIdVL_Iso50";
-    trg_name[111]= "HLT_PAPhoton10_Photon10_TightCaloIdVL";
-    trg_name[112]= "HLT_PAPhoton10_TightCaloIdVL_Iso50";
-    trg_name[113]= "HLT_PAPhoton10_TightCaloIdVL";
-    trg_name[114]= "HLT_PAPhoton15_NoCaloIdVL";
-    trg_name[115]= "HLT_PAPhoton15_Photon10_NoCaloIdVL";
-    trg_name[116]= "HLT_PAPhoton15_Photon10_TightCaloIdVL";
-    trg_name[117]= "HLT_PAPhoton15_TightCaloIdVL_Iso50";
-    trg_name[118]= "HLT_PAPhoton15_TightCaloIdVL";
-    trg_name[119]= "HLT_PAPhoton20_NoCaloIdVL";
-    trg_name[120]= "HLT_PAPhoton20_Photon15_NoCaloIdVL";
-    trg_name[121]= "HLT_PAPhoton20_Photon15_TightCaloIdVL";
-    trg_name[122]= "HLT_PAPhoton20_Photon20_NoCaloIdVL";
-    trg_name[123]= "HLT_PAPhoton20_TightCaloIdVL_Iso50";
-    trg_name[124]= "HLT_PAPhoton20_TightCaloIdVL";
-    trg_name[125]= "HLT_PAPhoton30_NoCaloIdVL";
-    trg_name[126]= "HLT_PAPhoton30_Photon30_NoCaloIdVL";
-    trg_name[127]= "HLT_PAPhoton30_TightCaloIdVL_Iso50";
-    trg_name[128]= "HLT_PAPhoton30_TightCaloIdVL";
-    trg_name[129]= "HLT_PAPhoton40_NoCaloIdVL";
-    trg_name[130]= "HLT_PAPhoton40_TightCaloIdVL";
-    trg_name[131]= "HLT_PAPhoton60_NoCaloIdVL";
-    trg_name[132]= "HLT_PAPixelTrackMultiplicity100_FullTrack12";
-    trg_name[133]= "HLT_PAPixelTrackMultiplicity100_L2DoubleMu3";
-    trg_name[134]= "HLT_PAPixelTrackMultiplicity130_FullTrack12";
-    trg_name[135]= "HLT_PAPixelTrackMultiplicity140_Jet80_NoJetID";
-    trg_name[136]= "HLT_PAPixelTrackMultiplicity160_FullTrack12";
-    trg_name[137]= "HLT_PAPixelTracks_Multiplicity100";
-    trg_name[138]= "HLT_PAPixelTracks_Multiplicity130";
-    trg_name[139]= "HLT_PAPixelTracks_Multiplicity160";
-    trg_name[140]= "HLT_PAPixelTracks_Multiplicity190";
-    trg_name[141]= "HLT_PAPixelTracks_Multiplicity220";
-    trg_name[142]= "HLT_PARandom";
-    trg_name[143]= "HLT_PARomanPots_Tech52";
-    trg_name[144]= "HLT_PASingleEle6_CaloIdNone_TrkIdVL";
-    trg_name[145]= "HLT_PASingleEle6_CaloIdT_TrkIdVL";
-    trg_name[146]= "HLT_PASingleEle8_CaloIdNone_TrkIdVL";
-    trg_name[147]= "HLT_PASingleForJet15";
-    trg_name[148]= "HLT_PASingleForJet25";
-    trg_name[149]= "HLT_PAT1minbias_Tech55";
-    trg_name[150]= "HLT_PATech35_HFSumET100";
-    trg_name[151]= "HLT_PATech35";
-    trg_name[152]= "HLT_PATripleJet100_20_20";
-    trg_name[153]= "HLT_PATripleJet20_20_20";
-    trg_name[154]= "HLT_PATripleJet40_20_20";
-    trg_name[155]= "HLT_PATripleJet60_20_20";
-    trg_name[156]= "HLT_PATripleJet80_20_20";
-    trg_name[157]= "HLT_PAUpcSingleEG5Full_TrackVeto7";
-    trg_name[158]= "HLT_PAUpcSingleEG5Pixel_TrackVeto";
-    trg_name[159]= "HLT_PAUpcSingleMuOpenFull_TrackVeto7";
-    trg_name[160]= "HLT_PAUpcSingleMuOpenPixel_TrackVeto";
-    trg_name[161]= "HLT_PAUpcSingleMuOpenTkMu_Onia";
-    trg_name[162]= "HLT_PAZeroBiasPixel_DoubleTrack";
-    trg_name[163]= "HLT_PAZeroBiasPixel_SingleTrack";
-    trg_name[164]= "HLT_PAZeroBias";
-    trg_name[165]= "HLT_Physics";
-    trg_name[166]= "HLT_TrackerCalibration";
-    trg_name[167]= "HLTriggerFinalPath";
-    trg_name[168]= "HLTriggerFirstPath";
-    trg_name[169]= "NanoDSTOutput";
-    trg_name[170]= "RPCMONOutput";
-    trg_name[171]= "TrackerCalibrationOutput";
+    trg_name[0]= "HLT_PAZeroBiasPixel_SingleTrack"; //.. dominate in minbiasUPC sample.
+    trg_name[1]= "HLT_PAFullTrack12";   //.. base: L1_SingleJet12_BptxAND w/ prescl=1
+    trg_name[2]= "HLT_PAFullTrack20";   //.. base: L1_SingleJet16_BptxAND w/ prescl=1
+    trg_name[3]= "HLT_PAFullTrack30";   //.. base: L1_SingleJet16_BptxAND w/ prescl=1
+    trg_name[4]= "L1_ZeroBias";  //.. base of HLT_PAZeroBiasPixel_SingleTrack
+
+    /*
+    trg_name[4]= "HLT_PAJet20_NoJetID";   //.. base: L1_SingleJet16_BptxAND
+    trg_name[5]= "HLT_PAJet40_NoJetID";   //.. base: L1_SingleJet16_BptxAND
+    trg_name[6]= "HLT_PAJet60_NoJetID";   //.. base: L1_SingleJet36
+    trg_name[7]= "HLT_PAJet80_NoJetID";   //.. base: L1_SingleJet36
+    trg_name[8]= "HLT_PAJet100_NoJetID";   //.. base: L1_SingleJet36
+
+    trg_name[9]= "HLT_PAPhoton10_NoCaloIdVL";   //.. base: L1_SingleEG5_BptxAND
+    trg_name[10]= "HLT_PAPhoton15_NoCaloIdVL";   //.. base: L1_SingleEG5_BptxAND
+    trg_name[11]= "HLT_PAPhoton20_NoCaloIdVL";   //.. base: L1_SingleEG5_BptxAND
+    trg_name[12]= "HLT_PAPhoton30_NoCaloIdVL";   //.. base: L1_SingleEG12
+
+    trg_name[13]= "HLT_PAPixelTrackMultiplicity100_FullTrack12";   //.. base: L1_ETT20_BptxAND
+    trg_name[14]= "HLT_PAPixelTrackMultiplicity130_FullTrack12";   //.. base: L1_ETT20_BptxAND
+    trg_name[15]= "HLT_PAPixelTrackMultiplicity160_FullTrack12";   //.. base: L1_ETT40
+    //.. 30% of pT = 0-10GeV/c is recorded in the following triggers
+    trg_name[16]= "HLT_PAPixelTracks_Multiplicity100";   //.. base: L1_ETT20_BptxAND
+    trg_name[17]= "HLT_PAPixelTracks_Multiplicity130";   //.. base: L1_ETT20_BptxAND
+    trg_name[18]= "HLT_PAPixelTracks_Multiplicity160";   //.. base: L1_ETT40
+    trg_name[19]= "HLT_PAPixelTracks_Multiplicity190";   //.. base: L1_ETT40
+
+    trg_name[20]= "HLT_PAHFSumET100";   //.. base: L1_ETT20_BptxAND
+    trg_name[21]= "HLT_PAHFSumET140";   //.. base: L1_ETT20_BptxAND
+    trg_name[22]= "HLT_PAHFSumET170";   //.. base: L1_ETT20_BptxAND
+
+    //.. base: L1_ZeroBias
+    //.. L1 base trigger 
+    trg_name[23]= "L1_SingleJet12_BptxAND";
+    trg_name[24]= "L1_SingleJet16_BptxAND";
+    trg_name[25]= "L1_SingleJet36";
+    trg_name[26]= "L1_SingleEG5_BptxAND";
+    trg_name[27]= "L1_SingleEG12";
+    trg_name[28]= "L1_SingleEG20";
+    trg_name[29]= "L1_ETT20_BptxAND";
+    trg_name[30]= "L1_ETT40";
+    trg_name[31]= "L1_ZeroBias";
+    */
 }
 
 //
@@ -771,116 +855,99 @@ void ana_hfforest::get_hist(TFile* f, int ich)
 {
     cout<<"--> getting histogram <---"<<endl;
     char hname[100];
-    //... all trigger 
-    for(short i = 0; i<npt; i++) {
 
-        sprintf(hname, "hfg_tot%d_%d", ich, i);
-        hfg_tot[ich][i] = (TH1F*)f->Get(hname);
+    for(short iy = 0; iy<NY; iy++) 
+        for(short ich = 0; ich<NCH; ich++) 
+            for(short it = 0; it<NTRG; it++) 
+                for(short i = 0; i<NPT; i++) {
 
-        sprintf(hname, "hfgdiff_tot%d_%d", ich, i);
-        hfgdiff_tot[ich][i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_tot%d_%d", ich, i);
-        hbgdiff_tot[ich][i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "HLT_tot%d_%d", ich, i);
-        HLT_tot[ich][i] = (TH1F*)f->Get(hname);
-        for(int j = 0; j<nhist; j++) {
-            sprintf(hname, "h%d_%d_%d", j, ich, i);
-            h[j][ich][i] = (TH1F*)f->Get(hname);
-        }
-    }
-
-    //.. each trigger 
-    for(short it = 0; it<ntrg; it++) {
-        cout<<"     it:  "<<it<<" of "<<ntrg<<endl;
-        for(short i = 0; i<npt; i++) {
-
-            sprintf(hname, "hfg%d_%d_%d", ich, it, i);
-            hfg[ich][it][i] = (TH1F*)f->Get(hname);
-
-            sprintf(hname, "hfgdiff%d_%d_%d", ich, it, i);
-            hfgdiff[ich][it][i] = (TH1F*)f->Get(hname);
-
-            sprintf(hname, "hbgdiff%d_%d_%d", ich, it, i);
-            hbgdiff[ich][it][i] = (TH1F*)f->Get(hname);
-        }
-    }
-}
-
-//
-void ana_hfforest::draw(char* filename, int ich, TCanvas* cfg, bool allTrg = true)
-{//.. draw the hisogram and see which trigger is useful 
-
-    book_hist();
-
-    TFile* f = new TFile(filename);
-    get_hist(f, ich);
-    get_trg_name();
-
-    //.. plot
-    if(allTrg) {//.. one plot per trigger ..
-        char outfile[1000];
-
-        cfg->Divide(3, 3);
-
-        for(int itrg = 0; itrg < ntrg; itrg++) {
-            for(short i = 0; i<9; i++) {
-                cfg->Update();
-                cfg->cd(i+1);
-
-                if(ich!=0) {
-                    hfg_tot[ich][i]->SetLineColor(1);
-                    hfg_tot[ich][i]->GetXaxis()->SetNdivisions(505);
-                    hfg_tot[ich][i]->SetMinimum(0);
-
-                    hfg_tot[ich][i]->Draw();
-
-                    hfg[ich][itrg][i]->SetLineColor(2);
-                    hfg[ich][itrg][i]->Draw("same");
-                } else {//..for D*
-                    hfgdiff_tot[ich][i]->SetLineColor(1);
-                    hfgdiff_tot[ich][i]->GetXaxis()->SetNdivisions(505);
-                    hfgdiff_tot[ich][i]->SetMinimum(0);
-
-                    hfgdiff_tot[ich][i]->Draw();
-
-                    hfgdiff[ich][itrg][i]->SetLineColor(2);
-                    hfgdiff[ich][itrg][i]->Draw("same");
+                    sprintf(hname, "hfg%d_%d_%d_%d", iy, ich, it, i);
+                    hfg[iy][ich][it][i] = (TH1F*)f->Get(hname);
                 }
+
+    //
+    for(short iy = 0; iy<NY; iy++) 
+        for(short it = 0; it<NTRG; it++) 
+            for(short i = 0; i<NPT; i++) {
+
+                sprintf(hname, "hfgdiff%d_%d_%d", iy, it, i);
+                hfgdiff[iy][it][i] = (TH1F*)f->Get(hname);
+
+                sprintf(hname, "hbgdiff%d_%d_%d", iy, it, i);
+                hbgdiff[iy][it][i] = (TH1F*)f->Get(hname);
+
             }
 
-            sprintf(outfile, "%s_%s.gif", mesonName[ich], trg_name[itrg]);
-            cfg->SaveAs(outfile);
-        }
-    } else {//.. drop specific groups of triggers ....
+    // components for trigger combination ..
+    for(short iy = 0; iy<NY; iy++) 
+        for(short ich = 0; ich<NCH; ich++) 
+            for(short i = 0; i<NPT; i++) {
 
-        cfg->Divide(3, 3);
+                sprintf(hname, "hfg_ZBiasSglTrkPt0_12_raw%d_%d_%d", iy, ich, i);
+                hfg_ZBiasSglTrkPt0_12_raw[iy][ich][i] = (TH1F*)f->Get(hname);
+                sprintf(hname, "hfg_ZBiasSglTrkPt0_12%d_%d_%d", iy, ich, i);
+                hfg_ZBiasSglTrkPt0_12[iy][ich][i] = (TH1F*)f->Get(hname);
 
-        for(short i = 0; i<9; i++) {
-            cfg->Update();
-            cfg->cd(i+1);
+                sprintf(hname, "hfg_TrkTrgPt12_20_raw%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt12_20_raw[iy][ich][i] = (TH1F*)f->Get(hname);
+                sprintf(hname, "hfg_TrkTrgPt12_20%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt12_20[iy][ich][i] = (TH1F*)f->Get(hname);
 
-            hfg_tot[ich][i]->SetLineColor(1);
-            hfg_tot[ich][i]->GetXaxis()->SetNdivisions(505);
-            hfg_tot[ich][i]->SetMinimum(0);
+                sprintf(hname, "hfg_TrkTrgPt20_30_raw%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt20_30_raw[iy][ich][i] = (TH1F*)f->Get(hname);
+                sprintf(hname, "hfg_TrkTrgPt20_30%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt20_30[iy][ich][i] = (TH1F*)f->Get(hname);
 
-            hfg_tot[ich][i]->Draw();
+                sprintf(hname, "hfg_TrkTrgPt30above_raw%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt30above_raw[iy][ich][i] = (TH1F*)f->Get(hname);
+                sprintf(hname, "hfg_TrkTrgPt30above%d_%d_%d", iy, ich, i);
+                hfg_TrkTrgPt30above[iy][ich][i] = (TH1F*)f->Get(hname);
 
-            HLT_tot[ich][i]->SetLineColor(2);
-            int color[nhist] = {1, 3, 4, 5, 6, 7, 9, 1, 3, 4, 5, 6, 7, 9};
-            int style[nhist] = {2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1};
-
-            HLT_tot[ich][i]->Draw("same");
-            for(int j = 0; j<nhist; j++) {
-                h[j][ich][i]->SetLineColor(color[j]);
-                h[j][ich][i]->SetLineStyle(style[j]);
-
-                //.. these are the trigger before the final round 
-                if(j==6 || j==8 || j==10 || j==11 || j==12 ||j==13 || j==3 || j==2 || j==1 || j==0)
-                    h[j][ich][i]->Draw("same");
             }
+
+    //
+    for(short iy = 0; iy<NY; iy++) 
+        for(short i = 0; i<NPT; i++) {
+
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12_raw%d_%d", iy, i);
+            hfgdiff_ZBiasSglTrkPt0_12_raw[iy][i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12%d_%d", iy, i);
+            hfgdiff_ZBiasSglTrkPt0_12[iy][i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfgdiff_TrkTrgPt12_20_raw%d_%d", iy, i);
+            hfgdiff_TrkTrgPt12_20_raw[iy][i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_TrkTrgPt12_20%d_%d", iy, i);
+            hfgdiff_TrkTrgPt12_20[iy][i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfgdiff_TrkTrgPt20_30_raw%d_%d", iy, i);
+            hfgdiff_TrkTrgPt20_30_raw[iy][i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_TrkTrgPt20_30%d_%d", iy, i);
+            hfgdiff_TrkTrgPt20_30[iy][i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfgdiff_TrkTrgPt30above_raw%d_%d", iy, i);
+            hfgdiff_TrkTrgPt30above_raw[iy][i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_TrkTrgPt30above%d_%d", iy, i);
+            hfgdiff_TrkTrgPt30above[iy][i] = (TH1F*)f->Get(hname);
+
+
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12_raw%d_%d", iy, i);
+            hbgdiff_ZBiasSglTrkPt0_12_raw[iy][i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12%d_%d", iy, i);
+            hbgdiff_ZBiasSglTrkPt0_12[iy][i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hbgdiff_TrkTrgPt12_20_raw%d_%d", iy, i);
+            hbgdiff_TrkTrgPt12_20_raw[iy][i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_TrkTrgPt12_20%d_%d", iy, i);
+            hbgdiff_TrkTrgPt12_20[iy][i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hbgdiff_TrkTrgPt20_30_raw%d_%d", iy, i);
+            hbgdiff_TrkTrgPt20_30_raw[iy][i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_TrkTrgPt20_30%d_%d", iy, i);
+            hbgdiff_TrkTrgPt20_30[iy][i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hbgdiff_TrkTrgPt30above_raw%d_%d", iy, i);
+            hbgdiff_TrkTrgPt30above_raw[iy][i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_TrkTrgPt30above%d_%d", iy, i);
+            hbgdiff_TrkTrgPt30above[iy][i] = (TH1F*)f->Get(hname);
         }
-        cfg->SaveAs("HLT_OR.gif");
-    }
 }

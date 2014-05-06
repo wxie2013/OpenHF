@@ -1,0 +1,551 @@
+crab:  Version 2.8.6 running on Mon Jun 10 12:16:02 2013 EST (16:16:02 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/
+
+crab:  Contacting Data Discovery Services ...
+crab:  Accessing DBS at: http://cmsdbsprod.cern.ch/cms_dbs_prod_global/servlet/DBSServlet
+crab:  Requested (A)DS /PAHighPt/HIRun2013-PromptReco-v1/RECO has 43 block(s).
+crab:  2585 jobs created to run on 26813 lumis
+crab:  Adding d0.root (from TFileService) to list of output files
+crab:  Creating 2585 jobs, please wait...
+crab:  Total of 2585 jobs created.
+
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:18:06 2013 EST (16:18:06 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/
+
+crab:  Contacting Data Discovery Services ...
+crab:  Accessing DBS at: http://cmsdbsprod.cern.ch/cms_dbs_prod_global/servlet/DBSServlet
+crab:  Requested (A)DS /PAHighPt/HIRun2013-PromptReco-v1/RECO has 43 block(s).
+crab:  2585 jobs created to run on 26813 lumis
+crab:  Adding dpm.root (from TFileService) to list of output files
+crab:  Creating 2585 jobs, please wait...
+crab:  Total of 2585 jobs created.
+
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:20:12 2013 EST (16:20:12 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/
+
+crab:  Contacting Data Discovery Services ...
+crab:  Accessing DBS at: http://cmsdbsprod.cern.ch/cms_dbs_prod_global/servlet/DBSServlet
+crab:  Requested (A)DS /PAHighPt/HIRun2013-PromptReco-v1/RECO has 43 block(s).
+crab:  2585 jobs created to run on 26813 lumis
+crab:  Adding ds.root (from TFileService) to list of output files
+crab:  Creating 2585 jobs, please wait...
+crab:  Total of 2585 jobs created.
+
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:22:24 2013 EST (16:22:24 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/
+
+crab:  Contacting Data Discovery Services ...
+crab:  Accessing DBS at: http://cmsdbsprod.cern.ch/cms_dbs_prod_global/servlet/DBSServlet
+crab:  Requested (A)DS /PAHighPt/HIRun2013-PromptReco-v1/RECO has 43 block(s).
+crab:  2585 jobs created to run on 26813 lumis
+crab:  Adding dstar.root (from TFileService) to list of output files
+crab:  Creating 2585 jobs, please wait...
+crab:  Total of 2585 jobs created.
+
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:24:30 2013 EST (16:24:30 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1
+crab:  1 blocks of jobs will be submitted
+crab:  remotehost from Avail.List = hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  Establishing gsissh ControlPath. Wait 2 sec ...
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:25:11 2013 EST (16:25:11 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:26:07 2013 EST (16:26:07 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1001
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:26:47 2013 EST (16:26:47 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:27:28 2013 EST (16:27:28 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 2001
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:28:06 2013 EST (16:28:06 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/
+
+crab:  asking to submit 500 jobs, but only 85 left: submitting those
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 2501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 85 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_d0_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:28:31 2013 EST (16:28:31 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1
+crab:  1 blocks of jobs will be submitted
+crab:  remotehost from Avail.List = submit-6.t2.ucsd.edu
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  Establishing gsissh ControlPath. Wait 2 sec ...
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:29:10 2013 EST (16:29:10 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is submit-6.t2.ucsd.edu
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:29:58 2013 EST (16:29:58 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1001
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is submit-6.t2.ucsd.edu
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:32:21 2013 EST (16:32:21 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is submit-6.t2.ucsd.edu
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:33:00 2013 EST (16:33:00 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 2001
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is submit-6.t2.ucsd.edu
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:33:41 2013 EST (16:33:41 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/
+
+crab:  asking to submit 500 jobs, but only 85 left: submitting those
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 2501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is submit-6.t2.ucsd.edu
+crab:  contacting remote host submit-6.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 85 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dstar_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:34:10 2013 EST (16:34:10 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/
+
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  Establishing gsissh ControlPath. Wait 2 sec ...
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:37:21 2013 EST (16:37:21 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:38:05 2013 EST (16:38:05 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1001
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:38:47 2013 EST (16:38:47 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:39:31 2013 EST (16:39:31 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 2001
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:40:09 2013 EST (16:40:09 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/
+
+crab:  asking to submit 500 jobs, but only 85 left: submitting those
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 2501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is hcc-crabserver.unl.edu
+crab:  contacting remote host hcc-crabserver.unl.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 85 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_ds_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:40:32 2013 EST (16:40:32 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1
+crab:  1 blocks of jobs will be submitted
+crab:  remotehost from Avail.List = submit-4.t2.ucsd.edu
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  Establishing gsissh ControlPath. Wait 2 sec ...
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:41:10 2013 EST (16:41:10 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is submit-4.t2.ucsd.edu
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:41:52 2013 EST (16:41:52 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1001
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is submit-4.t2.ucsd.edu
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:42:49 2013 EST (16:42:49 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 1501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is submit-4.t2.ucsd.edu
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:43:28 2013 EST (16:43:28 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/
+
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 2001
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is submit-4.t2.ucsd.edu
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 500 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/log/crab.log
+crab:  Version 2.8.6 running on Mon Jun 10 12:44:10 2013 EST (16:44:10 UTC)
+
+crab. Working options:
+	scheduler           remoteGlidein
+	job type            CMSSW
+	server              OFF
+	working directory   /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/
+
+crab:  asking to submit 500 jobs, but only 85 left: submitting those
+crab:  Checking available resources...
+crab:  Found  compatible site(s) for job 2501
+crab:  1 blocks of jobs will be submitted
+crab:  serverName from Task DB is submit-4.t2.ucsd.edu
+crab:  contacting remote host submit-4.t2.ucsd.edu
+crab:  COPY FILES TO REMOTE HOST
+crab:  SUBMIT TO REMOTE GLIDEIN FRONTEND
+crab:  Total of 85 jobs submitted.
+Log file is /home/wxie/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/test/crab_dpm_highPt_crab_pPb/log/crab.log

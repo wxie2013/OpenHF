@@ -1,6 +1,7 @@
+#include "../interface/candAna.hh"
 void run_candAna(int startFile, int endFile, char *filelist)
 {
-    gSystem->Load("../../../../lib/slc5_amd64_gcc462/libUserCodeOpenHF.so");
+    //gSystem->Load("../../../../lib/slc5_amd64_gcc462/libUserCodeOpenHF.so");
 
     candAna *a = new candAna;
 

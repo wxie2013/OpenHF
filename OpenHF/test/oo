@@ -1,0 +1,6 @@
+crab -kill 137,2139,4402     -c crab_HeavyFlavor_highPt_crab_pPb_misaligned
+crab -submit 137,2139,4402  -c crab_HeavyFlavor_highPt_crab_pPb_misaligned
+
+
+crab -kill 469,660,661,662,663,664,665,666,667,668,669 -c crab_HeavyFlavor_PAMinBiasUPC_crab_pPb_misaligned_1
+crab -submit 469,660,661,662,663,664,665,666,667,668,669 -c crab_HeavyFlavor_PAMinBiasUPC_crab_pPb_misaligned_1

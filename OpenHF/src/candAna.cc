@@ -650,8 +650,8 @@ void candAna::addCandidate(
         float fpt1,
         float feta1,
         float fphi1,
-        float fpt2,
         float fq2,
+        float fpt2,
         float feta2,
         float fphi2, 
         int   nBPixLayer_dau2, 
@@ -722,7 +722,7 @@ void candAna::addCandidate(
 void candAna::LoopOverFile(int startFile, int endFile, char *filelist) 
 {
     char* resultfile = new char[100];
-    sprintf(resultfile, "%s%d%s%d%s", "candAna_", startFile, "To", endFile, ".root");
+    sprintf(resultfile, "%s%s%d%s%d%s", "candAna_", filelist, startFile, "To", endFile, ".root");
     result = new TFile(resultfile, "RECREATE");  
 
     //...
@@ -744,17 +744,21 @@ void candAna::LoopOverFile(int startFile, int endFile, char *filelist)
 
         cout<<filename<<endl;
 
-        TFile f(filename);
-        if(f.IsZombie()) 
+        TFile* f = TFile::Open(filename);
+        if(!f || f->IsZombie()) {
+            cout<<" corrupted files "<<endl;
             continue;
+        }
 
         TTree* T1 = 0;
-        if(!(T1 = (TTree*) f.Get("T1")))
-            T1 = (TTree*) f.Get("tree/fTree");
+        if(!(T1 = (TTree*) f->Get("T1")))
+            T1 = (TTree*) f->Get("tree/fTree");
 
 
 
         LoopOverEvt(T1);
+
+        f->Close();
     }
 
     result->cd();

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
+//#include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
 #include "SimDataFormats/TrackingAnalysis/interface/TrackingParticle.h"
 #include "SimTracker/TrackAssociation/interface/TrackAssociatorBase.h" 
 #include "SimTracker/Records/interface/TrackAssociatorRecord.h"

@@ -18,9 +18,8 @@ $cut_fprob = $ARGV[12];
 $cut_fdr = $ARGV[13];
 $cut_fchi2 = $ARGV[14];
 
-$HOME = "/home/wxie";
 #$BASE = "/usr/rmt_share/scratch96/w/wxie";
-$BASE = "/home/wxie/dev";
+$BASE = "/home/wxie";
 $workarea = "$BASE/CMSSW_5_3_8_HI/src/UserCode/OpenHF/macros";
 
 open(FILE, "$filelist");
@@ -48,15 +47,15 @@ for ($ifile = 0; $ifile < $njobs ; $ifile ++) {
     }
 
     #-- produce job exec file ...
-    $job_execfile = "run\_$type\_$istart\_$iend";
+    $job_execfile = "tmp\_run\_$type\_$filelist\_$istart\_$iend";
     &produce_execfile;
 
     #-- produce condor configuration file ...
-    $config_file = "condor\_$type\_$istart\_$iend.job";
+    $config_file = "tmp\_condor\_$type\_$filelist\_$istart\_$iend.job";
     &produce_config_file;
 
-    #system("condor_submit $config_file");
-    system("./$job_execfile");
+    system("condor_submit $config_file");
+    #system("./$job_execfile");
 
     if($iend == $itotal) {
         last;
@@ -72,7 +71,7 @@ sub produce_execfile {
 
     print OUTPUTFILE ("#!/bin/sh \n");
     print OUTPUTFILE ("source /cvmfs/cms.cern.ch/cmsset_default.sh \n");
-    print OUTPUTFILE ("source /opt/osg/setup.sh \n");
+    print OUTPUTFILE ("export X509_USER_PROXY=/home/wxie/.myproxy  \n");
     print OUTPUTFILE ("DIR=\"CMSSW_5_3_8_HI/src/UserCode/OpenHF/macros\" \n");
     print OUTPUTFILE ("cd $BASE/CMSSW_5_3_8_HI \n");
     print OUTPUTFILE ("eval `scramv1 runtime -sh` \n");
@@ -103,6 +102,11 @@ sub produce_config_file {
     print OUTPUTFILE ("output               = $job_execfile.out\n");
     print OUTPUTFILE ("error                = $job_execfile.err\n");
     print OUTPUTFILE ("log                  = $job_execfile.log\n");
+    print OUTPUTFILE ("#======================================================================\n");
+    print OUTPUTFILE ("# get the environment (path, etc.)\n");
+    print OUTPUTFILE ("Getenv         = True \n");
+    print OUTPUTFILE ("# prefer to run on fast computers\n");
+    print OUTPUTFILE ("Rank           = kflops\n");
     print OUTPUTFILE ("#======================================================================\n");
     print OUTPUTFILE ("\n");
     print OUTPUTFILE ("requirements = (Arch == \"X86_64\")||regexp(\"cms\",Name) \n");

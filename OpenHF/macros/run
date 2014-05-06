@@ -1,0 +1,11 @@
+./run_mapRunLumiHfTreeFile.csh 0 500 minbiasUPC.lis 1
+./run_mapRunLumiHfTreeFile.csh 500 1000 minbiasUPC.lis 1
+./run_mapRunLumiHfTreeFile.csh 1000 1500 minbiasUPC.lis 1
+./run_mapRunLumiHfTreeFile.csh 1500 2000 minbiasUPC.lis 1
+./run_mapRunLumiHfTreeFile.csh 2000 2500 minbiasUPC.lis 1
+./run_mapRunLumiHfTreeFile.csh 2500 3000 minbiasUPC.lis 1
+./run_mapRunLumiHfTreeFile.csh 3000 3500 minbiasUPC.lis 1
+./run_mapRunLumiHfTreeFile.csh 3500 4000 minbiasUPC.lis 1
+./run_mapRunLumiHfTreeFile.csh 4000 4500 minbiasUPC.lis 1
+./run_mapRunLumiHfTreeFile.csh 4500 5000 minbiasUPC.lis 1
+

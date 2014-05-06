@@ -2,14 +2,13 @@
 
 sub produce_small_file_segment;
 
-$njobs = $ARGV[0];
-$meson = $ARGV[1];
-$filelist = $ARGV[2];
-$cutfile = $ARGV[3];
+$macro = $ARGV[0];
+$njobs = $ARGV[1];
+$start_from = $ARGV[2];
+$filelist = $ARGV[3];
 
-$HOME = "/home/wxie";
-$BASE = "/usr/rmt_share/scratch96/w/wxie";
-$workarea = "$BASE/CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/macros2";
+$BASE = "/home/wxie";
+$workarea = "$BASE/CMSSW_5_3_8_HI/src/UserCode/OpenHF/macros";
 
 open(FILE, "$filelist");
 @lines = <FILE>;
@@ -21,51 +20,36 @@ print "number of files: $itotal \n";
 
 
 $ntot = 0;
-$is_last = 0;
+$nfiles = int($itotal/$njobs)+1;
 for ($ifile = 0; $ifile < $njobs ; $ifile ++) {
 
-    $nfiles = int($itotal/$njobs)+1;
     $istart = $ifile*$nfiles;
     $iend = $nfiles + $istart;
 
-    #-- produce file segment 
-    $file_seg = "$meson$ifile.lis";
-    &produce_small_file_segment;
+    if($iend >$itotal) {
+        $iend = $itotal;
+    }
+
+    if($istart < $start_from) {
+        next;
+    }
 
     #-- produce job exec file ...
-    $job_execfile = "run_$file_seg";
+    $job_execfile = "tmp_run\_$macro\_$filelist\_$istart\_$iend";
     &produce_execfile;
 
     #-- produce condor configuration file ...
-    $config_file = "condor_$file_seg.job";
+    $config_file = "tmp_condor\_$macro\_$filelist\_$istart\_$iend.job";
     &produce_config_file;
 
-    #system("condor_submit $config_file");
-    system("./$job_execfile");
+    system("condor_submit $config_file");
+    #system("./$job_execfile");
 
-    if($is_last==1) {
+    if($iend == $itotal) {
         last;
     }
-
 }
 
-#-----------------------------
-# produce small file segment
-sub produce_small_file_segment {
-
-    open(OUTPUTFILE,">$file_seg");
-    for ($isub = $istart; $isub < $iend ; $isub ++) {
-        chomp($lines[$isub]);
-        print OUTPUTFILE ($lines[$isub],"\n");
-
-        $ntot++;
-
-        if($ntot >= $itotal) {
-            $is_last = 1;
-            return;
-        }
-    }
-}
 
 #-----------------------------------------------------
 # produce condor configuation file for each file list  
@@ -75,17 +59,15 @@ sub produce_execfile {
 
     print OUTPUTFILE ("#!/bin/sh \n");
     print OUTPUTFILE ("source /cvmfs/cms.cern.ch/cmsset_default.sh \n");
-    print OUTPUTFILE ("source /opt/osg/setup.sh \n");
-    print OUTPUTFILE ("DIR=\"CMSSW_5_3_8_HI/src/HeavyFlavorAnalysis/Bs2MuMu/macros2\" \n");
+    print OUTPUTFILE ("export X509_USER_PROXY=/home/wxie/.myproxy  \n");
+    print OUTPUTFILE ("DIR=\"CMSSW_5_3_8_HI/src/UserCode/OpenHF/macros\" \n");
     print OUTPUTFILE ("cd $BASE/CMSSW_5_3_8_HI \n");
     print OUTPUTFILE ("eval `scramv1 runtime -sh` \n");
     print OUTPUTFILE ("cd $BASE/\$DIR \n");
-    print OUTPUTFILE ("bin/runHfReader -c $file_seg -C $cutfile \n");
-    print OUTPUTFILE ("mv $file_seg Data/2GeV_cut/.\n");
-    print OUTPUTFILE ("mv $file_seg.$cutfile.root Data/2GeV_cut/.\n");
-    print OUTPUTFILE ("mv $job_execfile Data/2GeV_cut/.\n");
-    print OUTPUTFILE ("mv $job_execfile.* Data/2GeV_cut/.\n");
-    print OUTPUTFILE ("mv condor_$file_seg.job Data/2GeV_cut/.\n");
+    print OUTPUTFILE ("root -b<<EOF\n");
+    print OUTPUTFILE ("gSystem->Load\(\"\.\.\/\.\.\/\.\.\/\.\.\/lib\/slc5_amd64_gcc462\/libUserCodeOpenHF.so\"\)\; \n");
+    print OUTPUTFILE (".x $macro+($istart, $iend, \"$filelist\") \n");
+    print OUTPUTFILE ("EOF\n");
 
     system("chmod u+x $job_execfile");
 }
@@ -108,6 +90,11 @@ sub produce_config_file {
     print OUTPUTFILE ("output               = $job_execfile.out\n");
     print OUTPUTFILE ("error                = $job_execfile.err\n");
     print OUTPUTFILE ("log                  = $job_execfile.log\n");
+    print OUTPUTFILE ("#======================================================================\n");
+    print OUTPUTFILE ("# get the environment (path, etc.)\n");
+    print OUTPUTFILE ("Getenv         = True \n");
+    print OUTPUTFILE ("# prefer to run on fast computers\n");
+    print OUTPUTFILE ("Rank           = kflops\n");
     print OUTPUTFILE ("#======================================================================\n");
     print OUTPUTFILE ("\n");
     print OUTPUTFILE ("requirements = (Arch == \"X86_64\")||regexp(\"cms\",Name) \n");

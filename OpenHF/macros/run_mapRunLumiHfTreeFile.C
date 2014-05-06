@@ -4,16 +4,23 @@ void run_mapRunLumiHfTreeFile(int startFile, int endFile, char *filelist, int tr
 
     mapRunLumiHfTreeFile *a = new mapRunLumiHfTreeFile;
 
-    if(trg==0) {
+    if(trg==-1) { //.. hlt path
+        a->set_pathname("/mnt/hadoop/store/user/wxie/PAHighPt/HLT_WXie/b8385945bc123ff6dcc68d83210a3d7d");
+        a->LoopOverFileHlt(startFile, endFile, filelist, "highPt_pPb");
+
+    } else if(trg==0) {
         a->set_pathname("/mnt/hadoop/store/user/wxie/PAHighPt/HFTree/7fdf5ec06bc167d7c907e513d3ce2df4");
         a->LoopOverFile(startFile, endFile, filelist, "highPt_pPb");
     } else if(trg==1) {
+        a->set_pathname("/mnt/hadoop/store/user/wxie/PAMinBiasUPC/HFTree/d32c37ab268e1492812aecf1e46c856e");
+        a->LoopOverFile(startFile, endFile, filelist, "minbiasUPC_pPb");
+    } else if(trg==2) {
         a->set_pathname("/mnt/hadoop/store/user/wxie/HeavyFlavor_minbias_pPb");
         a->LoopOverFile(startFile, endFile, filelist, "minbias_pPb");
-    } else if(trg==2) {
+    } else if(trg==3) {
         a->set_pathname("/mnt/hadoop/store/user/wxie/HeavyFlavor_highPt_pp");
         a->LoopOverFile(startFile, endFile, filelist, "highPt_pp");
-    } else if(trg==3) {
+    } else if(trg==4) {
         a->set_pathname("/mnt/hadoop/store/user/wxie/HeavyFlavor_minbias_pp");
         a->LoopOverFile(startFile, endFile, filelist, "minbias_pp");
     }

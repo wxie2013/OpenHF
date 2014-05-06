@@ -8,8 +8,8 @@
 
 #include "../interface/hfcand_v0.hh"
 
-const short nhist = 20; //.. number of histograms
-const float delta_pt = 10; //.. 10 GeV per bin
+const short nhist = 200; //.. number of histograms
+const float delta_pt = 0.5; //.. 10 GeV per bin
 const int nbin = 200;
 
 using namespace std;

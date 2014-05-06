@@ -30,12 +30,12 @@ process.source = cms.Source("PoolSource",
         skipEvents = cms.untracked.uint32(0),
         fileNames  = cms.untracked.vstring(
                 #'file:/afs/cern.ch/work/w/wxie/public/2A54599E-DB74-E211-9D29-5404A63886AD.root'
-                '/store/hidata/HIRun2013/PAHighPt/RECO/PromptReco-v1/000/210/534/00000/865432B8-1E65-E211-BF13-001D09F24FEC.root'
+                '/store/hidata/HIRun2013/PAHighPt/RECO/PromptReco-v1/000/211/032/00000/3CEE6CB0-626C-E211-9E31-003048D3C982.root'
             )
         )
 
 process.maxEvents = cms.untracked.PSet(
-        input = cms.untracked.int32(100)
+        input = cms.untracked.int32(-1)
         )
 
 rootFileName = "test.root"

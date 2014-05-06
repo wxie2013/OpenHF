@@ -1,6 +1,6 @@
 //.. note: the following are initial value and constraint on parameters for each histogram. 
 //.. ------------------------- For Ds->Phi+pi ------------------------------
-//     root> .x draw_hist.C+ ("ana_candAnaDs2PhiPi_ana_ds2PhiPi.lis_0To11.root", false, "ana_ds2Phi.gif", 4, 1.8, 2.1);
+//     root> .x draw_hist.C+ ("ana_candAnaDs2PhiPi_ana_ds2PhiPi.lis_0To11.root", 2, 163, false, "ana_ds2Phi.gif", 4, 1.8, 2.1);
 //     fg0: pol2 can not describe background 
 //     initial value for all histograms: 
 //     577 1.97 0.01 400 1.86 0.005
@@ -29,13 +29,13 @@
 //      1.94 2.0 0.01 0.05 0 100 1.85 1.9  0.002 0.01
 //.. ------------------------- For D0->kaon+pi ------------------------------
 //     initial value for all histograms: 
-//     root>  .x draw_hist.C+ ("ana_D0_tot.root", false, "ana_d0.gif", 5, 1.78, 1.95);
+// .x draw_hist.C+("checkTrg_hhforest_hfforest_minbiasUPC.lis.root", 1, 163, false, "d0.gif", 1, 1.78, 1.95)
 //      1000 1.87 0.02 0 0 0
 //     constraints for all histograms: 
 //      1.84 1.9 0 0.05 0 0 0 0 0 0
 //.. ------------------------- For Dpm->kaon+pi+pi ------------------------------
 //     initial value for all histograms: 
-//     root>  .x draw_hist.C+ ("ana_Dpm_tot.root", false, "ana_dpm.gif", 5, 1.78, 2.0);
+//     root>  .x draw_hist.C+ ("ana_Dpm_tot.root", 4, 163, false, "ana_dpm.gif", 1, 1.78, 2.0);
 //      1000 1.87 0.005 0 0 0
 //     constraints for all histograms: 
 //      1.84 1.9 0 0.03 0 0 0 0 0 0
@@ -51,36 +51,29 @@
 #include <TF1.h>
 #include <TCanvas.h>
 
-const int nhist = 20;
+const int npt = 20;
 using namespace std;
 
-void draw_hist(char* filename, bool draw_diff = false, char* outfile="oo.root", int n_rebin = 5, float rlow = 1.8, float rhigh = 2.1)
+void draw_hist(char* filename, int ich, int itrg,  bool draw_diff = false, char* outfile="oo.root", int n_rebin = 5, float rlow = 1.8, float rhigh = 2.1)
 {//..note:  draw_diff=true only for D* ..
 
     TFile* f = new TFile(filename);
 
     //. get histogram
-    TH1* hfg[nhist] = {0};
-    TH1* hbg[nhist] = {0};
-    TH1* hdau[nhist] = {0};
-    TH1* hfgdiff[nhist] = {0};
-    TH1* hbgdiff[nhist] = {0};
+    TH1* hfg[npt] = {0};
+    TH1* hfgdiff[npt] = {0};
+    TH1* hbgdiff[npt] = {0};
     char hname[200];
-    for(short i = 0; i<nhist; i++) {
-        sprintf(hname, "hfg%d", i);
-        hfg[i] = (TH1F*)f->Get(hname)->Clone();
+    for(short i = 0; i<npt; i++) {
+        sprintf(hname, "hfg%d_%d_%d", ich, itrg, i);
+        hfg[i] = (TH1F*)f->Get(hname);
 
-        sprintf(hname, "hbg%d", i);
-        hbg[i] = (TH1F*)f->Get(hname)->Clone(); 
+        sprintf(hname, "hfgdiff%d_%d_%d", ich, itrg, i);
+        hfgdiff[i] = (TH1F*)f->Get(hname);
 
-        sprintf(hname, "hdau%d", i);
-        hdau[i] =  (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hbgdiff%d_%d_%d", ich, itrg, i);
+        hbgdiff[i] = (TH1F*)f->Get(hname);
 
-        sprintf(hname, "hfgdiff%d", i);
-        hfgdiff[i] =  (TH1F*)f->Get(hname)->Clone();
-
-        sprintf(hname, "hbgdiff%d", i);
-        hbgdiff[i] =  (TH1F*)f->Get(hname)->Clone();
     }
 
     //... draw ...
@@ -93,7 +86,6 @@ void draw_hist(char* filename, bool draw_diff = false, char* outfile="oo.root", 
         if(!draw_diff) {
             hfg[i]->SetMarkerSize(0.8);
             hfg[i]->Rebin(n_rebin);
-            hbg[i]->Rebin(n_rebin);
 
             hfg[i]->SetLineColor(2);
             hfg[i]->SetMarkerColor(2);

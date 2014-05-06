@@ -10,7 +10,10 @@
 #include "../interface/snglhfcand_v0.hh"
 #include "../interface/candAna.hh"
 #include "../interface/mapRunLumiHfTreeFile.hh"
+#include "../interface/FindUsefulTrigger.hh"
 #include "../interface/ana_hfforest.hh"
+#include "../interface/checkTrgMatch.hh"
+
 #define __Link_Tana__
 #endif
 
@@ -35,7 +38,9 @@
 #pragma link C++ class snglhfcand_v0+; 
 #pragma link C++ class candAna+; 
 #pragma link C++ class mapRunLumiHfTreeFile+; 
+#pragma link C++ class FindUsefulTrigger+; 
 #pragma link C++ class ana_hfforest+; 
+#pragma link C++ class checkTrgMatch+; 
 
 #endif
 

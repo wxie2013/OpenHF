@@ -4,6 +4,7 @@ crab -create -cfg HeavyFlavor_highPt_crab_pPb_2.cfg
 crab -create -cfg HeavyFlavor_highPt_crab_pPb_3.cfg
 crab -create -cfg HeavyFlavor_highPt_crab_pPb_4.cfg
 crab -create -cfg HeavyFlavor_highPt_crab_pPb_5.cfg
+crab -create -cfg HeavyFlavor_highPt_crab_pPb_6.cfg
 
 crab -submit 1-500     -c crab_HeavyFlavor_highPt_crab_pPb_0
 crab -submit 501-1000  -c crab_HeavyFlavor_highPt_crab_pPb_0
@@ -44,3 +45,5 @@ crab -submit 1001-1500 -c crab_HeavyFlavor_highPt_crab_pPb_5
 crab -submit 1501-2000 -c crab_HeavyFlavor_highPt_crab_pPb_5
 crab -submit 2001-2500 -c crab_HeavyFlavor_highPt_crab_pPb_5
 crab -submit 2501-3000 -c crab_HeavyFlavor_highPt_crab_pPb_5
+
+crab -submit 1-500     -c crab_HeavyFlavor_highPt_crab_pPb_6
