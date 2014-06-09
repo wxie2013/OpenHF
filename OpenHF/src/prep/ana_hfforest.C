@@ -158,7 +158,7 @@ ana_hfforest::~ana_hfforest()
 //
 bool ana_hfforest::checkRapidityBoundary(float y) 
 {
-    if(y<Ymin || y>Ymin+NY*dY) {
+    if(y<=Ymin || y>=Ymin+NY*dY) {
         cout<<"!! rapidity: "<<y<<" beyond "<<Ymin<<"--"<<Ymin+NY*dY<<".  exit !!!"<<endl;
         return false;
     }
@@ -167,7 +167,7 @@ bool ana_hfforest::checkRapidityBoundary(float y)
 }
 
 //
-void ana_hfforest::Init(int startFile, int endFile, char *filelist, int iy, int ich, char* outfile)
+void ana_hfforest::Init(int startFile, int endFile, char *filelist, int iy, int ich)
 {//.. called right after constructor 
     filename = new char[1000];
     float ydn = iy*dY + Ymin; 
@@ -175,8 +175,8 @@ void ana_hfforest::Init(int startFile, int endFile, char *filelist, int iy, int 
     if(!checkRapidityBoundary(ydn) || !checkRapidityBoundary(yup)) 
         exit(0);
 
-    //sprintf(filename, "ana_hhforest_%s_%dTo%d_rapidity_%3.1f_%3.1f_%s.root",  filelist, startFile, endFile, ydn, yup, MesonName[ich]);
-    result = new TFile(outfile, "recreate");
+    sprintf(filename, "ana_hhforest_%s_%dTo%d_rapidity_%3.1f_%3.1f_%s.root",  filelist, startFile, endFile, ydn, yup, MesonName[ich]);
+    result = new TFile(filename, "recreate");
 
     //
     define_cuts();
@@ -654,10 +654,10 @@ void ana_hfforest::get_pt_range(int i, float& pt_low, float& pt_high)
 }
 
 //
-void ana_hfforest::LoopOverFile(int startFile, int endFile, char *filelist, int iy, int ich, char* outfile) 
+void ana_hfforest::LoopOverFile(int startFile, int endFile, char *filelist, int iy, int ich) 
 {//.. loop over files in the "*filelist" from startFile to endFile in sequence
     //
-    Init(startFile, endFile, filelist, iy, ich, outfile);
+    Init(startFile, endFile, filelist, iy, ich);
 
     //
     ifstream file_stream(filelist);
