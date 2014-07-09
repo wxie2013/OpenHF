@@ -15,10 +15,8 @@ const char* MesonName[NCH] = {"Dstar2D0Pi", "D02KPi", "Ds2PhiPi", "Ds2KstarK", "
 
 ClassImp(ana_hfforest)
 
-    //
 ana_hfforest::ana_hfforest()
-{
-}
+{;}
 
 //
 ana_hfforest::~ana_hfforest()
@@ -159,7 +157,7 @@ ana_hfforest::~ana_hfforest()
 bool ana_hfforest::checkRapidityBoundary(float y) 
 {
     if(y<Ymin || y>Ymin+NY*dY) {
-        cout<<"!! rapidity: "<<y<<" beyond "<<Ymin<<"--"<<Ymin+NY*dY<<".  exit !!!"<<endl;
+        cout<<"!! rapidity: "<<y<<" beyond "<<Ymin<<"--"<<Ymin+NY*dY<<". !!!"<<endl;
         return false;
     }
 
@@ -634,6 +632,7 @@ void ana_hfforest::book_hist(int ich, int iy)
         hbgdiff_PhoTrgPt30above_raw[i]->Sumw2();
         hbgdiff_PhoTrgPt30above[i]->Sumw2();
     }
+
 }
 
 //
@@ -731,6 +730,8 @@ void ana_hfforest::write()
             hfg[itrg][i]->Write();
             hfgdiff_raw[itrg][i]->Write();
             hfgdiff[itrg][i]->Write();
+            hbgdiff_raw[itrg][i]->Write();
+            hbgdiff[itrg][i]->Write();
         }
 
     for(short i = 0; i<NPT; i++) {
@@ -866,7 +867,7 @@ void ana_hfforest::get_trg_info(TTree* T1, TTree* T2)
         for(int it = 0; it<NTRG; it++) {
             if (branch_nameT1.Contains(trg_name[it])){
                 if(!branch_nameT1.Contains("Prescl") && 
-                   !branch_nameT1.Contains("trigObject")) {//.. use original trigger decision
+                        !branch_nameT1.Contains("trigObject")) {//.. use original trigger decision
                     T1->SetBranchAddress(branch_nameT1.Data(), &trg[it]);
                     tid = it;
                 } else  if(branch_nameT1.Contains("Prescl")) {//.. use original prescale
@@ -961,8 +962,11 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
     float fq1 = cand->get_fq1();  
     //float fq2 = cand->get_fq2();
     float fq2 = cand->get_fpt2(); //.. fpt2 is filled by fq2
+    float feta1 = cand->get_feta1();
+    float feta2 = cand->get_feta2();
 
-    if(!GetRapidity(mass, fpt, feta, iy) || fq1==fq2) 
+
+    if(!GetRapidity(mass, fpt, feta, iy) || fq1==fq2 || fabs(feta1)>etaMax || fabs(feta2)>etaMax) 
         return;
     //
     float ffls3d = cand->get_ffls3d();
@@ -989,9 +993,9 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
                 }
             }
 
-            FillTrgCombineTrkTrg(0, ich, ipt, iy, mass, mass_dau);
-            FillTrgCombineJetTrg(0, ich, ipt, iy, mass, mass_dau);
-            FillTrgCombinePhoTrg(0, ich, ipt, iy, mass, mass_dau);
+            FillTrgCombineTrkTrg(0, ich, ipt, mass, mass_dau);
+            FillTrgCombineJetTrg(0, ich, ipt, mass, mass_dau);
+            FillTrgCombinePhoTrg(0, ich, ipt, mass, mass_dau);
 
         } else {
             if(mass_dau > cut_m_dau_low[ich] && mass_dau < cut_m_dau_high[ich]) {
@@ -1007,14 +1011,14 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
                     }
                 }
 
-                FillTrgCombineTrkTrg(0, ich, ipt, iy, mass, mass_dau);
-                FillTrgCombineJetTrg(0, ich, ipt, iy, mass, mass_dau);
-                FillTrgCombinePhoTrg(0, ich, ipt, iy, mass, mass_dau);
+                FillTrgCombineTrkTrg(0, ich, ipt, mass, mass_dau);
+                FillTrgCombineJetTrg(0, ich, ipt, mass, mass_dau);
+                FillTrgCombinePhoTrg(0, ich, ipt, mass, mass_dau);
 
                 if(ich==0) {
-                    FillTrgCombineTrkTrg(1, ich, ipt, iy, mass, mass_dau);
-                    FillTrgCombineJetTrg(1, ich, ipt, iy, mass, mass_dau);
-                    FillTrgCombinePhoTrg(1, ich, ipt, iy, mass, mass_dau);
+                    FillTrgCombineTrkTrg(1, ich, ipt, mass, mass_dau);
+                    FillTrgCombineJetTrg(1, ich, ipt, mass, mass_dau);
+                    FillTrgCombinePhoTrg(1, ich, ipt, mass, mass_dau);
                 }
 
             } else { //.. background through side band ...
@@ -1026,9 +1030,9 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
                 }
 
                 if(ich==0) {
-                    FillTrgCombineTrkTrg(2, ich, ipt, iy, mass, mass_dau);
-                    FillTrgCombineJetTrg(2, ich, ipt, iy, mass, mass_dau);
-                    FillTrgCombinePhoTrg(2, ich, ipt, iy, mass, mass_dau);
+                    FillTrgCombineTrkTrg(2, ich, ipt, mass, mass_dau);
+                    FillTrgCombineJetTrg(2, ich, ipt, mass, mass_dau);
+                    FillTrgCombinePhoTrg(2, ich, ipt, mass, mass_dau);
                 }
             }
         }
@@ -1036,7 +1040,7 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
 }
 
 //
-void ana_hfforest::FillTrgCombineTrkTrg(int id, int ich, int ipt, int iy, float mass, float mass_dau)
+void ana_hfforest::FillTrgCombineTrkTrg(int id, int ich, int ipt, float mass, float mass_dau)
 {//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
     float maxTrgPt = 0;
@@ -1092,7 +1096,7 @@ void ana_hfforest::FillTrgCombineTrkTrg(int id, int ich, int ipt, int iy, float 
 }
 
 //
-void ana_hfforest::FillTrgCombineJetTrg(int id, int ich, int ipt, int iy, float mass, float mass_dau)
+void ana_hfforest::FillTrgCombineJetTrg(int id, int ich, int ipt, float mass, float mass_dau)
 {//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
     float maxTrgPt = 0;
@@ -1182,7 +1186,7 @@ void ana_hfforest::FillTrgCombineJetTrg(int id, int ich, int ipt, int iy, float 
 }
 
 //
-void ana_hfforest::FillTrgCombinePhoTrg(int id, int ich, int ipt, int iy, float mass, float mass_dau)
+void ana_hfforest::FillTrgCombinePhoTrg(int id, int ich, int ipt, float mass, float mass_dau)
 {//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
     float maxTrgPt = 0;
@@ -1354,11 +1358,81 @@ void ana_hfforest::get_trg_name()
     trg_name[16]= "L1_SingleJet36";
     trg_name[17]= "L1_SingleEG5_BptxAND";
     trg_name[18]= "L1_SingleEG12";
+
+    //.. high multiplicity triggers 
+    trg_name[19]= "HLT_PAPixelTrackMultiplicity100_FullTrack12";
+    trg_name[20]= "HLT_PAPixelTrackMultiplicity100_L2DoubleMu3";
+    trg_name[21]= "HLT_PAPixelTrackMultiplicity130_FullTrack12";
+    trg_name[22]= "HLT_PAPixelTrackMultiplicity140_Jet80_NoJetID";
+    trg_name[23]= "HLT_PAPixelTrackMultiplicity160_FullTrack12";
+    trg_name[24]= "HLT_PAPixelTracks_Multiplicity100";
+    trg_name[25]= "HLT_PAPixelTracks_Multiplicity130";
+    trg_name[26]= "HLT_PAPixelTracks_Multiplicity160";
+    trg_name[27]= "HLT_PAPixelTracks_Multiplicity190";
+    trg_name[28]= "HLT_PAPixelTracks_Multiplicity220";
+
 }
 
 //
+void ana_hfforest::get_comb_hist(TFile* f)
+{
+    if(!f) {
+        cout<<" !!! file does not exist,  exit"<<endl;
+        exit(0);
+    }
+
+    cout<<" .... fetching combination file  ..."<<endl;
+    char hname[100];
+    for(short i = 0; i<NptRebin; i++) {
+        sprintf(hname, "hfg_raw_combTrkTrg_pt%d", i);
+        hfg_raw_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hfg_combTrkTrg_pt%d", i);
+        hfg_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hfgdiff_raw_combTrkTrg%d", i);
+        hfgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hfgdiff_combTrkTrg%d", i);
+        hfgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hbgdiff_raw_combTrkTrg%d", i);
+        hbgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hbgdiff_combTrkTrg%d", i);
+        hbgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+
+        sprintf(hname, "hfg_raw_combJetTrg%d", i);
+        hfg_raw_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hfg_combJetTrg%d", i);
+        hfg_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hfgdiff_raw_combJetTrg%d", i);
+        hfgdiff_raw_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hfgdiff_combJetTrg%d", i);
+        hfgdiff_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hbgdiff_raw_combJetTrg%d", i);
+        hbgdiff_raw_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hbgdiff_combJetTrg%d", i);
+        hbgdiff_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+
+        sprintf(hname, "hfg_raw_combPhoTrg%d", i);
+        hfg_raw_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hfg_combPhoTrg%d", i);
+        hfg_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hfgdiff_raw_combPhoTrg%d", i);
+        hfgdiff_raw_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hfgdiff_combPhoTrg%d", i);
+        hfgdiff_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hbgdiff_raw_combPhoTrg%d", i);
+        hbgdiff_raw_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hbgdiff_combPhoTrg%d", i);
+        hbgdiff_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+    }
+    cout<<" .... done ..."<<endl;
+}
+//
 void ana_hfforest::get_hist(TFile* f)
 {
+    if(!f) {
+        cout<<" !!! file does not exist,  exit"<<endl;
+        exit(0);
+    }
+    cout<<" .... fetching histogram ...."<<endl;
     char hname[100];
 
     // all D mesons
@@ -1379,11 +1453,12 @@ void ana_hfforest::get_hist(TFile* f)
             sprintf(hname, "hfgdiff_raw%d_%d", it, i);
             hfgdiff_raw[it][i] = (TH1F*)f->Get(hname)->Clone();
 
-            sprintf(hname, "hbgdiff%d_%d", it, i);
-            hbgdiff[it][i] = (TH1F*)f->Get(hname)->Clone();
-            sprintf(hname, "hbgdiff_raw%d_%d", it, i);
-            hbgdiff_raw[it][i] = (TH1F*)f->Get(hname)->Clone();
+              sprintf(hname, "hbgdiff%d_%d", it, i);
+              hbgdiff[it][i] = (TH1F*)f->Get(hname)->Clone();
+              sprintf(hname, "hbgdiff_raw%d_%d", it, i);
+              hbgdiff_raw[it][i] = (TH1F*)f->Get(hname)->Clone();
         }
+
 
     // components for trigger combination for all D..
     for(short i = 0; i<NPT; i++) {
@@ -1465,6 +1540,7 @@ void ana_hfforest::get_hist(TFile* f)
         sprintf(hname, "hfg_PhoTrgPt30above%d", i);
         hfg_PhoTrgPt30above[i] = (TH1F*)f->Get(hname)->Clone();
     }
+
 
     // components for trigger combination for D*
     for(short i = 0; i<NPT; i++) {
@@ -1623,5 +1699,521 @@ void ana_hfforest::get_hist(TFile* f)
         hbgdiff_PhoTrgPt30above_raw[i] = (TH1F*)f->Get(hname)->Clone();
         sprintf(hname, "hbgdiff_PhoTrgPt30above%d", i);
         hbgdiff_PhoTrgPt30above[i] = (TH1F*)f->Get(hname)->Clone();
+    }
+    cout<<" .... done ...."<<endl;
+}
+//
+//
+void ana_hfforest::define_rebinSpec()
+{
+    //clone any mass spectrum to define the combined one then reset them to 0 contents
+    char hname[200];
+    for(short it = 0; it<NTRG; it++) 
+        for(short i = 0; i<NptRebin; i++) {
+            sprintf(hname, "hfg_raw_rebin%d_%d", it, i);
+            hfg_raw_rebin[it][i] = (TH1F*)hfg_raw[it][i]->Clone(hname);
+
+            sprintf(hname, "hfgdiff_raw_rebin%d_%d", it, i);
+            hfgdiff_raw_rebin[it][i] = (TH1F*)hfgdiff_raw[it][i]->Clone(hname);
+
+            sprintf(hname, "hbgdiff_raw_rebin%d_%d", it, i);
+            hbgdiff_raw_rebin[it][i] = (TH1F*)hbgdiff_raw[it][i]->Clone(hname);
+
+            hfg_raw_rebin[it][i]->Reset();
+            hfgdiff_raw_rebin[it][i]->Reset();
+            hbgdiff_raw_rebin[it][i]->Reset();
+        }
+}
+
+//
+void ana_hfforest::define_combSpec()
+{
+    //clone any mass spectrum to define the combined one then reset them to 0 contents
+    char hname[200];
+    for(short i = 0; i<NptRebin; i++) {
+        //FullTrack trigger 
+        sprintf(hname, "hfg_raw_combTrkTrg_pt%d", i);
+        hfg_raw_combTrkTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
+        sprintf(hname, "hfg_combTrkTrg_pt%d", i);
+        hfg_combTrkTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
+
+        sprintf(hname, "hfgdiff_raw_combTrkTrg%d", i);
+        hfgdiff_raw_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+        sprintf(hname, "hfgdiff_combTrkTrg%d", i);
+        hfgdiff_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+
+        sprintf(hname, "hbgdiff_raw_combTrkTrg%d", i);
+        hbgdiff_raw_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+        sprintf(hname, "hbgdiff_combTrkTrg%d", i);
+        hbgdiff_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+
+        //Jet trigger 
+        sprintf(hname, "hfg_raw_combJetTrg%d", i);
+        hfg_raw_combJetTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
+        sprintf(hname, "hfg_combJetTrg%d", i);
+        hfg_combJetTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
+
+        sprintf(hname, "hfgdiff_raw_combJetTrg%d", i);
+        hfgdiff_raw_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+        sprintf(hname, "hfgdiff_combJetTrg%d", i);
+        hfgdiff_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+
+        sprintf(hname, "hbgdiff_raw_combJetTrg%d", i);
+        hbgdiff_raw_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+        sprintf(hname, "hbgdiff_combJetTrg%d", i);
+        hbgdiff_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+
+        //Photon trigger 
+        sprintf(hname, "hfg_raw_combPhoTrg%d", i);
+        hfg_raw_combPhoTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
+        sprintf(hname, "hfg_combPhoTrg%d", i);
+        hfg_combPhoTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
+
+        sprintf(hname, "hfgdiff_raw_combPhoTrg%d", i);
+        hfgdiff_raw_combPhoTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+        sprintf(hname, "hfgdiff_combPhoTrg%d", i);
+        hfgdiff_combPhoTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+
+        sprintf(hname, "hbgdiff_raw_combPhoTrg%d", i);
+        hbgdiff_raw_combPhoTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+        sprintf(hname, "hbgdiff_combPhoTrg%d", i);
+        hbgdiff_combPhoTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+
+        //.. now reset all bin to zero 
+        hfg_raw_combTrkTrg[i]->Reset();
+        hfg_combTrkTrg[i]->Reset();
+        hfgdiff_raw_combTrkTrg[i]->Reset();
+        hfgdiff_combTrkTrg[i]->Reset();
+        hbgdiff_raw_combTrkTrg[i]->Reset();
+        hbgdiff_combTrkTrg[i]->Reset();
+
+        //Jet trigger 
+        hfg_raw_combJetTrg[i]->Reset();
+        hfg_combJetTrg[i]->Reset();
+        hfgdiff_raw_combJetTrg[i]->Reset();
+        hfgdiff_combJetTrg[i]->Reset();
+        hbgdiff_raw_combJetTrg[i]->Reset();
+        hbgdiff_combJetTrg[i]->Reset();
+
+        //Photon trigger 
+        hfg_raw_combPhoTrg[i]->Reset();
+        hfg_combPhoTrg[i]->Reset();
+        hfgdiff_raw_combPhoTrg[i]->Reset();
+        hfgdiff_combPhoTrg[i]->Reset();
+        hbgdiff_raw_combPhoTrg[i]->Reset();
+        hbgdiff_combPhoTrg[i]->Reset();
+    }
+}
+//
+void ana_hfforest::rebinSpec(TFile* fout)
+{
+    cout<<".... rebining the spectra ...."<<endl;
+    define_rebinSpec();
+
+    for(short it = 0; it<NTRG; it++) {
+        int im = 0; //.. bin id for merged histogram
+        for(short i = 0; i<NPT; i++) {
+
+            float pt_low = 0, pt_high = 0;
+            get_pt_range(i, pt_low, pt_high);
+            //
+            //.. check if the merged bin range is incorrectly assigned...
+            if(pt_low < ptRebin[im+1] && pt_high > ptRebin[im+1]) {
+                cout<<"!!  merged bin range: "<<ptRebin[im]<<" - "<<ptRebin[im+1]<<" is not a integer number of the basic bin range: "<<pt_low<<" - "<<pt_high<<". exit !!"<<endl;
+                exit(0);
+            }
+            //.. check if merging of one bin is done
+            if(pt_low >= ptRebin[im+1] && pt_high <= ptRebin[im+2])
+                im++;
+
+            //Track trigger
+            if(hfg[it][i]->Integral())
+                hfg_raw[it][i]->Scale(hfg[it][i]->Integral()/hfg_raw[it][i]->Integral());
+            if(hfgdiff[it][i]->Integral())
+                hfgdiff_raw[it][i]->Scale(hfgdiff[it][i]->Integral()/hfgdiff_raw[it][i]->Integral());
+            if(hbgdiff[it][i]->Integral())
+                hbgdiff_raw[it][i]->Scale(hbgdiff[it][i]->Integral()/hbgdiff_raw[it][i]->Integral());
+
+            hfg_raw_rebin[it][im]->Add(hfg_raw[it][i]);
+            hfgdiff_raw_rebin[it][im]->Add(hfgdiff_raw[it][i]);
+            hbgdiff_raw_rebin[it][im]->Add(hbgdiff_raw[it][i]);
+        }
+    }
+
+    cout<<" ....Writing the spectra ...."<<endl;
+    fout->cd();
+    //.. save 
+    for(short it = 0; it<NTRG; it++) {
+        for(short i = 0; i<NptRebin; i++) {
+            // track trigger 
+            hfg_raw_rebin[it][i]->Write(); 
+            hfgdiff_raw_rebin[it][i]->Write(); 
+            hbgdiff_raw_rebin[it][i]->Write(); 
+        }
+    }
+}
+
+//
+void ana_hfforest::CombineSpec(TFile* fout)
+{
+    cout<<".... combining the spectra ...."<<endl;
+    define_combSpec();
+
+    int im = 0; //.. bin id for merged histogram
+    for(short i = 0; i<NPT; i++) {
+
+        float pt_low = 0, pt_high = 0;
+        get_pt_range(i, pt_low, pt_high);
+        //
+        //.. check if the merged bin range is incorrectly assigned...
+        if(pt_low < ptRebin[im+1] && pt_high > ptRebin[im+1]) {
+            cout<<"!!  merged bin range: "<<ptRebin[im]<<" - "<<ptRebin[im+1]<<" is not a integer number of the basic bin range: "<<pt_low<<" - "<<pt_high<<". exit !!"<<endl;
+            exit(0);
+        }
+        //.. check if merging of one bin is done
+        if(pt_low >= ptRebin[im+1] && pt_high <= ptRebin[im+2])
+            im++;
+
+        //Track trigger
+        if(hfg_TrkTrgPt12_20_raw[i]->Integral())
+            hfg_TrkTrgPt12_20_raw[i]->Scale(hfg_TrkTrgPt12_20[i]->Integral()/hfg_TrkTrgPt12_20_raw[i]->Integral());
+        if(hfg_TrkTrgPt20_30_raw[i]->Integral())
+            hfg_TrkTrgPt20_30_raw[i]->Scale(hfg_TrkTrgPt20_30[i]->Integral()/hfg_TrkTrgPt20_30_raw[i]->Integral());
+        if(hfg_TrkTrgPt30above_raw[i]->Integral())
+            hfg_TrkTrgPt30above_raw[i]->Scale(hfg_TrkTrgPt30above[i]->Integral()/hfg_TrkTrgPt30above_raw[i]->Integral());
+
+        hfg_raw_combTrkTrg[im]->Add(hfg_TrkTrgPt12_20_raw[i]);
+        hfg_raw_combTrkTrg[im]->Add(hfg_TrkTrgPt20_30_raw[i]);
+        hfg_raw_combTrkTrg[im]->Add(hfg_TrkTrgPt30above_raw[i]);
+
+        hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt12_20[i]);
+        hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt20_30[i]);
+        hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt30above[i]);
+        //
+        //
+        //Jet trigger 
+        if(hfg_JetTrgPt20_40_raw[i]->Integral())
+            hfg_JetTrgPt20_40_raw[i]->Scale(hfg_JetTrgPt20_40[i]->Integral()/hfg_JetTrgPt20_40_raw[i]->Integral());
+        if(hfg_JetTrgPt40_60_raw[i]->Integral())
+            hfg_JetTrgPt40_60_raw[i]->Scale(hfg_JetTrgPt40_60[i]->Integral()/hfg_JetTrgPt40_60_raw[i]->Integral());
+        if(hfg_JetTrgPt60_80_raw[i]->Integral())
+            hfg_JetTrgPt60_80_raw[i]->Scale(hfg_JetTrgPt60_80[i]->Integral()/hfg_JetTrgPt60_80_raw[i]->Integral());
+        if(hfg_JetTrgPt80_100_raw[i]->Integral())
+            hfg_JetTrgPt80_100_raw[i]->Scale(hfg_JetTrgPt80_100[i]->Integral()/hfg_JetTrgPt80_100_raw[i]->Integral());
+        if(hfg_JetTrgPt100above_raw[i]->Integral())
+            hfg_JetTrgPt100above_raw[i]->Scale(hfg_JetTrgPt100above[i]->Integral()/hfg_JetTrgPt100above_raw[i]->Integral());
+
+        hfg_raw_combJetTrg[im]->Add( hfg_JetTrgPt20_40_raw[i]);
+        hfg_raw_combJetTrg[im]->Add(hfg_JetTrgPt40_60_raw[i]);
+        hfg_raw_combJetTrg[im]->Add(hfg_JetTrgPt60_80_raw[i]);
+        hfg_raw_combJetTrg[im]->Add(hfg_JetTrgPt80_100_raw[i]);
+        hfg_raw_combJetTrg[im]->Add(hfg_JetTrgPt100above_raw[i]);
+
+        hfg_combJetTrg[im]->Add( hfg_JetTrgPt20_40[i]);
+        hfg_combJetTrg[im]->Add(hfg_JetTrgPt40_60[i]);
+        hfg_combJetTrg[im]->Add(hfg_JetTrgPt60_80[i]);
+        hfg_combJetTrg[im]->Add(hfg_JetTrgPt80_100[i]);
+        hfg_combJetTrg[im]->Add(hfg_JetTrgPt100above[i]);
+
+
+
+        //Photon trigger 
+        if(hfg_PhoTrgPt10_15_raw[i]->Integral())
+            hfg_PhoTrgPt10_15_raw[i]->Scale(hfg_PhoTrgPt10_15[i]->Integral()/hfg_PhoTrgPt10_15_raw[i]->Integral());
+        if(hfg_PhoTrgPt15_20_raw[i]->Integral())
+            hfg_PhoTrgPt15_20_raw[i]->Scale(hfg_PhoTrgPt15_20[i]->Integral()/hfg_PhoTrgPt15_20_raw[i]->Integral());
+        if(hfg_PhoTrgPt20_30_raw[i]->Integral())
+            hfg_PhoTrgPt20_30_raw[i]->Scale(hfg_PhoTrgPt20_30[i]->Integral()/hfg_PhoTrgPt20_30_raw[i]->Integral());
+        if(hfg_PhoTrgPt30above_raw[i]->Integral())
+            hfg_PhoTrgPt30above_raw[i]->Scale(hfg_PhoTrgPt30above[i]->Integral()/hfg_PhoTrgPt30above_raw[i]->Integral());
+
+        hfg_raw_combPhoTrg[im]->Add(hfg_PhoTrgPt10_15_raw[i]);
+        hfg_raw_combPhoTrg[im]->Add(hfg_PhoTrgPt15_20_raw[i]);
+        hfg_raw_combPhoTrg[im]->Add(hfg_PhoTrgPt20_30_raw[i]);
+        hfg_raw_combPhoTrg[im]->Add(hfg_PhoTrgPt30above_raw[i]);
+
+        hfg_combPhoTrg[im]->Add( hfg_PhoTrgPt10_15[i]);
+        hfg_combPhoTrg[im]->Add(hfg_PhoTrgPt15_20[i]);
+        hfg_combPhoTrg[im]->Add(hfg_PhoTrgPt20_30[i]);
+        hfg_combPhoTrg[im]->Add(hfg_PhoTrgPt30above[i]);
+
+        // components for trigger combination for D*
+        // fulltrack trigger
+        if(hfgdiff_TrkTrgPt12_20_raw[i]->Integral())
+            hfgdiff_TrkTrgPt12_20_raw[i]->Scale(hfgdiff_TrkTrgPt12_20[i]->Integral()/hfgdiff_TrkTrgPt12_20_raw[i]->Integral());
+        if(hfgdiff_TrkTrgPt20_30_raw[i]->Integral())
+            hfgdiff_TrkTrgPt20_30_raw[i]->Scale(hfgdiff_TrkTrgPt20_30[i]->Integral()/hfgdiff_TrkTrgPt20_30_raw[i]->Integral());
+        if(hfgdiff_TrkTrgPt30above_raw[i]->Integral())
+            hfgdiff_TrkTrgPt30above_raw[i]->Scale(hfgdiff_TrkTrgPt30above[i]->Integral()/hfgdiff_TrkTrgPt30above_raw[i]->Integral());
+
+        hfgdiff_raw_combTrkTrg[im]->Add( hfgdiff_TrkTrgPt12_20_raw[i]);
+        hfgdiff_raw_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt20_30_raw[i]);
+        hfgdiff_raw_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt30above_raw[i]);
+
+        hfgdiff_combTrkTrg[im]->Add( hfgdiff_TrkTrgPt12_20[i]);
+        hfgdiff_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt20_30[i]);
+        hfgdiff_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt30above[i]);
+
+        //
+        if(hbgdiff_TrkTrgPt12_20_raw[i]->Integral())
+            hbgdiff_TrkTrgPt12_20_raw[i]->Scale(hbgdiff_TrkTrgPt12_20[i]->Integral()/hbgdiff_TrkTrgPt12_20_raw[i]->Integral());
+        if(hbgdiff_TrkTrgPt20_30_raw[i]->Integral())
+            hbgdiff_TrkTrgPt20_30_raw[i]->Scale(hbgdiff_TrkTrgPt20_30[i]->Integral()/hbgdiff_TrkTrgPt20_30_raw[i]->Integral());
+        if(hbgdiff_TrkTrgPt30above_raw[i]->Integral())
+            hbgdiff_TrkTrgPt30above_raw[i]->Scale(hbgdiff_TrkTrgPt30above[i]->Integral()/hbgdiff_TrkTrgPt30above_raw[i]->Integral());
+
+        hbgdiff_raw_combTrkTrg[im]->Add( hbgdiff_TrkTrgPt12_20_raw[i]);
+        hbgdiff_raw_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt20_30_raw[i]);
+        hbgdiff_raw_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt30above_raw[i]);
+
+        hbgdiff_combTrkTrg[im]->Add( hbgdiff_TrkTrgPt12_20[i]);
+        hbgdiff_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt20_30[i]);
+        hbgdiff_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt30above[i]);
+
+
+        // Jet trigger
+        if(hfgdiff_JetTrgPt20_40_raw[i]->Integral())
+            hfgdiff_JetTrgPt20_40_raw[i]->Scale(hfgdiff_JetTrgPt20_40[i]->Integral()/hfgdiff_JetTrgPt20_40_raw[i]->Integral());
+        if(hfgdiff_JetTrgPt40_60_raw[i]->Integral())
+            hfgdiff_JetTrgPt40_60_raw[i]->Scale(hfgdiff_JetTrgPt40_60[i]->Integral()/hfgdiff_JetTrgPt40_60_raw[i]->Integral());
+        if(hfgdiff_JetTrgPt60_80_raw[i]->Integral())
+            hfgdiff_JetTrgPt60_80_raw[i]->Scale(hfgdiff_JetTrgPt60_80[i]->Integral()/hfgdiff_JetTrgPt60_80_raw[i]->Integral());
+        if(hfgdiff_JetTrgPt80_100_raw[i]->Integral())
+            hfgdiff_JetTrgPt80_100_raw[i]->Scale(hfgdiff_JetTrgPt80_100[i]->Integral()/hfgdiff_JetTrgPt80_100_raw[i]->Integral());
+        if(hfgdiff_JetTrgPt100above_raw[i]->Integral())
+            hfgdiff_JetTrgPt100above_raw[i]->Scale(hfgdiff_JetTrgPt100above[i]->Integral()/hfgdiff_JetTrgPt100above_raw[i]->Integral());
+
+        hfgdiff_raw_combJetTrg[im]->Add(hfgdiff_JetTrgPt20_40_raw[i]);
+        hfgdiff_raw_combJetTrg[im]->Add(hfgdiff_JetTrgPt40_60_raw[i]);
+        hfgdiff_raw_combJetTrg[im]->Add(hfgdiff_JetTrgPt60_80_raw[i]);
+        hfgdiff_raw_combJetTrg[im]->Add(hfgdiff_JetTrgPt80_100_raw[i]);
+        hfgdiff_raw_combJetTrg[im]->Add(hfgdiff_JetTrgPt100above_raw[i]);
+
+        hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt20_40[i]);
+        hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt40_60[i]);
+        hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt60_80[i]);
+        hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt80_100[i]);
+        hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt100above[i]);
+
+
+        //
+        if(hbgdiff_JetTrgPt20_40_raw[i]->Integral())
+            hbgdiff_JetTrgPt20_40_raw[i]->Scale(hbgdiff_JetTrgPt20_40[i]->Integral()/hbgdiff_JetTrgPt20_40_raw[i]->Integral());
+        if(hbgdiff_JetTrgPt40_60_raw[i]->Integral())
+            hbgdiff_JetTrgPt40_60_raw[i]->Scale(hbgdiff_JetTrgPt40_60[i]->Integral()/hbgdiff_JetTrgPt40_60_raw[i]->Integral());
+        if(hbgdiff_JetTrgPt60_80_raw[i]->Integral())
+            hbgdiff_JetTrgPt60_80_raw[i]->Scale(hbgdiff_JetTrgPt60_80[i]->Integral()/hbgdiff_JetTrgPt60_80_raw[i]->Integral());
+        if(hbgdiff_JetTrgPt80_100_raw[i]->Integral())
+            hbgdiff_JetTrgPt80_100_raw[i]->Scale(hbgdiff_JetTrgPt80_100[i]->Integral()/hbgdiff_JetTrgPt80_100_raw[i]->Integral());
+        if(hbgdiff_JetTrgPt100above_raw[i]->Integral())
+            hbgdiff_JetTrgPt100above_raw[i]->Scale(hbgdiff_JetTrgPt100above[i]->Integral()/hbgdiff_JetTrgPt100above_raw[i]->Integral());
+
+        hbgdiff_raw_combJetTrg[im]->Add(hbgdiff_JetTrgPt20_40_raw[i]);
+        hbgdiff_raw_combJetTrg[im]->Add(hbgdiff_JetTrgPt40_60_raw[i]);
+        hbgdiff_raw_combJetTrg[im]->Add(hbgdiff_JetTrgPt60_80_raw[i]);
+        hbgdiff_raw_combJetTrg[im]->Add(hbgdiff_JetTrgPt80_100_raw[i]);
+        hbgdiff_raw_combJetTrg[im]->Add(hbgdiff_JetTrgPt100above_raw[i]);
+
+        hbgdiff_combJetTrg[im]->Add(hbgdiff_JetTrgPt20_40[i]);
+        hbgdiff_combJetTrg[im]->Add(hbgdiff_JetTrgPt40_60[i]);
+        hbgdiff_combJetTrg[im]->Add(hbgdiff_JetTrgPt60_80[i]);
+        hbgdiff_combJetTrg[im]->Add(hbgdiff_JetTrgPt80_100[i]);
+        hbgdiff_combJetTrg[im]->Add(hbgdiff_JetTrgPt100above[i]);
+
+
+        // Photon trigger
+        if(hfgdiff_PhoTrgPt10_15_raw[i]->Integral())
+            hfgdiff_PhoTrgPt10_15_raw[i]->Scale(hfgdiff_PhoTrgPt10_15[i]->Integral()/hfgdiff_PhoTrgPt10_15_raw[i]->Integral());
+        if(hfgdiff_PhoTrgPt15_20_raw[i]->Integral())
+            hfgdiff_PhoTrgPt15_20_raw[i]->Scale(hfgdiff_PhoTrgPt15_20[i]->Integral()/hfgdiff_PhoTrgPt15_20_raw[i]->Integral());
+        if(hfgdiff_PhoTrgPt20_30_raw[i]->Integral())
+            hfgdiff_PhoTrgPt20_30_raw[i]->Scale(hfgdiff_PhoTrgPt20_30[i]->Integral()/hfgdiff_PhoTrgPt20_30_raw[i]->Integral());
+        if(hfgdiff_PhoTrgPt30above_raw[i]->Integral())
+            hfgdiff_PhoTrgPt30above_raw[i]->Scale(hfgdiff_PhoTrgPt30above[i]->Integral()/hfgdiff_PhoTrgPt30above_raw[i]->Integral());
+
+        hfgdiff_raw_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt10_15_raw[i]);
+        hfgdiff_raw_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt15_20_raw[i]);
+        hfgdiff_raw_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt20_30_raw[i]);
+        hfgdiff_raw_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt30above_raw[i]);
+
+        hfgdiff_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt10_15[i]);
+        hfgdiff_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt15_20[i]);
+        hfgdiff_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt20_30[i]);
+        hfgdiff_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt30above[i]);
+
+        //
+        if(hbgdiff_PhoTrgPt10_15_raw[i]->Integral())
+            hbgdiff_PhoTrgPt10_15_raw[i]->Scale(hbgdiff_PhoTrgPt10_15[i]->Integral()/hbgdiff_PhoTrgPt10_15_raw[i]->Integral());
+        if(hbgdiff_PhoTrgPt15_20_raw[i]->Integral())
+            hbgdiff_PhoTrgPt15_20_raw[i]->Scale(hbgdiff_PhoTrgPt15_20[i]->Integral()/hbgdiff_PhoTrgPt15_20_raw[i]->Integral());
+        if(hbgdiff_PhoTrgPt20_30_raw[i]->Integral())
+            hbgdiff_PhoTrgPt20_30_raw[i]->Scale(hbgdiff_PhoTrgPt20_30[i]->Integral()/hbgdiff_PhoTrgPt20_30_raw[i]->Integral());
+        if(hbgdiff_PhoTrgPt30above_raw[i]->Integral())
+            hbgdiff_PhoTrgPt30above_raw[i]->Scale(hbgdiff_PhoTrgPt30above[i]->Integral()/hbgdiff_PhoTrgPt30above_raw[i]->Integral());
+
+        hbgdiff_raw_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt10_15_raw[i]);
+        hbgdiff_raw_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt15_20_raw[i]);
+        hbgdiff_raw_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt20_30_raw[i]);
+        hbgdiff_raw_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt30above_raw[i]);
+
+        hbgdiff_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt10_15[i]);
+        hbgdiff_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt15_20[i]);
+        hbgdiff_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt20_30[i]);
+        hbgdiff_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt30above[i]);
+
+    }
+    cout<<" ....Writing the spectra ...."<<endl;
+    fout->cd();
+    //.. save 
+    for(short i = 0; i<NptRebin; i++) {
+        // track trigger 
+        hfg_raw_combTrkTrg[i]->Write(); 
+        hfg_combTrkTrg[i]->Write();   
+
+        hfgdiff_raw_combTrkTrg[i]->Write();
+        hfgdiff_combTrkTrg[i]->Write();
+
+        hbgdiff_raw_combTrkTrg[i]->Write();
+        hbgdiff_combTrkTrg[i]->Write();
+
+        // Jet trigger 
+        hfg_raw_combJetTrg[i]->Write(); 
+        hfg_combJetTrg[i]->Write();   
+
+        hfgdiff_raw_combJetTrg[i]->Write();
+        hfgdiff_combJetTrg[i]->Write();
+
+        hbgdiff_raw_combJetTrg[i]->Write();
+        hbgdiff_combJetTrg[i]->Write();
+
+        // Photon trigger 
+        hfg_raw_combPhoTrg[i]->Write(); 
+        hfg_combPhoTrg[i]->Write();   
+
+        hfgdiff_raw_combPhoTrg[i]->Write();
+        hfgdiff_combPhoTrg[i]->Write();
+
+        hbgdiff_raw_combPhoTrg[i]->Write();
+        hbgdiff_combPhoTrg[i]->Write();
+    }
+}
+
+//
+void ana_hfforest::draw(int mesonID, int whichTrg, int Nrebin, TFile* f)
+{//..mesonID: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
+ //.. whichTrg: 0=TrkTrg, 1=JetTrg, 2=PhoTrg
+    char plotName[200];
+
+    get_comb_hist(f);
+
+    TCanvas* cc = new TCanvas("cc", "", 1000, 800);
+    int nrow = 4, ncol = 4;
+    cc->Divide(nrow, ncol);
+    int ic = 0, iplt= 0;
+    for(int i = 0; i<NptRebin; i++) {
+        cc->cd(ic+1);
+
+        if(mesonID==0) {
+            if(whichTrg==0) {
+                drawTrg(hfgdiff_raw_combTrkTrg[i], hfgdiff_combTrkTrg[i], Nrebin);
+            } else if(whichTrg==1) {
+                drawTrg(hfgdiff_raw_combJetTrg[i], hfgdiff_combJetTrg[i], Nrebin);
+            } else if(whichTrg==2) {
+                drawTrg(hfgdiff_raw_combPhoTrg[i], hfgdiff_combPhoTrg[i], Nrebin);
+            }
+        } else if(mesonID <NCH) {
+            if(whichTrg==0) {
+                drawTrg(hfg_raw_combTrkTrg[i], hfg_combTrkTrg[i], Nrebin);
+            } else if(whichTrg==1) {
+                drawTrg(hfg_raw_combJetTrg[i], hfg_combJetTrg[i], Nrebin);
+            } else if(whichTrg==2) {
+                drawTrg(hfg_raw_combPhoTrg[i], hfg_combPhoTrg[i], Nrebin);
+            }
+        } else {
+            cout<<" !!! no such D meson  !!!"<<endl;
+        }
+
+        if(ic == nrow*ncol-1 || i==NptRebin-1) {
+            sprintf(plotName, "%s_Trg%d_plot%d.gif", MesonName[mesonID], whichTrg, iplt);
+            cc->SaveAs(plotName);
+            cc->Clear();
+            cc->Divide(nrow, ncol);
+            iplt++;
+            ic = 0;
+        } else 
+            ic++;
+    }
+}
+
+//
+void ana_hfforest::drawTrg(TH1* h_raw, TH1* h, int nrb)
+{
+    h_raw->Rebin(nrb);
+    h->Rebin(nrb);
+
+    h_raw->SetLineColor(2);
+    h_raw->SetMarkerStyle(20);
+    h_raw->SetMarkerColor(2);
+    h_raw->SetMarkerSize(0.5);
+
+    h->SetLineColor(1);
+    h->SetMarkerStyle(25);
+    h->SetMarkerColor(1);
+    h->SetMarkerSize(0.5);
+
+    h->Draw();
+    h_raw->Draw("same");
+}
+//
+//
+void ana_hfforest::drawHighMult(int mesonID, int whichTrg, int Nrebin, TFile* f)
+{//..mesonID: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
+ //.. whichTrg: see trg_name ..
+    char plotName[200];
+
+    get_hist(f);
+
+    TCanvas* cc = new TCanvas("cc", "", 1000, 800);
+    int nrow = 4, ncol = 4;
+    cc->Divide(nrow, ncol);
+    int ic = 0, iplt= 0;
+    for(int i = 0; i<NPT; i++) {
+        cc->cd(ic+1);
+
+        if(mesonID==0) {
+            // normalize the background counts outside the signal region, i.e. mdiff<0.143||>0.149 
+            int ib1 = hfgdiff_raw[whichTrg][i]->FindBin(0.143);
+            int ib2 = hfgdiff_raw[whichTrg][i]->FindBin(0.149);
+            int ibmax = hfgdiff_raw[whichTrg][i]->GetNbinsX();
+
+            float scale = (hfgdiff_raw[whichTrg][i]->Integral(1, ib1) + 
+                          hfgdiff_raw[whichTrg][i]->Integral(ib2, ibmax))/
+                          (hbgdiff_raw[whichTrg][i]->Integral(1, ib1) + 
+                           hbgdiff_raw[whichTrg][i]->Integral(ib2, ibmax));
+            hbgdiff_raw[whichTrg][i]->Scale(scale);
+
+            hfgdiff_raw[whichTrg][i]->Rebin(Nrebin);
+            hbgdiff_raw[whichTrg][i]->Rebin(Nrebin);
+            hfgdiff_raw[whichTrg][i]->SetLineColor(2);
+            hbgdiff_raw[whichTrg][i]->SetLineColor(4);
+            hfgdiff_raw[whichTrg][i]->Draw();
+            hbgdiff_raw[whichTrg][i]->Draw("same");
+        } else if(mesonID < NCH) {
+            hfg_raw[whichTrg][i]->Rebin(Nrebin);
+            hfg_raw[whichTrg][i]->SetLineColor(2);
+            hfg_raw[whichTrg][i]->Draw();
+        } else {
+            cout<<" !!! no such D meson  !!!"<<endl;
+        }
+
+        if(ic == nrow*ncol-1 || i==NPT-1) {
+            sprintf(plotName, "%s_Trg%d_plot%d.gif", MesonName[mesonID], whichTrg, iplt);
+            cc->SaveAs(plotName);
+            cc->Clear();
+            cc->Divide(nrow, ncol);
+            iplt++;
+            ic = 0;
+        } else 
+            ic++;
     }
 }
