@@ -78,17 +78,29 @@ void mapRunLumiHfTreeFile::LoopOverFile(int startFile, int endFile, char *fileli
         TBranch* b_run = T1->GetBranch("fRunNumber");
         T1->SetBranchAddress("TAna01Event", &fpEvt);
 
+        int last_run=-1;
+        int run = fpEvt->fRunNumber;
         float lumi_min = 1e10, lumi_max = -1;
         for(int i = 0; i<T1->GetEntries(); i++) {
             b_flumi->GetEntry(i);
             b_run->GetEntry(i);
 
-            get_infor(lumi_min, lumi_max, fpEvt->fLumiSection);
+            if(run!=last_run && i!=0) {
+                write_infor(infor, last_run, (int)lumi_min, (int)lumi_max, filename); 
+                tmap->Fill();
+
+                lumi_min = 1e10;
+                lumi_max = -1;
+                last_run=run;
+                get_infor(lumi_min, lumi_max, fpEvt->fLumiSection);
+            } else {
+                last_run=run;
+                get_infor(lumi_min, lumi_max, fpEvt->fLumiSection);
+            }
         }
 
-
-        write_infor(infor, fpEvt->fRunNumber, (int)lumi_min, (int)lumi_max, filename); 
-
+        // for the last run in the file
+        write_infor(infor, run, (int)lumi_min, (int)lumi_max, filename); 
         tmap->Fill();
 
         f->Close();
@@ -137,7 +149,7 @@ void mapRunLumiHfTreeFile::LoopOverFileHlt(int startFile, int endFile, char *fil
             continue;
         }
 
-        int run = -1, lumi = -1;
+        int run = -1, last_run=-1, lumi = -1;
         T1->SetBranchAddress("Run", &run);
         T1->SetBranchAddress("LumiBlock", &lumi);
         TBranch* b_flumi = T1->GetBranch("LumiBlock");
@@ -148,12 +160,21 @@ void mapRunLumiHfTreeFile::LoopOverFileHlt(int startFile, int endFile, char *fil
             b_flumi->GetEntry(i);
             b_run->GetEntry(i);
 
-            get_infor(lumi_min, lumi_max, lumi);
+            if(run!=last_run && i!=0) {
+                write_infor(infor, last_run, (int)lumi_min, (int)lumi_max, filename); 
+                tmap->Fill();
+
+                lumi_min = 1e10;
+                lumi_max = -1;
+                last_run=run;
+                get_infor(lumi_min, lumi_max, lumi);
+            } else {
+                last_run=run;
+                get_infor(lumi_min, lumi_max, lumi);
+            }
         }
-
-
-        write_infor(infor, run, (int)lumi_min, (int)lumi_max, filename); 
-
+        // for the last run in the file..
+        write_infor(infor, last_run, (int)lumi_min, (int)lumi_max, filename); 
         tmap->Fill();
 
         f->Close();
