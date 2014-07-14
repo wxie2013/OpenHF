@@ -52,6 +52,8 @@ class HFHiForestSync : public edm::EDAnalyzer {
         float cut_ffls3d;
         float cut_falpha0;
 
+        bool findLumi(int lumi, vector<int>& list);
+
     private:
         edm::Service<TFileService> fs;
 

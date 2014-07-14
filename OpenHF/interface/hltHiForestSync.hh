@@ -61,6 +61,7 @@ class hltHiForestSync : public edm::EDAnalyzer {
         void LoopOverEvt(TTree* T1, Long64_t& run_hifst, Long64_t& evt_hifst);
         void get_trg_name();
         void get_trg_info(TTree* T);
+        bool findLumi(int lumi, vector<int>& list);
 
     private:
         virtual void beginJob() ;

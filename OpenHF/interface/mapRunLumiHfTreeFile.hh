@@ -28,7 +28,8 @@ class mapRunLumiHfTreeFile : public TNamed
     private:
         void Init(int startFile, int endFile, const char* trgName);
         void get_infor(float& min, float& max, int lumi);
-        void write_infor(map_info* infor, int run, int min, int max, string& fname);
+        void fill_listOfLumis(int lumi, vector<int>& list);
+        void write_infor(map_info* infor, int run, int min, int max, string& fname, vector<int>& list);
 
     public:
         mapRunLumiHfTreeFile();
