@@ -199,6 +199,7 @@ void HFDumpStuff::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     if (fVerbose > 0) cout << "The best pV is at position: " << bestPV  << " and has " << bestN << " tracks" << endl;
 
 
+    /* This is for MC. For update it later when using MC
     // -- pthat 
     gHFEvent->fPtHat = -1.; 
     try { 
@@ -208,8 +209,7 @@ void HFDumpStuff::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     } catch (cms::Exception &ex) { 
         if (fVerbose > 0) cout << "GenEventInfoProduct not found." << endl; 
     } 
-
-
+    */
 }
 
 // ------------ method called once each job just before starting event loop  ------------
