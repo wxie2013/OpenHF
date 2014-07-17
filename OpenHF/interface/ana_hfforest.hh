@@ -57,6 +57,42 @@ class ana_hfforest : public TNamed
         TH1* hbgdiff_raw[NTRG][NPT];
         TH1* hbgdiff[NTRG][NPT];
 
+    private: //.. mass distributions for combined spec 
+        // track trigger 
+        TH1* hfg_raw_combTrkTrg[NptRebin]; // raw spectra for the comb to avoid large error from prescale
+        TH1* hfg_combTrkTrg[NptRebin];   //.. regular method
+
+        TH1* hfgdiff_raw_combTrkTrg[NptRebin];
+        TH1* hfgdiff_combTrkTrg[NptRebin];
+
+        TH1* hbgdiff_raw_combTrkTrg[NptRebin];
+        TH1* hbgdiff_combTrkTrg[NptRebin];
+
+        // Jet trigger 
+        TH1* hfg_raw_combJetTrg[NptRebin]; // raw spectra for the comb to avoid large error from prescale
+        TH1* hfg_combJetTrg[NptRebin];   //.. regular method
+
+        TH1* hfgdiff_raw_combJetTrg[NptRebin];
+        TH1* hfgdiff_combJetTrg[NptRebin];
+
+        TH1* hbgdiff_raw_combJetTrg[NptRebin];
+        TH1* hbgdiff_combJetTrg[NptRebin];
+
+        // Photon trigger 
+        TH1* hfg_raw_combPhoTrg[NptRebin]; // raw spectra for the comb to avoid large error from prescale
+        TH1* hfg_combPhoTrg[NptRebin];   //.. regular method
+
+        TH1* hfgdiff_raw_combPhoTrg[NptRebin];
+        TH1* hfgdiff_combPhoTrg[NptRebin];
+
+        TH1* hbgdiff_raw_combPhoTrg[NptRebin];
+        TH1* hbgdiff_combPhoTrg[NptRebin];
+
+        //.. all individual triggers (for checking trigger combination)
+        TH1* hfg_raw_rebin[NTRG][NptRebin]; // raw spectram w/o correcting prescale
+        TH1* hfgdiff_raw_rebin[NTRG][NptRebin];
+        TH1* hbgdiff_raw_rebin[NTRG][NptRebin];
+
     private: //.. mass distributions for FullTrack trigger
         //histo for trg combination. for all D
         TH1* hfg_ZBiasSglTrkPt0_12_raw[NPT];  //.. 0-12GeV/c before correcting prescale
@@ -64,6 +100,11 @@ class ana_hfforest : public TNamed
 
         TH1* hfg_TrkTrgPt12_20_raw[NPT]; //.. 12-20 GeV/c before correcting prescale 
         TH1* hfg_TrkTrgPt12_20[NPT];  //.. 12-20 GeV/c after correcting prescale
+        // for debugging 
+        TH1* hfg_TrkTrgPt12_raw[NPT];
+        TH1* hfg_JetTrgPt20_raw[NPT];
+        TH1* hfg_PhoTrgPt10_raw[NPT];
+        //
 
         TH1* hfg_TrkTrgPt20_30_raw[NPT];  
         TH1* hfg_TrkTrgPt20_30[NPT];  
@@ -200,7 +241,12 @@ class ana_hfforest : public TNamed
 
         TH1* hbgdiff_PhoTrgPt30above_raw[NPT];  
         TH1* hbgdiff_PhoTrgPt30above[NPT];  
-        //
+
+        // trigger prescale weight for each events 
+        float maxTrkTrgPt;
+        float maxJetTrgPt;
+        float maxPhoTrgPt;
+
 
     private: //.. various cuts used to produce results. 
         float cut_m_low[NCH]; //.. low end of the mass hiso.
@@ -217,7 +263,6 @@ class ana_hfforest : public TNamed
         void define_cuts();
         void book_hist(int ich, int iy);
         bool checkRapidityBoundary(float y);
-        void get_hist(TFile* f);
         void get_trg_name();
         void get_trg_info(TTree* T1, TTree* T2);
         int  get_pt_bin_num(float pt);
@@ -230,16 +275,26 @@ class ana_hfforest : public TNamed
         void LoopOverEvt(TTree* T, int iy, int ich);
         void LoopOverHFCandidate(int iy, int ich);
         void FillMassHisto(snglhfcand* cand, int iy, int ich);
-        void FillTrgCombineTrkTrg(int id, int ich, int ipt, int iy, float mass, float mass_dau);
-        void FillTrgCombineJetTrg(int id, int ich, int ipt, int iy, float mass, float mass_dau);
-        void FillTrgCombinePhoTrg(int id, int ich, int ipt, int iy, float mass, float mass_dau);
+        void FillTrgCombineTrkTrg(int id, int ich, int ipt, float mass, float mass_dau);
+        void FillTrgCombineJetTrg(int id, int ich, int ipt, float mass, float mass_dau);
+        void FillTrgCombinePhoTrg(int id, int ich, int ipt, float mass, float mass_dau);
         void FindMaxTrgPt(trigO* tobj, float& max);
-
+        void define_combSpec();
+        void define_rebinSpec();
+        void drawDstar(TH1* h_fg, TH1* h_bg, int nrb, float& sig, float& err);
+        void draw_fit(int mesonID, TH1* h, int nrb, float rlow, float rhigh, float& sig, float& err);
+        void GetMaxTrgPt(); //for trigger combination 
     public:
         ana_hfforest();
         virtual ~ana_hfforest();
 
+        void get_hist(TFile* fin);
+        void get_comb_hist(TFile* fin);
+        void rebinSpec(TFile* fout);
+        void CombineSpec(TFile* fout);
         void LoopOverFile(int startFile, int endFile, char *filelist, int iy, int ich, char* outfile);
+        void drawOneTrg(int mesonID, int whichTrg, int Nrebin, bool chk);
+        void drawHighMult(int mesonID, int whichTrg, int Nrebin, TFile* fin);
 
         ClassDef(ana_hfforest, 1)
 };

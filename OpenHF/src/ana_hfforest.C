@@ -3,6 +3,7 @@
 
 #include "TH1F.h"
 #include "TFile.h"
+#include "TF1.h"
 #include "TSystem.h"
 #include "TTree.h"
 #include "TNtuple.h"
@@ -11,9 +12,10 @@
 #include "../interface/hfcand_v0.hh"
 #include "../interface/ana_hfforest.hh"
 
-const char* MesonName[NCH] = {"Dstar2D0Pi", "D02KPi", "Ds2PhiPi", "Ds2KstarK", "Dpm2KPiPi"};
-
 ClassImp(ana_hfforest)
+
+// for unknown reason this can not be placed in ana_common.hh
+const char* MesonName[NCH] = {"Dstar2D0Pi", "D02KPi", "Ds2PhiPi", "Ds2KstarK", "Dpm2KPiPi"};
 
 ana_hfforest::ana_hfforest()
 {;}
@@ -157,7 +159,7 @@ ana_hfforest::~ana_hfforest()
 bool ana_hfforest::checkRapidityBoundary(float y) 
 {
     if(y<Ymin || y>Ymin+NY*dY) {
-        cout<<"!! rapidity: "<<y<<" beyond "<<Ymin<<"--"<<Ymin+NY*dY<<". !!!"<<endl;
+        //cout<<"!! rapidity: "<<y<<" beyond "<<Ymin<<"--"<<Ymin+NY*dY<<". !!!"<<endl;
         return false;
     }
 
@@ -193,6 +195,7 @@ void ana_hfforest::Init(int startFile, int endFile, char *filelist, int iy, int 
     for(int i = 0; i<NTRG; i++) {
         trg_obj[i] = new trigO;
     }
+
 }
 
 //
@@ -258,6 +261,9 @@ void ana_hfforest::book_hist(int ich, int iy)
         sprintf(hname, "hfg_ZBiasSglTrkPt0_12%d", i);
         hfg_ZBiasSglTrkPt0_12[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
 
+        sprintf(hname, "hfg_TrkTrgPt12_raw%d", i);
+        hfg_TrkTrgPt12_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
         sprintf(hname, "hfg_TrkTrgPt12_20_raw%d", i);
         hfg_TrkTrgPt12_20_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
         sprintf(hname, "hfg_TrkTrgPt12_20%d", i);
@@ -292,6 +298,9 @@ void ana_hfforest::book_hist(int ich, int iy)
         hfg_ZBiasSglTrkPt0_20_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
         sprintf(hname, "hfg_ZBiasSglTrkPt0_20%d", i);
         hfg_ZBiasSglTrkPt0_20[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+        sprintf(hname, "hfg_JetTrgPt20_raw%d", i);
+        hfg_JetTrgPt20_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
 
         sprintf(hname, "hfg_JetTrgPt20_40_raw%d", i);
         hfg_JetTrgPt20_40_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
@@ -343,6 +352,9 @@ void ana_hfforest::book_hist(int ich, int iy)
         hfg_ZBiasSglTrkPt0_10_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
         sprintf(hname, "hfg_ZBiasSglTrkPt0_10%d", i);
         hfg_ZBiasSglTrkPt0_10[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+        sprintf(hname, "hfg_PhoTrgPt10_raw%d", i);
+        hfg_PhoTrgPt10_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
 
         sprintf(hname, "hfg_PhoTrgPt10_15_raw%d", i);
         hfg_PhoTrgPt10_15_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
@@ -739,6 +751,7 @@ void ana_hfforest::write()
         hfg_ZBiasSglTrkPt0_12_raw[i]->Write();
         hfg_ZBiasSglTrkPt0_12[i]->Write();
 
+	hfg_TrkTrgPt12_raw[i]->Write();
         hfg_TrkTrgPt12_20_raw[i]->Write();
         hfg_TrkTrgPt12_20[i]->Write();
         hfg_TrkTrgPt20_30_raw[i]->Write();
@@ -750,6 +763,7 @@ void ana_hfforest::write()
         hfg_ZBiasSglTrkPt0_20_raw[i]->Write();
         hfg_ZBiasSglTrkPt0_20[i]->Write();
 
+        hfg_JetTrgPt20_raw[i]->Write();
         hfg_JetTrgPt20_40_raw[i]->Write();
         hfg_JetTrgPt20_40[i]->Write();
         hfg_JetTrgPt40_60_raw[i]->Write();
@@ -765,6 +779,7 @@ void ana_hfforest::write()
         hfg_ZBiasSglTrkPt0_10_raw[i]->Write();
         hfg_ZBiasSglTrkPt0_10[i]->Write();
 
+        hfg_PhoTrgPt10_raw[i]->Write();
         hfg_PhoTrgPt10_15_raw[i]->Write();
         hfg_PhoTrgPt10_15[i]->Write();
         hfg_PhoTrgPt15_20_raw[i]->Write();
@@ -903,6 +918,10 @@ void ana_hfforest::reset_trg()
         trg[i] = 0;
         trg_obj[i]->clear();
     }
+
+    maxTrkTrgPt = 0;
+    maxJetTrgPt = 0;
+    maxPhoTrgPt = 0;
 }
 
 //
@@ -913,7 +932,36 @@ void ana_hfforest::LoopOverEvt(TTree* T, int iy, int ich)
         reset_trg();
         T->GetEntry(i);
 
+        GetMaxTrgPt();
         LoopOverHFCandidate(iy, ich);
+    }
+}
+
+//
+void ana_hfforest::GetMaxTrgPt()
+{
+    //.. track trigger ...
+    for(int it = 1; it<=3; it++) {
+        if(trg[it]) {
+            FindMaxTrgPt(trg_obj[it], maxTrkTrgPt);
+            break;
+        }
+    }
+
+    // Jet trigger
+    for(int it = 4; it<=8; it++) {
+        if(trg[it]) {
+            FindMaxTrgPt(trg_obj[it], maxJetTrgPt);
+            break;
+        }
+    }
+
+    // photon trigger 
+    for(int it = 9; it<=12; it++) {
+        if(trg[it]) {
+            FindMaxTrgPt(trg_obj[it], maxPhoTrgPt);
+            break;
+        }
     }
 }
 
@@ -1043,54 +1091,41 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
 void ana_hfforest::FillTrgCombineTrkTrg(int id, int ich, int ipt, float mass, float mass_dau)
 {//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
-    float maxTrgPt = 0;
-    if(trg[1]) {
-        FindMaxTrgPt(trg_obj[1], maxTrgPt);
+    if(trg[1] && maxTrkTrgPt >=12) 
+        hfg_TrkTrgPt12_raw[ipt]->Fill(mass);
 
-        if(maxTrgPt >=12 && maxTrgPt < 20) {
-            if(id==0) {
-                hfg_TrkTrgPt12_20_raw[ipt]->Fill(mass);
-                hfg_TrkTrgPt12_20[ipt]->Fill(mass, prscl[1]); //.. L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_TrkTrgPt12_20_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_TrkTrgPt12_20[ipt]->Fill(mass-mass_dau, prscl[1]); //.. L1 base prescale 1
-            } else if(id==2) {
-                hbgdiff_TrkTrgPt12_20_raw[ipt]->Fill(mass-mass_dau);
-                hbgdiff_TrkTrgPt12_20[ipt]->Fill(mass-mass_dau, prscl[1]); //.. L1 base prescale 1
-            }
+    if(trg[1] && maxTrkTrgPt >=12 && maxTrkTrgPt < 20) {
+        if(id==0) {
+            hfg_TrkTrgPt12_20_raw[ipt]->Fill(mass);
+            hfg_TrkTrgPt12_20[ipt]->Fill(mass, prscl[1]); //.. L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_TrkTrgPt12_20_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_TrkTrgPt12_20[ipt]->Fill(mass-mass_dau, prscl[1]); //.. L1 base prescale 1
+        } else if(id==2) {
+            hbgdiff_TrkTrgPt12_20_raw[ipt]->Fill(mass-mass_dau);
+            hbgdiff_TrkTrgPt12_20[ipt]->Fill(mass-mass_dau, prscl[1]); //.. L1 base prescale 1
         }
-    }
-
-    if(trg[2])  {
-        FindMaxTrgPt(trg_obj[2], maxTrgPt);
-
-        if(maxTrgPt >=20 && maxTrgPt < 30) {
-            if(id==0) {
-                hfg_TrkTrgPt20_30_raw[ipt]->Fill(mass);
-                hfg_TrkTrgPt20_30[ipt]->Fill(mass, prscl[2]); //.. L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_TrkTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_TrkTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[2]); //.. L1 base prescale 1
-            } else if(id==2) {
-                hbgdiff_TrkTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
-                hbgdiff_TrkTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[2]); //.. L1 base prescale 1
-            }
+    } else if(trg[2] && maxTrkTrgPt >=20 && maxTrkTrgPt < 30) {
+        if(id==0) {
+            hfg_TrkTrgPt20_30_raw[ipt]->Fill(mass);
+            hfg_TrkTrgPt20_30[ipt]->Fill(mass, prscl[2]); //.. L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_TrkTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_TrkTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[2]); //.. L1 base prescale 1
+        } else if(id==2) {
+            hbgdiff_TrkTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
+            hbgdiff_TrkTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[2]); //.. L1 base prescale 1
         }
-    }
-
-    if(trg[3]) {
-        FindMaxTrgPt(trg_obj[3], maxTrgPt);
-        if(maxTrgPt >= 30) {
-            if(id==0) {
-                hfg_TrkTrgPt30above_raw[ipt]->Fill(mass);
-                hfg_TrkTrgPt30above[ipt]->Fill(mass, prscl[3]);// L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_TrkTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_TrkTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[3]);// L1 base prescale 1
-            } else if(id==2) {
-                hfgdiff_TrkTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_TrkTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[3]);// L1 base prescale 1
-            }
+    } else if(trg[3] && maxTrkTrgPt >= 30) {
+        if(id==0) {
+            hfg_TrkTrgPt30above_raw[ipt]->Fill(mass);
+            hfg_TrkTrgPt30above[ipt]->Fill(mass, prscl[3]);// L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_TrkTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_TrkTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[3]);// L1 base prescale 1
+        } else if(id==2) {
+            hfgdiff_TrkTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_TrkTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[3]);// L1 base prescale 1
         }
     }
 }
@@ -1099,88 +1134,63 @@ void ana_hfforest::FillTrgCombineTrkTrg(int id, int ich, int ipt, float mass, fl
 void ana_hfforest::FillTrgCombineJetTrg(int id, int ich, int ipt, float mass, float mass_dau)
 {//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
-    float maxTrgPt = 0;
-    if(trg[4]) {
-        FindMaxTrgPt(trg_obj[4], maxTrgPt);
+    if(trg[4] && maxJetTrgPt >=20) 
+        hfg_JetTrgPt20_raw[ipt]->Fill(mass);
 
-        if(maxTrgPt >=20 && maxTrgPt < 40) {
-            if(id==0) {
-                hfg_JetTrgPt20_40_raw[ipt]->Fill(mass);
-                hfg_JetTrgPt20_40[ipt]->Fill(mass, prscl[4]); //.. L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_JetTrgPt20_40_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_JetTrgPt20_40[ipt]->Fill(mass-mass_dau, prscl[4]); //.. L1 base prescale 1
-            } else if(id==2) {
-                hbgdiff_JetTrgPt20_40_raw[ipt]->Fill(mass-mass_dau);
-                hbgdiff_JetTrgPt20_40[ipt]->Fill(mass-mass_dau, prscl[4]); //.. L1 base prescale 1
-            }
+    if(trg[4] && maxJetTrgPt >=20 && maxJetTrgPt < 40) {
+        if(id==0) {
+            hfg_JetTrgPt20_40_raw[ipt]->Fill(mass);
+            hfg_JetTrgPt20_40[ipt]->Fill(mass, prscl[4]); //.. L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_JetTrgPt20_40_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_JetTrgPt20_40[ipt]->Fill(mass-mass_dau, prscl[4]); //.. L1 base prescale 1
+        } else if(id==2) {
+            hbgdiff_JetTrgPt20_40_raw[ipt]->Fill(mass-mass_dau);
+            hbgdiff_JetTrgPt20_40[ipt]->Fill(mass-mass_dau, prscl[4]); //.. L1 base prescale 1
         }
-    }
-
-    if(trg[5])  {
-        FindMaxTrgPt(trg_obj[5], maxTrgPt);
-
-        if(maxTrgPt >=40 && maxTrgPt < 60) {
-            if(id==0) {
-                hfg_JetTrgPt40_60_raw[ipt]->Fill(mass);
-                hfg_JetTrgPt40_60[ipt]->Fill(mass, prscl[5]); //.. L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_JetTrgPt40_60_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_JetTrgPt40_60[ipt]->Fill(mass-mass_dau, prscl[5]); //.. L1 base prescale 1
-            } else if(id==2) {
-                hbgdiff_JetTrgPt40_60_raw[ipt]->Fill(mass-mass_dau);
-                hbgdiff_JetTrgPt40_60[ipt]->Fill(mass-mass_dau, prscl[5]); //.. L1 base prescale 1
-            }
+    } else if(trg[5] && maxJetTrgPt >=40 && maxJetTrgPt < 60) {
+        if(id==0) {
+            hfg_JetTrgPt40_60_raw[ipt]->Fill(mass);
+            hfg_JetTrgPt40_60[ipt]->Fill(mass, prscl[5]); //.. L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_JetTrgPt40_60_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_JetTrgPt40_60[ipt]->Fill(mass-mass_dau, prscl[5]); //.. L1 base prescale 1
+        } else if(id==2) {
+            hbgdiff_JetTrgPt40_60_raw[ipt]->Fill(mass-mass_dau);
+            hbgdiff_JetTrgPt40_60[ipt]->Fill(mass-mass_dau, prscl[5]); //.. L1 base prescale 1
         }
-    }
-
-    if(trg[6])  {
-        FindMaxTrgPt(trg_obj[6], maxTrgPt);
-
-        if(maxTrgPt >=60 && maxTrgPt < 80) {
-            if(id==0) {
-                hfg_JetTrgPt60_80_raw[ipt]->Fill(mass);
-                hfg_JetTrgPt60_80[ipt]->Fill(mass, prscl[6]); //.. L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_JetTrgPt60_80_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_JetTrgPt60_80[ipt]->Fill(mass-mass_dau, prscl[6]); //.. L1 base prescale 1
-            } else if(id==2) {
-                hbgdiff_JetTrgPt60_80_raw[ipt]->Fill(mass-mass_dau);
-                hbgdiff_JetTrgPt60_80[ipt]->Fill(mass-mass_dau, prscl[6]); //.. L1 base prescale 1
-            }
+    } else if(trg[6] && maxJetTrgPt >=60 && maxJetTrgPt < 80) {
+        if(id==0) {
+            hfg_JetTrgPt60_80_raw[ipt]->Fill(mass);
+            hfg_JetTrgPt60_80[ipt]->Fill(mass, prscl[6]); //.. L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_JetTrgPt60_80_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_JetTrgPt60_80[ipt]->Fill(mass-mass_dau, prscl[6]); //.. L1 base prescale 1
+        } else if(id==2) {
+            hbgdiff_JetTrgPt60_80_raw[ipt]->Fill(mass-mass_dau);
+            hbgdiff_JetTrgPt60_80[ipt]->Fill(mass-mass_dau, prscl[6]); //.. L1 base prescale 1
         }
-    }
-
-    if(trg[7])  {
-        FindMaxTrgPt(trg_obj[7], maxTrgPt);
-
-        if(maxTrgPt >=80 && maxTrgPt < 100) {
-            if(id==0) {
-                hfg_JetTrgPt80_100_raw[ipt]->Fill(mass);
-                hfg_JetTrgPt80_100[ipt]->Fill(mass, prscl[7]); //.. L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_JetTrgPt80_100_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_JetTrgPt80_100[ipt]->Fill(mass-mass_dau, prscl[7]); //.. L1 base prescale 1
-            } else if(id==2) {
-                hbgdiff_JetTrgPt80_100_raw[ipt]->Fill(mass-mass_dau);
-                hbgdiff_JetTrgPt80_100[ipt]->Fill(mass-mass_dau, prscl[7]); //.. L1 base prescale 1
-            }
+    } else if(trg[7] && maxJetTrgPt >=80 && maxJetTrgPt < 100) {
+        if(id==0) {
+            hfg_JetTrgPt80_100_raw[ipt]->Fill(mass);
+            hfg_JetTrgPt80_100[ipt]->Fill(mass, prscl[7]); //.. L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_JetTrgPt80_100_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_JetTrgPt80_100[ipt]->Fill(mass-mass_dau, prscl[7]); //.. L1 base prescale 1
+        } else if(id==2) {
+            hbgdiff_JetTrgPt80_100_raw[ipt]->Fill(mass-mass_dau);
+            hbgdiff_JetTrgPt80_100[ipt]->Fill(mass-mass_dau, prscl[7]); //.. L1 base prescale 1
         }
-    }
-
-    if(trg[8]) {
-        FindMaxTrgPt(trg_obj[8], maxTrgPt);
-        if(maxTrgPt >= 100) {
-            if(id==0) {
-                hfg_JetTrgPt100above_raw[ipt]->Fill(mass);
-                hfg_JetTrgPt100above[ipt]->Fill(mass, prscl[8]);// L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_JetTrgPt100above_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_JetTrgPt100above[ipt]->Fill(mass-mass_dau, prscl[8]);// L1 base prescale 1
-            } else if(id==2) {
-                hfgdiff_JetTrgPt100above_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_JetTrgPt100above[ipt]->Fill(mass-mass_dau, prscl[8]);// L1 base prescale 1
-            }
+    } else if(trg[8] && maxJetTrgPt >= 100) {
+        if(id==0) {
+            hfg_JetTrgPt100above_raw[ipt]->Fill(mass);
+            hfg_JetTrgPt100above[ipt]->Fill(mass, prscl[8]);// L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_JetTrgPt100above_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_JetTrgPt100above[ipt]->Fill(mass-mass_dau, prscl[8]);// L1 base prescale 1
+        } else if(id==2) {
+            hfgdiff_JetTrgPt100above_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_JetTrgPt100above[ipt]->Fill(mass-mass_dau, prscl[8]);// L1 base prescale 1
         }
     }
 }
@@ -1189,71 +1199,52 @@ void ana_hfforest::FillTrgCombineJetTrg(int id, int ich, int ipt, float mass, fl
 void ana_hfforest::FillTrgCombinePhoTrg(int id, int ich, int ipt, float mass, float mass_dau)
 {//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
-    float maxTrgPt = 0;
-    if(trg[9]) {
-        FindMaxTrgPt(trg_obj[9], maxTrgPt);
+    if(trg[9] && maxPhoTrgPt >=10) 
+        hfg_PhoTrgPt10_raw[ipt]->Fill(mass);
 
-        if(maxTrgPt >=10 && maxTrgPt < 15) {
-            if(id==0) {
-                hfg_PhoTrgPt10_15_raw[ipt]->Fill(mass);
-                hfg_PhoTrgPt10_15[ipt]->Fill(mass, prscl[9]); //.. L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_PhoTrgPt10_15_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_PhoTrgPt10_15[ipt]->Fill(mass-mass_dau, prscl[9]); //.. L1 base prescale 1
-            } else if(id==2) {
-                hbgdiff_PhoTrgPt10_15_raw[ipt]->Fill(mass-mass_dau);
-                hbgdiff_PhoTrgPt10_15[ipt]->Fill(mass-mass_dau, prscl[9]); //.. L1 base prescale 1
-            }
+    if(trg[9] && maxPhoTrgPt >=10 && maxPhoTrgPt < 15) {
+        if(id==0) {
+            hfg_PhoTrgPt10_15_raw[ipt]->Fill(mass);
+            hfg_PhoTrgPt10_15[ipt]->Fill(mass, prscl[9]); //.. L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_PhoTrgPt10_15_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_PhoTrgPt10_15[ipt]->Fill(mass-mass_dau, prscl[9]); //.. L1 base prescale 1
+        } else if(id==2) {
+            hbgdiff_PhoTrgPt10_15_raw[ipt]->Fill(mass-mass_dau);
+            hbgdiff_PhoTrgPt10_15[ipt]->Fill(mass-mass_dau, prscl[9]); //.. L1 base prescale 1
         }
-    }
-
-    if(trg[10])  {
-        FindMaxTrgPt(trg_obj[10], maxTrgPt);
-
-        if(maxTrgPt >=15 && maxTrgPt < 20) {
-            if(id==0) {
-                hfg_PhoTrgPt15_20_raw[ipt]->Fill(mass);
-                hfg_PhoTrgPt15_20[ipt]->Fill(mass, prscl[10]); //.. L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_PhoTrgPt15_20_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_PhoTrgPt15_20[ipt]->Fill(mass-mass_dau, prscl[10]); //.. L1 base prescale 1
-            } else if(id==2) {
-                hbgdiff_PhoTrgPt15_20_raw[ipt]->Fill(mass-mass_dau);
-                hbgdiff_PhoTrgPt15_20[ipt]->Fill(mass-mass_dau, prscl[10]); //.. L1 base prescale 1
-            }
+    } else if(trg[10] && maxPhoTrgPt >=15 && maxPhoTrgPt < 20) {
+        if(id==0) {
+            hfg_PhoTrgPt15_20_raw[ipt]->Fill(mass);
+            hfg_PhoTrgPt15_20[ipt]->Fill(mass, prscl[10]); //.. L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_PhoTrgPt15_20_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_PhoTrgPt15_20[ipt]->Fill(mass-mass_dau, prscl[10]); //.. L1 base prescale 1
+        } else if(id==2) {
+            hbgdiff_PhoTrgPt15_20_raw[ipt]->Fill(mass-mass_dau);
+            hbgdiff_PhoTrgPt15_20[ipt]->Fill(mass-mass_dau, prscl[10]); //.. L1 base prescale 1
         }
-    }
-
-    if(trg[11])  {
-        FindMaxTrgPt(trg_obj[11], maxTrgPt);
-
-        if(maxTrgPt >=20 && maxTrgPt < 30) {
-            if(id==0) {
-                hfg_PhoTrgPt20_30_raw[ipt]->Fill(mass);
-                hfg_PhoTrgPt20_30[ipt]->Fill(mass, prscl[11]); //.. L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_PhoTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_PhoTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[11]); //.. L1 base prescale 1
-            } else if(id==2) {
-                hbgdiff_PhoTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
-                hbgdiff_PhoTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[11]); //.. L1 base prescale 1
-            }
+    } else if(trg[11] && maxPhoTrgPt >=20 && maxPhoTrgPt < 30) {
+        if(id==0) {
+            hfg_PhoTrgPt20_30_raw[ipt]->Fill(mass);
+            hfg_PhoTrgPt20_30[ipt]->Fill(mass, prscl[11]); //.. L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_PhoTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_PhoTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[11]); //.. L1 base prescale 1
+        } else if(id==2) {
+            hbgdiff_PhoTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
+            hbgdiff_PhoTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[11]); //.. L1 base prescale 1
         }
-    }
-
-    if(trg[12]) {
-        FindMaxTrgPt(trg_obj[12], maxTrgPt);
-        if(maxTrgPt >= 30) {
-            if(id==0) {
-                hfg_PhoTrgPt30above_raw[ipt]->Fill(mass);
-                hfg_PhoTrgPt30above[ipt]->Fill(mass, prscl[12]);// L1 base prescale 1
-            } else if(id==1) {
-                hfgdiff_PhoTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_PhoTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[12]);// L1 base prescale 1
-            } else if(id==2) {
-                hfgdiff_PhoTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
-                hfgdiff_PhoTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[12]);// L1 base prescale 1
-            }
+    } else if(trg[12] && maxPhoTrgPt >= 30) {
+        if(id==0) {
+            hfg_PhoTrgPt30above_raw[ipt]->Fill(mass);
+            hfg_PhoTrgPt30above[ipt]->Fill(mass, prscl[12]);// L1 base prescale 1
+        } else if(id==1) {
+            hfgdiff_PhoTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_PhoTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[12]);// L1 base prescale 1
+        } else if(id==2) {
+            hfgdiff_PhoTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
+            hfgdiff_PhoTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[12]);// L1 base prescale 1
         }
     }
 }
@@ -1384,44 +1375,57 @@ void ana_hfforest::get_comb_hist(TFile* f)
     cout<<" .... fetching combination file  ..."<<endl;
     char hname[100];
     for(short i = 0; i<NptRebin; i++) {
-        sprintf(hname, "hfg_raw_combTrkTrg_pt%d", i);
-        hfg_raw_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
-        sprintf(hname, "hfg_combTrkTrg_pt%d", i);
-        hfg_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        sprintf(hname, "hfg_raw_combTrkTrg%d", i);
+        hfg_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
+        sprintf(hname, "hfg_combTrkTrg%d", i);
+        hfg_combTrkTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_raw_combTrkTrg%d", i);
-        hfgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_combTrkTrg%d", i);
-        hfgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_raw_combTrkTrg%d", i);
-        hbgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_combTrkTrg%d", i);
-        hbgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_raw_combJetTrg%d", i);
-        hfg_raw_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_raw_combJetTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_combJetTrg%d", i);
-        hfg_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_combJetTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_raw_combJetTrg%d", i);
-        hfgdiff_raw_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_raw_combJetTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_combJetTrg%d", i);
-        hfgdiff_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_combJetTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_raw_combJetTrg%d", i);
-        hbgdiff_raw_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_raw_combJetTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_combJetTrg%d", i);
-        hbgdiff_combJetTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_combJetTrg[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_raw_combPhoTrg%d", i);
-        hfg_raw_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_raw_combPhoTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_combPhoTrg%d", i);
-        hfg_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_combPhoTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_raw_combPhoTrg%d", i);
-        hfgdiff_raw_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_raw_combPhoTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_combPhoTrg%d", i);
-        hfgdiff_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_combPhoTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_raw_combPhoTrg%d", i);
-        hbgdiff_raw_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_raw_combPhoTrg[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_combPhoTrg%d", i);
-        hbgdiff_combPhoTrg[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_combPhoTrg[i] = (TH1F*)f->Get(hname);
+    }
+    // reference hist for checking trigger combination ...
+    for(short it = 0; it<NTRG; it++) {
+        for(short i = 0; i<NptRebin; i++) {
+            sprintf(hname, "hfg_raw_rebin%d_%d", it, i);
+            hfg_raw_rebin[it][i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfgdiff_raw_rebin%d_%d", it, i);
+            hfgdiff_raw_rebin[it][i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hbgdiff_raw_rebin%d_%d", it, i);
+            hbgdiff_raw_rebin[it][i] = (TH1F*)f->Get(hname);
+        }
     }
     cout<<" .... done ..."<<endl;
 }
@@ -1440,23 +1444,23 @@ void ana_hfforest::get_hist(TFile* f)
         for(short i = 0; i<NPT; i++) {
 
             sprintf(hname, "hfg%d_%d", it, i);
-            hfg[it][i] = (TH1F*)f->Get(hname)->Clone();
+            hfg[it][i] = (TH1F*)f->Get(hname);
             sprintf(hname, "hfg_raw%d_%d", it, i);
-            hfg_raw[it][i] =  (TH1F*)f->Get(hname)->Clone();
+            hfg_raw[it][i] =  (TH1F*)f->Get(hname);
         }
 
     // D*
     for(short it = 0; it<NTRG; it++) 
         for(short i = 0; i<NPT; i++) {
             sprintf(hname, "hfgdiff%d_%d", it, i);
-            hfgdiff[it][i] = (TH1F*)f->Get(hname)->Clone();
+            hfgdiff[it][i] = (TH1F*)f->Get(hname);
             sprintf(hname, "hfgdiff_raw%d_%d", it, i);
-            hfgdiff_raw[it][i] = (TH1F*)f->Get(hname)->Clone();
+            hfgdiff_raw[it][i] = (TH1F*)f->Get(hname);
 
               sprintf(hname, "hbgdiff%d_%d", it, i);
-              hbgdiff[it][i] = (TH1F*)f->Get(hname)->Clone();
+              hbgdiff[it][i] = (TH1F*)f->Get(hname);
               sprintf(hname, "hbgdiff_raw%d_%d", it, i);
-              hbgdiff_raw[it][i] = (TH1F*)f->Get(hname)->Clone();
+              hbgdiff_raw[it][i] = (TH1F*)f->Get(hname);
         }
 
 
@@ -1464,81 +1468,81 @@ void ana_hfforest::get_hist(TFile* f)
     for(short i = 0; i<NPT; i++) {
 
         sprintf(hname, "hfg_ZBiasSglTrkPt0_12_raw%d", i);
-        hfg_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_ZBiasSglTrkPt0_12%d", i);
-        hfg_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_TrkTrgPt12_20_raw%d", i);
-        hfg_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_TrkTrgPt12_20%d", i);
-        hfg_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_TrkTrgPt20_30_raw%d", i);
-        hfg_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_TrkTrgPt20_30%d", i);
-        hfg_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_TrkTrgPt30above_raw%d", i);
-        hfg_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_TrkTrgPt30above%d", i);
-        hfg_TrkTrgPt30above[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
 
         //Jet trigger 
         sprintf(hname, "hfg_ZBiasSglTrkPt0_20_raw%d", i);
-        hfg_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_ZBiasSglTrkPt0_20%d", i);
-        hfg_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_JetTrgPt20_40_raw%d", i);
-        hfg_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_JetTrgPt20_40%d", i);
-        hfg_JetTrgPt20_40[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_JetTrgPt20_40[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_JetTrgPt40_60_raw%d", i);
-        hfg_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_JetTrgPt40_60%d", i);
-        hfg_JetTrgPt40_60[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_JetTrgPt40_60[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_JetTrgPt60_80_raw%d", i);
-        hfg_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_JetTrgPt60_80%d", i);
-        hfg_JetTrgPt60_80[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_JetTrgPt60_80[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_JetTrgPt80_100_raw%d", i);
-        hfg_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_JetTrgPt80_100%d", i);
-        hfg_JetTrgPt80_100[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_JetTrgPt80_100[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_JetTrgPt100above_raw%d", i);
-        hfg_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_JetTrgPt100above%d", i);
-        hfg_JetTrgPt100above[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_JetTrgPt100above[i] = (TH1F*)f->Get(hname);
 
         //Photon trigger 
         sprintf(hname, "hfg_ZBiasSglTrkPt0_10_raw%d", i);
-        hfg_ZBiasSglTrkPt0_10_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_ZBiasSglTrkPt0_10_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_ZBiasSglTrkPt0_10%d", i);
-        hfg_ZBiasSglTrkPt0_10[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_ZBiasSglTrkPt0_10[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_PhoTrgPt10_15_raw%d", i);
-        hfg_PhoTrgPt10_15_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_PhoTrgPt10_15_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_PhoTrgPt10_15%d", i);
-        hfg_PhoTrgPt10_15[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_PhoTrgPt10_15[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_PhoTrgPt15_20_raw%d", i);
-        hfg_PhoTrgPt15_20_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_PhoTrgPt15_20_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_PhoTrgPt15_20%d", i);
-        hfg_PhoTrgPt15_20[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_PhoTrgPt15_20[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_PhoTrgPt20_30_raw%d", i);
-        hfg_PhoTrgPt20_30_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_PhoTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_PhoTrgPt20_30%d", i);
-        hfg_PhoTrgPt20_30[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_PhoTrgPt20_30[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfg_PhoTrgPt30above_raw%d", i);
-        hfg_PhoTrgPt30above_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_PhoTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfg_PhoTrgPt30above%d", i);
-        hfg_PhoTrgPt30above[i] = (TH1F*)f->Get(hname)->Clone();
+        hfg_PhoTrgPt30above[i] = (TH1F*)f->Get(hname);
     }
 
 
@@ -1547,158 +1551,158 @@ void ana_hfforest::get_hist(TFile* f)
 
         // FullTrack trigger
         sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12_raw%d", i);
-        hfgdiff_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12%d", i);
-        hfgdiff_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_TrkTrgPt12_20_raw%d", i);
-        hfgdiff_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_TrkTrgPt12_20%d", i);
-        hfgdiff_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_TrkTrgPt20_30_raw%d", i);
-        hfgdiff_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_TrkTrgPt20_30%d", i);
-        hfgdiff_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_TrkTrgPt30above_raw%d", i);
-        hfgdiff_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_TrkTrgPt30above%d", i);
-        hfgdiff_TrkTrgPt30above[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
 
 
         sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12_raw%d", i);
-        hbgdiff_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12%d", i);
-        hbgdiff_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_TrkTrgPt12_20_raw%d", i);
-        hbgdiff_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_TrkTrgPt12_20%d", i);
-        hbgdiff_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_TrkTrgPt20_30_raw%d", i);
-        hbgdiff_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_TrkTrgPt20_30%d", i);
-        hbgdiff_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_TrkTrgPt30above_raw%d", i);
-        hbgdiff_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_TrkTrgPt30above%d", i);
-        hbgdiff_TrkTrgPt30above[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
 
         // Jet trigger
         sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20_raw%d", i);
-        hfgdiff_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20%d", i);
-        hfgdiff_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_JetTrgPt20_40_raw%d", i);
-        hfgdiff_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_JetTrgPt20_40%d", i);
-        hfgdiff_JetTrgPt20_40[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_JetTrgPt20_40[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_JetTrgPt40_60_raw%d", i);
-        hfgdiff_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_JetTrgPt40_60%d", i);
-        hfgdiff_JetTrgPt40_60[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_JetTrgPt40_60[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_JetTrgPt60_80_raw%d", i);
-        hfgdiff_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_JetTrgPt60_80%d", i);
-        hfgdiff_JetTrgPt60_80[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_JetTrgPt60_80[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_JetTrgPt80_100_raw%d", i);
-        hfgdiff_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_JetTrgPt80_100%d", i);
-        hfgdiff_JetTrgPt80_100[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_JetTrgPt80_100[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_JetTrgPt100above_raw%d", i);
-        hfgdiff_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_JetTrgPt100above%d", i);
-        hfgdiff_JetTrgPt100above[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_JetTrgPt100above[i] = (TH1F*)f->Get(hname);
 
 
         sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20_raw%d", i);
-        hbgdiff_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20%d", i);
-        hbgdiff_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_JetTrgPt20_40_raw%d", i);
-        hbgdiff_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_JetTrgPt20_40%d", i);
-        hbgdiff_JetTrgPt20_40[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_JetTrgPt20_40[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_JetTrgPt40_60_raw%d", i);
-        hbgdiff_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_JetTrgPt40_60%d", i);
-        hbgdiff_JetTrgPt40_60[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_JetTrgPt40_60[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_JetTrgPt60_80_raw%d", i);
-        hbgdiff_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_JetTrgPt60_80%d", i);
-        hbgdiff_JetTrgPt60_80[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_JetTrgPt60_80[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_JetTrgPt80_100_raw%d", i);
-        hbgdiff_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_JetTrgPt80_100%d", i);
-        hbgdiff_JetTrgPt80_100[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_JetTrgPt80_100[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_JetTrgPt100above_raw%d", i);
-        hbgdiff_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_JetTrgPt100above%d", i);
-        hbgdiff_JetTrgPt100above[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_JetTrgPt100above[i] = (TH1F*)f->Get(hname);
 
         // Photon trigger
         sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_10_raw%d", i);
-        hfgdiff_ZBiasSglTrkPt0_10_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_ZBiasSglTrkPt0_10_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_10%d", i);
-        hfgdiff_ZBiasSglTrkPt0_10[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_ZBiasSglTrkPt0_10[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_PhoTrgPt10_15_raw%d", i);
-        hfgdiff_PhoTrgPt10_15_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_PhoTrgPt10_15_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_PhoTrgPt10_15%d", i);
-        hfgdiff_PhoTrgPt10_15[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_PhoTrgPt10_15[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_PhoTrgPt15_20_raw%d", i);
-        hfgdiff_PhoTrgPt15_20_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_PhoTrgPt15_20_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_PhoTrgPt15_20%d", i);
-        hfgdiff_PhoTrgPt15_20[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_PhoTrgPt15_20[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_PhoTrgPt20_30_raw%d", i);
-        hfgdiff_PhoTrgPt20_30_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_PhoTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_PhoTrgPt20_30%d", i);
-        hfgdiff_PhoTrgPt20_30[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_PhoTrgPt20_30[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hfgdiff_PhoTrgPt30above_raw%d", i);
-        hfgdiff_PhoTrgPt30above_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_PhoTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hfgdiff_PhoTrgPt30above%d", i);
-        hfgdiff_PhoTrgPt30above[i] = (TH1F*)f->Get(hname)->Clone();
+        hfgdiff_PhoTrgPt30above[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_10_raw%d", i);
-        hbgdiff_ZBiasSglTrkPt0_10_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_ZBiasSglTrkPt0_10_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_10%d", i);
-        hbgdiff_ZBiasSglTrkPt0_10[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_ZBiasSglTrkPt0_10[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_PhoTrgPt10_15_raw%d", i);
-        hbgdiff_PhoTrgPt10_15_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_PhoTrgPt10_15_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_PhoTrgPt10_15%d", i);
-        hbgdiff_PhoTrgPt10_15[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_PhoTrgPt10_15[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_PhoTrgPt15_20_raw%d", i);
-        hbgdiff_PhoTrgPt15_20_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_PhoTrgPt15_20_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_PhoTrgPt15_20%d", i);
-        hbgdiff_PhoTrgPt15_20[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_PhoTrgPt15_20[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_PhoTrgPt20_30_raw%d", i);
-        hbgdiff_PhoTrgPt20_30_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_PhoTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_PhoTrgPt20_30%d", i);
-        hbgdiff_PhoTrgPt20_30[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_PhoTrgPt20_30[i] = (TH1F*)f->Get(hname);
 
         sprintf(hname, "hbgdiff_PhoTrgPt30above_raw%d", i);
-        hbgdiff_PhoTrgPt30above_raw[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_PhoTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
         sprintf(hname, "hbgdiff_PhoTrgPt30above%d", i);
-        hbgdiff_PhoTrgPt30above[i] = (TH1F*)f->Get(hname)->Clone();
+        hbgdiff_PhoTrgPt30above[i] = (TH1F*)f->Get(hname);
     }
     cout<<" .... done ...."<<endl;
 }
@@ -1732,9 +1736,9 @@ void ana_hfforest::define_combSpec()
     char hname[200];
     for(short i = 0; i<NptRebin; i++) {
         //FullTrack trigger 
-        sprintf(hname, "hfg_raw_combTrkTrg_pt%d", i);
+        sprintf(hname, "hfg_raw_combTrkTrg%d", i);
         hfg_raw_combTrkTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
-        sprintf(hname, "hfg_combTrkTrg_pt%d", i);
+        sprintf(hname, "hfg_combTrkTrg%d", i);
         hfg_combTrkTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
 
         sprintf(hname, "hfgdiff_raw_combTrkTrg%d", i);
@@ -1851,6 +1855,7 @@ void ana_hfforest::rebinSpec(TFile* fout)
             hbgdiff_raw_rebin[it][i]->Write(); 
         }
     }
+    cout<<"... done ..."<<endl;
 }
 
 //
@@ -2096,45 +2101,85 @@ void ana_hfforest::CombineSpec(TFile* fout)
         hbgdiff_raw_combPhoTrg[i]->Write();
         hbgdiff_combPhoTrg[i]->Write();
     }
+    cout<<" ... done ...."<<endl;
 }
 
 //
-void ana_hfforest::draw(int mesonID, int whichTrg, int Nrebin, TFile* f)
-{//..mesonID: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
+void ana_hfforest::drawOneTrg(int ich, int whichTrg, int Nrebin, bool chk)
+{//..ich: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
  //.. whichTrg: 0=TrkTrg, 1=JetTrg, 2=PhoTrg
     char plotName[200];
+    char outName[200];
+    //
+    if(!chk) 
+        sprintf(outName, "%s_trg%d_comb.root", MesonName[ich], whichTrg);
+    else 
+        sprintf(outName, "%s_trg%d_check.root", MesonName[ich], whichTrg);
 
-    get_comb_hist(f);
+    TFile outFile(outName, "recreate");
+    TH1F* hpt = new TH1F("hpt", "", NptRebin, ptRebin);
+    hpt->SetMinimum(1);
 
+    //
     TCanvas* cc = new TCanvas("cc", "", 1000, 800);
     int nrow = 4, ncol = 4;
     cc->Divide(nrow, ncol);
+
     int ic = 0, iplt= 0;
+    float sig= 0, err= 0;
     for(int i = 0; i<NptRebin; i++) {
         cc->cd(ic+1);
 
-        if(mesonID==0) {
+        if(ich==0) {
             if(whichTrg==0) {
-                drawTrg(hfgdiff_raw_combTrkTrg[i], hfgdiff_combTrkTrg[i], Nrebin);
+                if(!chk) 
+                    drawDstar(hfgdiff_raw_combTrkTrg[i], hbgdiff_raw_combTrkTrg[i], Nrebin, sig, err);
+                    //draw_fit(ich, hfgdiff_raw_combTrkTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+                else
+                    drawDstar(hfgdiff_raw_rebin[1][i], hbgdiff_raw_rebin[1][i], Nrebin, sig, err);
+                    //draw_fit(ich, hfgdiff_raw_rebin[1][i], Nrebin, mlow[ich], mup[ich], sig, err);
             } else if(whichTrg==1) {
-                drawTrg(hfgdiff_raw_combJetTrg[i], hfgdiff_combJetTrg[i], Nrebin);
+                if(!chk) 
+                    drawDstar(hfgdiff_raw_combJetTrg[i], hbgdiff_raw_combJetTrg[i], Nrebin, sig, err);
+                    //draw_fit(ich, hfgdiff_raw_combJetTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+                else
+                    drawDstar(hfgdiff_raw_rebin[4][i], hbgdiff_raw_rebin[1][i], Nrebin, sig, err);
+                    //draw_fit(ich, hfgdiff_raw_rebin[4][i], Nrebin, mlow[ich], mup[ich], sig, err);
             } else if(whichTrg==2) {
-                drawTrg(hfgdiff_raw_combPhoTrg[i], hfgdiff_combPhoTrg[i], Nrebin);
+                if(!chk) 
+                    drawDstar(hfgdiff_raw_combPhoTrg[i], hbgdiff_combPhoTrg[i], Nrebin, sig, err);
+                    //draw_fit(ich, hfgdiff_raw_combPhoTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+                else
+                    drawDstar(hfgdiff_raw_rebin[9][i], hbgdiff_raw_rebin[1][i], Nrebin, sig, err);
+                    //draw_fit(ich, hfgdiff_raw_rebin[9][i], Nrebin, mlow[ich], mup[ich], sig, err);
             }
-        } else if(mesonID <NCH) {
+        } else if(ich <NCH) {
             if(whichTrg==0) {
-                drawTrg(hfg_raw_combTrkTrg[i], hfg_combTrkTrg[i], Nrebin);
+                if(!chk)
+                    draw_fit(ich, hfg_raw_combTrkTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+                else
+                    draw_fit(ich, hfg_raw_rebin[1][i], Nrebin, mlow[ich], mup[ich], sig, err);
             } else if(whichTrg==1) {
-                drawTrg(hfg_raw_combJetTrg[i], hfg_combJetTrg[i], Nrebin);
+                if(!chk) 
+                    draw_fit(ich, hfg_raw_combJetTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+                else
+                    draw_fit(ich, hfg_raw_rebin[4][i], Nrebin, mlow[ich], mup[ich], sig, err);
             } else if(whichTrg==2) {
-                drawTrg(hfg_raw_combPhoTrg[i], hfg_combPhoTrg[i], Nrebin);
+                if(!chk) 
+                    draw_fit(ich, hfg_raw_combPhoTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+                else
+                    draw_fit(ich, hfg_raw_rebin[9][i], Nrebin, mlow[ich], mup[ich], sig, err);
             }
         } else {
             cout<<" !!! no such D meson  !!!"<<endl;
         }
 
         if(ic == nrow*ncol-1 || i==NptRebin-1) {
-            sprintf(plotName, "%s_Trg%d_plot%d.gif", MesonName[mesonID], whichTrg, iplt);
+            if(!chk)
+                sprintf(plotName, "%s_Trg%d_plot%d_comb.gif", MesonName[ich], whichTrg, iplt);
+            else
+                sprintf(plotName, "%s_Trg%d_plot%d_check.gif", MesonName[ich], whichTrg, iplt);
+
             cc->SaveAs(plotName);
             cc->Clear();
             cc->Divide(nrow, ncol);
@@ -2142,32 +2187,52 @@ void ana_hfforest::draw(int mesonID, int whichTrg, int Nrebin, TFile* f)
             ic = 0;
         } else 
             ic++;
+
+        //
+        hpt->SetBinContent(i+1, sig);
+        hpt->SetBinError(i+1, err);
     }
+
+    hpt->Write();
+    outFile.Close();
 }
 
 //
-void ana_hfforest::drawTrg(TH1* h_raw, TH1* h, int nrb)
+void ana_hfforest::drawDstar(TH1* h_fg, TH1* h_bg, int nrb, float& sig, float& err)
 {
-    h_raw->Rebin(nrb);
-    h->Rebin(nrb);
+    int ib1 = h_fg->FindBin(0.142);
+    int ib2 = h_fg->FindBin(0.15);
+    int ibmax = h_fg->GetNbinsX();
 
-    h_raw->SetLineColor(2);
-    h_raw->SetMarkerStyle(20);
-    h_raw->SetMarkerColor(2);
-    h_raw->SetMarkerSize(0.5);
+    float scale = 1;
+    float bgInt = h_bg->Integral(1, ib1) + h_bg->Integral(ib2, ibmax);
+    if(bgInt)
+        scale = (h_fg->Integral(1, ib1) + h_fg->Integral(ib2, ibmax))/bgInt;
 
-    h->SetLineColor(1);
-    h->SetMarkerStyle(25);
-    h->SetMarkerColor(1);
-    h->SetMarkerSize(0.5);
+    h_bg->Scale(scale);
 
-    h->Draw();
-    h_raw->Draw("same");
+    h_fg->Rebin(nrb);
+    h_bg->Rebin(nrb);
+
+    h_fg->SetLineColor(2);
+    h_fg->SetMarkerStyle(20);
+    h_fg->SetMarkerColor(2);
+    h_fg->SetMarkerSize(0.5);
+
+    h_bg->SetLineColor(1);
+    h_bg->SetMarkerStyle(25);
+    h_bg->SetMarkerColor(1);
+    h_bg->SetMarkerSize(0.5);
+
+    h_fg->Draw();
+    h_bg->Draw("same");
+
+    sig = h_fg->Integral(ib1, ib2) - h_bg->Integral(ib1, ib2);
 }
+
 //
-//
-void ana_hfforest::drawHighMult(int mesonID, int whichTrg, int Nrebin, TFile* f)
-{//..mesonID: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
+void ana_hfforest::drawHighMult(int ich, int whichTrg, int Nrebin, TFile* f)
+{//..ich: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
  //.. whichTrg: see trg_name ..
     char plotName[200];
 
@@ -2180,7 +2245,7 @@ void ana_hfforest::drawHighMult(int mesonID, int whichTrg, int Nrebin, TFile* f)
     for(int i = 0; i<NPT; i++) {
         cc->cd(ic+1);
 
-        if(mesonID==0) {
+        if(ich==0) {
             // normalize the background counts outside the signal region, i.e. mdiff<0.143||>0.149 
             int ib1 = hfgdiff_raw[whichTrg][i]->FindBin(0.143);
             int ib2 = hfgdiff_raw[whichTrg][i]->FindBin(0.149);
@@ -2198,7 +2263,7 @@ void ana_hfforest::drawHighMult(int mesonID, int whichTrg, int Nrebin, TFile* f)
             hbgdiff_raw[whichTrg][i]->SetLineColor(4);
             hfgdiff_raw[whichTrg][i]->Draw();
             hbgdiff_raw[whichTrg][i]->Draw("same");
-        } else if(mesonID < NCH) {
+        } else if(ich < NCH) {
             hfg_raw[whichTrg][i]->Rebin(Nrebin);
             hfg_raw[whichTrg][i]->SetLineColor(2);
             hfg_raw[whichTrg][i]->Draw();
@@ -2207,7 +2272,7 @@ void ana_hfforest::drawHighMult(int mesonID, int whichTrg, int Nrebin, TFile* f)
         }
 
         if(ic == nrow*ncol-1 || i==NPT-1) {
-            sprintf(plotName, "%s_Trg%d_plot%d.gif", MesonName[mesonID], whichTrg, iplt);
+            sprintf(plotName, "%s_Trg%d_plot%d.gif", MesonName[ich], whichTrg, iplt);
             cc->SaveAs(plotName);
             cc->Clear();
             cc->Divide(nrow, ncol);
@@ -2216,4 +2281,95 @@ void ana_hfforest::drawHighMult(int mesonID, int whichTrg, int Nrebin, TFile* f)
         } else 
             ic++;
     }
+}
+//
+void ana_hfforest::draw_fit(int ich, TH1* h, int nrb, float rlow, float rhigh, float& sig, float& err)
+{
+    h->Rebin(nrb);
+    h->SetMarkerSize(0.8);
+    h->SetLineColor(2);
+    h->SetMarkerColor(2);
+    h->SetMarkerStyle(20);
+    h->GetXaxis()->SetNdivisions(505);
+
+    h->GetXaxis()->SetRangeUser(rlow, rhigh);
+    //.. fit with a Gaussian and pol
+    TF1* fit_fun = new TF1("fit_fun", "[0]*(1/[2]/sqrt(6.28)*exp(-0.5*pow((x-[1])/[2], 2))) + pol2(3) + [6]*(1/[8]/sqrt(6.28)*exp(-0.5*pow((x-[7])/[8], 2)))", rlow, rhigh);
+    float tot = h->Integral();
+
+    float var_mean = 0.01, var_width = 0.01;
+    float p0 = tot, p1 = MesonMass[ich], p2 = 0.015;
+    if(ich==0) {
+        var_mean = 0.005;
+        var_width = 5e-4;
+        p2 = 1e-3;
+    }
+    int pass = 1;
+    float p6 = tot, p7 = MesonMass[4], p8 = 0.015; //..2nd peak is D+/-
+    float zero = 0;
+    while(pass) {
+        //.. initial value 
+        fit_fun->SetParameter(0, p0);
+        fit_fun->SetParameter(1, p1);
+        fit_fun->SetParameter(2, p2);
+        if(ich==2) {//.. 2nd gaussian for Ds->phi+pi
+            fit_fun->SetParameter(6, p6);
+            fit_fun->SetParameter(7, p7);
+            fit_fun->SetParameter(8, p8);
+        }
+
+        //.. fit constraint ..
+        fit_fun->SetParLimits(0, 0, 1e10);
+        fit_fun->SetParLimits(1, TMath::Max(zero, MesonMass[ich]-var_mean), MesonMass[ich]+var_mean);
+        fit_fun->SetParLimits(2, TMath::Max(zero, p2-var_width),  p2+var_width);
+
+        if(ich==2) {
+            fit_fun->SetParLimits(6, 0, 1e10);
+            fit_fun->SetParLimits(7, TMath::Max(zero, MesonMass[4]-var_mean), MesonMass[4]+var_mean);
+            fit_fun->SetParLimits(8, TMath::Max(zero, p8-var_width),  p8+var_width);
+        } else {//.. all D except Ds->phi+pi have only one peak. remove the 2nd peak
+            fit_fun->FixParameter(6, 0);
+            fit_fun->FixParameter(7, 0);
+            fit_fun->FixParameter(8, 0);
+        }
+
+        //.. using likelyhood. Chi2 bias total counts
+        for(int ii = 0; ii<10; ii++)
+            h->Fit(fit_fun,  "LQ", "", rlow, rhigh);
+
+        //.. draw foreground and background ..
+        h->Draw();
+
+        TF1* fit_fun_bg = (TF1*)fit_fun->Clone("fit_fun_bg");
+        fit_fun_bg->SetParameter(0, 0);
+        fit_fun_bg->SetParameter(1, 0);
+        fit_fun_bg->SetParameter(2, 0);
+        fit_fun_bg->SetParameter(6, 0);
+        fit_fun_bg->SetParameter(7, 0);
+        fit_fun_bg->SetParameter(8, 0);
+
+        fit_fun_bg->SetLineColor(8);
+        fit_fun_bg->Draw("same");
+        gPad->Update();
+
+        //.. check if need to fit again ...
+        cout<<" good fit? (0: no refit, 1: refit w/o range change. 2: refit w/ range change"<<endl;
+        scanf("%d", &pass);
+
+        if(pass) {
+            cout<<" var(mean), var(width) ?"<<endl;
+            scanf("%f%f", &var_mean, &var_width);
+
+            if(pass==2) {
+                cout<<" rlow, rhigh? "<<endl;
+                scanf("%f%f", &rlow, &rhigh);
+            }
+        }
+    }
+
+    //
+    sig = fit_fun->GetParameter(0)/h->GetBinWidth(1);
+    err = fit_fun->GetParError(0)/h->GetBinWidth(1);
+
+    cout<<"total number of D: "<<sig<<"+/-"<<err<<endl;
 }
