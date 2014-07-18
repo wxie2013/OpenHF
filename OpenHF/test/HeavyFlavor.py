@@ -30,9 +30,7 @@ process.GlobalTag.globaltag = "GR_P_V43D::All"
 
 process.source = cms.Source("PoolSource",
         skipEvents = cms.untracked.uint32(0),
-        fileNames  = cms.untracked.vstring(
-                '/store/hidata/HIRun2013/PAHighPt/RECO/PromptReco-v1/000/210/534/00000/865432B8-1E65-E211-BF13-001D09F24FEC.root'
-            )
+	fileNames = cms.untracked.vstring("file:/home/wxie/data/1485AF8A-E16B-E211-85AD-001D09F248F8.root")
         )
 
 process.maxEvents = cms.untracked.PSet(
@@ -45,8 +43,8 @@ process.tree = cms.EDAnalyzer(
     "HFTree",
     verbose      = cms.untracked.int32(1),
     printFrequency = cms.untracked.int32(1),
-    #fileName     = cms.untracked.string(rootFileName),
-    requireCand  =  cms.untracked.bool(True)
+    requireCand  =  cms.untracked.bool(True),
+    fReducedTree  =  cms.untracked.bool(True)
     )
 
 # ----------------------------------------------------------------------

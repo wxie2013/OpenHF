@@ -1,7 +1,8 @@
 #!/usr/local/bin/perl
 
 $infile1 = $ARGV[0];
-$base = "/home/wxie/CMSSW_6_2_9/src/UserCode/OpenHF/macros";
+$CMSSW_BASE = $ARGV[1];
+$base = "$CMSSW_BASE/src/UserCode/OpenHF/macros";
 open(INPUTFILE1,$infile1);
 @infile1_lines = <INPUTFILE1>;
 close(INPUTFILE1);

@@ -30,7 +30,6 @@ class candAna : public TNamed
         int fLS;
 
         int ncand; 
-        hfcand* hfcandidate;
 
         float cut_ffls3d; 
         float cut_falpha0;
@@ -38,7 +37,6 @@ class candAna : public TNamed
         TFile* result;
 
     private:
-        void evtAnalysis(TAna01Event *evt);
         void addCandidate(
                 float fprob,
                 float ff3d,
@@ -112,6 +110,10 @@ class candAna : public TNamed
         void LoopOverEvt(TTree* T1);
         //.. sync production with hiforest ....
         void LoopOverEvt(TTree* T1, Long64_t& run_hifst, Long64_t& evt_hifst);
+
+        //.. produce reduced tree directly
+        hfcand* hfcandidate;
+        void evtAnalysis(TAna01Event *evt);
 
         ClassDef(candAna, 1)
 };

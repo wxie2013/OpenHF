@@ -8,13 +8,15 @@ $start_from = $ARGV[2];
 $filelist = $ARGV[3];
 $iy = $ARGV[4];
 $ich = $ARGV[5];
-
+$CMSSW_BASE = $ARGV[6];
+$SCRAM_ARCH = $ARGV[7];
 #
-$BASE = "/home/wxie";
-$workarea = "CMSSW_6_2_9/src/UserCode/OpenHF/macros";
+$workarea = "$CMSSW_BASE/src/UserCode/OpenHF/macros";
 @MesonName = ("Dstar2D0Pi", "D02KPi", "Ds2PhiPi", "Ds2KstarK", "Dpm2KPiPi");
-@yup = ("m2.5", "m2.0", "m1.5", "m1.0", "m0.5", "0.0", "p0.5", "p1.0", "p1.5", "p2.0", "p2.5", "p3.0");
-@ydn = ("m3.0", "m2.5", "m2.0", "m1.5", "m1.0", "m0.5", "0.0", "p0.5", "p1.0", "p1.5", "p2.0", "p2.5");
+#@yup = ("m2.5", "m2.0", "m1.5", "m1.0", "m0.5", "0.0", "p0.5", "p1.0", "p1.5", "p2.0", "p2.5", "p3.0");
+#@ydn = ("m3.0", "m2.5", "m2.0", "m1.5", "m1.0", "m0.5", "0.0", "p0.5", "p1.0", "p1.5", "p2.0", "p2.5");
+@yup = ("p2.0");
+@ydn = ("m2.0");
 #-- move files in to different directories
 $dir = "$MesonName[$ich]\_ydn\_$ydn[$iy]\_yup\_$yup[$iy]";
 system("mkdir $dir; cd $dir; ln -s ../$filelist .; cd ../.");
@@ -83,12 +85,12 @@ sub produce_execfile {
     print EXECFILE ("#!/bin/sh \n");
     print EXECFILE ("source /cvmfs/cms.cern.ch/cmsset_default.sh \n");
     print EXECFILE ("export X509_USER_PROXY=/home/wxie/.myproxy  \n");
-    print EXECFILE ("cd $BASE/CMSSW_6_2_9/src \n");
+    print EXECFILE ("cd $CMSSW_BASE/src \n");
     print EXECFILE ("eval `scramv1 runtime -sh` \n");
-    print EXECFILE ("cd $BASE/$workarea/$dir \n");
+    print EXECFILE ("cd $workarea/$dir \n");
     print EXECFILE ("root -b<<EOF\n");
-    print EXECFILE ("gSystem->Load\(\"$BASE\/CMSSW_6_2_9\/lib\/slc6_amd64_gcc472\/libUserCodeOpenHF.so\"\)\; \n");
-    print EXECFILE (".x $BASE/$workarea/$macro($istart, $iend, \"$filelist\", $iy, $ich, \"$outfile\") \n");
+    print EXECFILE ("gSystem->Load\(\"$CMSSW_BASE\/lib\/$SCRAM_ARCH\/libUserCodeOpenHF.so\"\)\; \n");
+    print EXECFILE (".x $workarea/$macro($istart, $iend, \"$filelist\", $iy, $ich, \"$outfile\") \n");
     print EXECFILE ("EOF\n");
 
     system("chmod u+x $job_execfile");
@@ -106,7 +108,7 @@ sub produce_config_file {
     print CONFIGFILE ("#======================================================================\n");
     print CONFIGFILE ("universe             = vanilla\n");
     print CONFIGFILE ("executable           = $job_execfile\n");
-    print CONFIGFILE ("initialdir           = $BASE/$workarea/$dir\n");
+    print CONFIGFILE ("initialdir           = $workarea/$dir\n");
     print CONFIGFILE ("should_Transfer_Files = NO\n");
     print CONFIGFILE ("#======================================================================\n");
     print CONFIGFILE ("output               = $job_execfile.out\n");

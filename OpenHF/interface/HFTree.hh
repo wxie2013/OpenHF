@@ -15,6 +15,7 @@
 class TFile;
 class TTree;
 class TAna01Event;
+class candAna;
 
 // ----------------------------------------------------------------------
 class HFTree : public edm::EDAnalyzer {
@@ -31,6 +32,7 @@ class HFTree : public edm::EDAnalyzer {
   TTree        *fTree;
   TAna01Event  *fEvent;
 
+  bool         fReducedTree;
   bool         fRequireCand, fFullGenBlock;
 
   std::string  fFileName;
@@ -40,6 +42,7 @@ class HFTree : public edm::EDAnalyzer {
   int          fPrintFrequency;
   int          fEventCounter; 
 
+  candAna*    ana;
 };
 
 #endif

@@ -286,7 +286,7 @@ void candAna::DstarAnalysis()
 
 
     //.. fill the hfcand ...
-    addCandidate(prob, svD0.fD3d, svD0.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mdstar, eta, phi, mdz, ptdz, etadz, phidz, ptPis, etaPis, phiPis, qPis, qPi, ptPi, etaPi, phiPi, qK, ptK, etaK, phiK, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
+    addCandidate(prob, svD0.fD3d, svD0.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mdstar, eta, phi, mdz, ptdz, etadz, phidz, qPis, ptPis, etaPis, phiPis, qPi, ptPi, etaPi, phiPi, qK, ptK, etaK, phiK, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
 }
 
 //_________________________________________________________________________
@@ -391,7 +391,7 @@ void candAna::Dpm2KaPiPiAnalysis()
     int nTrackerLayer_2 = numberOfTrackerLayers(pK);
 
     //.. fill the hfcand ...
-    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mdpm, eta, phi, mkpi, ptkpi, etakpi, phikpi, ptPi2, etaPi2, phiPi2, qPi2, qPi1, ptPi1, etaPi1, phiPi1, qK, ptK, etaK, phiK, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
+    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mdpm, eta, phi, mkpi, ptkpi, etakpi, phikpi, qPi2, ptPi2, etaPi2, phiPi2, qPi1, ptPi1, etaPi1, phiPi1, qK, ptK, etaK, phiK, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
 
 }
 
@@ -505,7 +505,7 @@ void candAna::Ds2KstarKaonAnalysis()
 
 
     //.. fill the hfcand ...
-    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mds, eta, phi, mkpi, ptkpi, etakpi, phikpi, ptK2, etaK2, phiK2, qK2, qPi, ptPi, etaPi, phiPi, qK1, ptK1, etaK1, phiK1, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
+    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mds, eta, phi, mkpi, ptkpi, etakpi, phikpi, qK2, ptK2, etaK2, phiK2, qPi, ptPi, etaPi, phiPi, qK1, ptK1, etaK1, phiK1, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
 
 }
 
@@ -621,7 +621,7 @@ void candAna::Ds2PhiPiAnalysis()
 
 
     //.. fill the hfcand ...
-    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mds, eta, phi, mPhi, ptPhi, etaPhi, phiPhi, ptPi, etaPi, phiPi, qPi, qK1, ptK1, etaK1, phiK1, qK2, ptK2, etaK2, phiK2, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
+    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mds, eta, phi, mPhi, ptPhi, etaPhi, phiPhi, qPi, ptPi, etaPi, phiPi, qK1, ptK1, etaK1, phiK1, qK2, ptK2, etaK2, phiK2, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
 }
 
 //__________________________________________
@@ -642,16 +642,16 @@ void candAna::addCandidate(
         float fptdau1,
         float fetadau1,
         float fphidau1,
+        float fqdau2,
         float fptdau2,
         float fetadau2,
         float fphidau2,
-        float fqdau2,
         float fq1,
         float fpt1,
         float feta1,
         float fphi1,
-        float fpt2,
         float fq2,
+        float fpt2,
         float feta2,
         float fphi2, 
         int   nBPixLayer_dau2, 
