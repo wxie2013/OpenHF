@@ -92,5 +92,4 @@ d0Sequence     = cms.Sequence(d0Dump);
 dstarSequence     = cms.Sequence(dstarDump);
 dpmSequence     = cms.Sequence(dpmDump);
 dsSequence     = cms.Sequence(dsPhiPiDump*dsKstarKaDump);
-#charmSequence     = cms.Sequence(d0Dump*dstarDump*dpmDump*dsPhiPiDump*dsKstarKaDump);
-charmSequence     = cms.Sequence(d0Dump*dstarDump*dpmDump*dsPhiPiDump);
+charmSequence     = cms.Sequence(d0Dump*dstarDump*dpmDump*dsPhiPiDump*dsKstarKaDump);
