@@ -92,7 +92,7 @@ void HFDstar::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
             HFDecayTree theTree(fType, true, MDSTARPLUS, false, -1.0, true);
-            HFDecayTreeIterator iterator = theTree.addDecayTree(2, true, MD0, false);
+            HFDecayTreeIterator iterator = theTree.addDecayTree(103, true, MD0, false);
             iterator->addTrack(iKaon,321);
             iterator->addTrack(iPion,211);
             iterator->setNodeCut(RefCountedHFNodeCut(new HFMaxDocaCut(fMaxDoca)));
