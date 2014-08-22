@@ -74,8 +74,10 @@ void HFDstar::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
         for (unsigned iTrack = 0; iTrack < trkSlowList.size(); iTrack++) {
 
-            if (iTrack == iKaon || iTrack == iPion) continue;
-            reco::TrackBaseRef rTrackView(fTracksHandle, iTrack);
+            unsigned int sPion = trkSlowList[iTrack];
+
+            if (sPion == iKaon || sPion == iPion) continue;
+            reco::TrackBaseRef rTrackView(fTracksHandle, sPion);
             reco::Track tSlowPion(*rTrackView);
 
             // -- the slow pion has the same charge like the fast pion
@@ -94,7 +96,7 @@ void HFDstar::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             iterator->addTrack(iKaon,321);
             iterator->addTrack(iPion,211);
             iterator->setNodeCut(RefCountedHFNodeCut(new HFMaxDocaCut(fMaxDoca)));
-            theTree.addTrack(iTrack,211);
+            theTree.addTrack(sPion,211);
             theTree.setNodeCut(RefCountedHFNodeCut(new HFMaxDocaCut(fMaxDoca)));
 
             fSequentialFitter->doFit(&theTree);

@@ -1,3 +1,5 @@
+#ifndef HFHiForestSync_H
+#define HFHiForestSync_H
 
 // system include files
 #include <memory>
@@ -67,3 +69,5 @@ class HFHiForestSync : public edm::EDAnalyzer {
         ~HFHiForestSync();
 
 };
+
+#endif

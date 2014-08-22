@@ -1,0 +1,102 @@
+#ifndef ana_common_H
+#define ana_common_H
+
+typedef std::vector<trigger::TriggerObject> trigO;
+
+
+//.. e.g. https://cmswbm.web.cern.ch/cmswbm/cmsdb/servlet/HLTSummary?RUN=211631&KEY=28422
+const int NCH = 5; //.. 5 D meson decay channels
+
+const int NPT = 100; //.. number of pT bin
+const float dPt = 1.0; //.. this defines the minimum pT bin width. Can merge later
+
+const int NBIN = 200; //.. number of bins in mass distribution
+const int NY = 1; 
+const float dY = 4;
+const float Ymin = -2;
+const float etaMax = 2.5; //.. maximum eta for single tracks
+
+// D* 
+const float mdiffup = 0.135;
+const float mdiffdn = 0.154;
+
+// note on "const char* const" instead of "const char*" 
+const char* const MesonName[NCH] = {"Dstar2D0Pi", "D02KPi", "Ds2PhiPi", "Ds2KstarK", "Dpm2KPiPi"};
+const float MesonMass[NCH] = {0.145, 1.865, 1.968, 1.968, 1.870};
+//.. fit ranges 
+const float mlow[NCH] = {0.14, 1.70, 1.8, 1.8, 1.78};
+const float mup[NCH] = {0.154, 2.1, 2.1, 2.1, 2.1};
+
+//
+const int nTrkMax = 10000;
+const int NFullTrkTrg = 4; //.. number of Full Trk trigger, including minbias in UPC
+const float TrkTrgOffThres[NFullTrkTrg] = {0, 14, 22, 32}; //.. offline fully efficient
+//
+const float maxDiff = 1e-3; //.. for identical quantity comparison
+
+//.. trigger combination andf merging 
+// note: the bin width need to be the integer number of dPt
+const int NptRebin = 23;
+const float ptRebin[NptRebin+1] = {
+    0,  2,  4,  6,  8, 
+    10, 12, 14, 16, 18, 
+    20, 22, 24, 26, 28, 
+    30, 32, 34, 36, 38, 
+    40, 45, 60, 100
+};
+/* 
+// for debugging at high pT
+const int NptRebin = 21;
+const float ptRebin[NptRebin+1] = {
+    0,  2,  4,  6,  8, 
+    10, 12, 14, 16, 18, 
+    20, 22, 24, 26, 28, 
+    30, 32, 34, 36, 38, 
+    40, 100
+};
+*/
+
+
+const int NTRG = 29; //.. including photon, Jet, Track and corresponding L1 base trigger and high multiplicity trigger
+//produced by make_code_to_read_hlt_name_pscl.txt.pl
+//.. all Run2013 pPb triggers. Most are useless. Here is to check which
+//.. one has most of the D mesons. 
+//.. trigger list is from, e.g. 
+//.. https://cmswbm.web.cern.ch/cmswbm/cmsdb/servlet/HLTSummary?RUN=211631&KEY=28422
+const char* const trg_name[NTRG] = {
+    "HLT_PAZeroBiasPixel_SingleTrack", //..mibias trigger 
+    "HLT_PAFullTrack12",   //.. base: L1_SingleJet12_BptxAND w/ prescl=1
+    "HLT_PAFullTrack20",   //.. base: L1_SingleJet16_BptxAND w/ prescl=1
+    "HLT_PAFullTrack30",   //.. base: L1_SingleJet16_BptxAND w/ prescl=1
+
+    "HLT_PAJet20_NoJetID",   //.. base: L1_SingleJet16_BptxAND
+    "HLT_PAJet40_NoJetID",   //.. base: L1_SingleJet16_BptxAND
+    "HLT_PAJet60_NoJetID",   //.. base: L1_SingleJet36
+    "HLT_PAJet80_NoJetID",   //.. base: L1_SingleJet36
+    "HLT_PAJet100_NoJetID",   //.. base: L1_SingleJet36
+
+    "HLT_PAPhoton10_NoCaloIdVL",   //.. base: L1_SingleEG5_BptxAND
+    "HLT_PAPhoton15_NoCaloIdVL",   //.. base: L1_SingleEG5_BptxAND
+    "HLT_PAPhoton20_NoCaloIdVL",   //.. base: L1_SingleEG5_BptxAND
+    "HLT_PAPhoton30_NoCaloIdVL",   //.. base: L1_SingleEG12
+
+    "L1_ZeroBias",  //.. base of HLT_PAZeroBiasPixel_SingleTrack
+    "L1_SingleJet12_BptxAND",
+    "L1_SingleJet16_BptxAND",
+    "L1_SingleJet36",
+    "L1_SingleEG5_BptxAND",
+    "L1_SingleEG12",
+
+    "HLT_PAPixelTrackMultiplicity100_FullTrack12",
+    "HLT_PAPixelTrackMultiplicity100_L2DoubleMu3",
+    "HLT_PAPixelTrackMultiplicity130_FullTrack12",
+    "HLT_PAPixelTrackMultiplicity140_Jet80_NoJetID",
+    "HLT_PAPixelTrackMultiplicity160_FullTrack12",
+    "HLT_PAPixelTracks_Multiplicity100",
+    "HLT_PAPixelTracks_Multiplicity130",
+    "HLT_PAPixelTracks_Multiplicity160",
+    "HLT_PAPixelTracks_Multiplicity190",
+    "HLT_PAPixelTracks_Multiplicity220"
+};
+
+#endif

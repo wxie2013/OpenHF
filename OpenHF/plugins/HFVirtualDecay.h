@@ -57,6 +57,8 @@ class HFVirtualDecay : public edm::EDAnalyzer {
 		double fPvWeight;
 		
 		int fType;
+
+        bool isPbPb;
 	
 	protected:
 		// data for subclasses

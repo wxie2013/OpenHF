@@ -10,12 +10,11 @@
 #include <TNamed.h>
 #include <TTree.h>
 
-#include "hfcand_v0.hh"
+#include "hfcand_v1.hh"
 #include "TAna01Event.hh"
 #include "TAnaCand.hh"
 #include "TAnaVertex.hh"
 #include "TAnaTrack.hh"
-
 
 using namespace std;
 
@@ -58,26 +57,17 @@ class candAna : public TNamed
                 float fetadau2,
                 float fphidau2,
                 float fqdau2,
+                int   index_dau2,
                 float fq1,
                 float fpt1,
                 float feta1,
                 float fphi1,
+                int   index1, 
                 float fpt2,
                 float fq2,
                 float feta2,
                 float fphi2,
-                int   nBPixLayer_dau2,
-                int   nPixLayer_dau2,
-                int   nBPixLayer1Hits_dau2,
-                int   nTrackerLayer_dau2,
-                int   nBPixLayer_1,
-                int   nPixLayer_1,
-                int   nBPixLayer1Hits_1,
-                int   nTrackerLayer_1,
-                int   nBPixLayer_2,
-                int   nPixLayer_2,
-                int   nBPixLayer1Hits_2,
-                int   nTrackerLayer_2);
+                int   index2); 
 
 
         void D0Analysis();
@@ -114,6 +104,7 @@ class candAna : public TNamed
         //.. produce reduced tree directly
         hfcand* hfcandidate;
         void evtAnalysis(TAna01Event *evt);
+        void fillTree() {fTree->Fill();}
 
         ClassDef(candAna, 1)
 };

@@ -13,7 +13,8 @@ dstarDump = cms.EDAnalyzer(
     maxDoca            = cms.untracked.double(0.1),
     maxD0              = cms.untracked.double(2.0),
     maxDz              = cms.untracked.double(99.0),
-    type               = cms.untracked.int32(1)
+    type               = cms.untracked.int32(1), 
+    isPbPb             = cms.untracked.bool(False)
     )
 #
 
@@ -28,7 +29,8 @@ d0Dump = cms.EDAnalyzer(
     D0Window           = cms.untracked.double(0.2),
     maxD0              = cms.untracked.double(2.0),
     maxDz              = cms.untracked.double(99.0),
-    type               = cms.untracked.int32(2)
+    type               = cms.untracked.int32(2),
+    isPbPb             = cms.untracked.bool(False)
     )
 
 # ----------------------------------------------------------------------
@@ -44,7 +46,8 @@ dsPhiPiDump = cms.EDAnalyzer(
     maxDoca            = cms.untracked.double(0.1),
     maxD0              = cms.untracked.double(2.0),
     maxDz              = cms.untracked.double(99.0),
-    type               = cms.untracked.int32(3)
+    type               = cms.untracked.int32(3),
+    isPbPb             = cms.untracked.bool(False)
     )
 #
 # ----------------------------------------------------------------------
@@ -60,7 +63,8 @@ dsKstarKaDump = cms.EDAnalyzer(
     maxDoca            = cms.untracked.double(0.1),
     maxD0              = cms.untracked.double(2.0),
     maxDz              = cms.untracked.double(99.0),
-    type               = cms.untracked.int32(4)
+    type               = cms.untracked.int32(4),
+    isPbPb             = cms.untracked.bool(False)
     )
 #
 # ----------------------------------------------------------------------
@@ -75,7 +79,8 @@ dpmDump = cms.EDAnalyzer(
     maxDoca            = cms.untracked.double(0.1),
     maxD0              = cms.untracked.double(2.0),
     maxDz              = cms.untracked.double(99.0),
-    type               = cms.untracked.int32(5)
+    type               = cms.untracked.int32(5),
+    isPbPb             = cms.untracked.bool(False)
     )
 #
 
@@ -87,4 +92,5 @@ d0Sequence     = cms.Sequence(d0Dump);
 dstarSequence     = cms.Sequence(dstarDump);
 dpmSequence     = cms.Sequence(dpmDump);
 dsSequence     = cms.Sequence(dsPhiPiDump*dsKstarKaDump);
-charmSequence     = cms.Sequence(d0Dump*dstarDump*dpmDump*dsPhiPiDump*dsKstarKaDump);
+#charmSequence     = cms.Sequence(d0Dump*dstarDump*dpmDump*dsPhiPiDump*dsKstarKaDump);
+charmSequence     = cms.Sequence(d0Dump*dstarDump*dpmDump*dsPhiPiDump);

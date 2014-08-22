@@ -31,8 +31,8 @@ class ana_hfforest : public TNamed
     private:
         int prscl[NTRG]; //.. trigger prescale factors
         int trg[NTRG];  //.. trigger decisions. better bool but the hlttree used int
-        const char* trg_name[NTRG]; //.. trigger name
-        trigO *trg_obj[NTRG]; //.. object to store trigger primitive. 
+        trigO *trg_obj[NTRG]; //.. object to store trigger primitive from rerun trigger. 
+        trigO *org_trg_obj[NTRG]; //.. object to store trigger primitive from the original tree. 
 
         char* filename;
 
@@ -44,6 +44,21 @@ class ana_hfforest : public TNamed
         TTree *HltTree;  //.. HLT tree
         TTree *hltTreeReRun;  //.. HLT tree rerun adding Photon and Track trigger primitive
         TTree *hftree;   //.. heavy flavor tree
+        TTree *trackTree;
+
+    private:
+        int   trkCharge[nTrkMax];
+        float trkPhi[nTrkMax];
+        float trkEta[nTrkMax];
+        float trkPt[nTrkMax];
+        float trkPtError[nTrkMax];
+        float trkDz1[nTrkMax];               // dZ to the first vertex
+        float trkDzError1[nTrkMax];
+        float trkDxy1[nTrkMax];              // d0 to the first vertex
+        float trkDxyError1[nTrkMax];
+        Bool_t highPurity[nTrkMax];
+
+        int nTrk;
 
     private: //.. mass distributions for all triggers
         // histogram for each individual trigger for D
@@ -68,43 +83,23 @@ class ana_hfforest : public TNamed
         TH1* hbgdiff_raw_combTrkTrg[NptRebin];
         TH1* hbgdiff_combTrkTrg[NptRebin];
 
-        // Jet trigger 
-        TH1* hfg_raw_combJetTrg[NptRebin]; // raw spectra for the comb to avoid large error from prescale
-        TH1* hfg_combJetTrg[NptRebin];   //.. regular method
-
-        TH1* hfgdiff_raw_combJetTrg[NptRebin];
-        TH1* hfgdiff_combJetTrg[NptRebin];
-
-        TH1* hbgdiff_raw_combJetTrg[NptRebin];
-        TH1* hbgdiff_combJetTrg[NptRebin];
-
-        // Photon trigger 
-        TH1* hfg_raw_combPhoTrg[NptRebin]; // raw spectra for the comb to avoid large error from prescale
-        TH1* hfg_combPhoTrg[NptRebin];   //.. regular method
-
-        TH1* hfgdiff_raw_combPhoTrg[NptRebin];
-        TH1* hfgdiff_combPhoTrg[NptRebin];
-
-        TH1* hbgdiff_raw_combPhoTrg[NptRebin];
-        TH1* hbgdiff_combPhoTrg[NptRebin];
-
         //.. all individual triggers (for checking trigger combination)
-        TH1* hfg_raw_rebin[NTRG][NptRebin]; // raw spectram w/o correcting prescale
-        TH1* hfgdiff_raw_rebin[NTRG][NptRebin];
-        TH1* hbgdiff_raw_rebin[NTRG][NptRebin];
+        TH1* hfg_rebin[NTRG][NptRebin]; // raw spectram w/o correcting prescale
+        TH1* hfgdiff_rebin[NTRG][NptRebin];
+        TH1* hbgdiff_rebin[NTRG][NptRebin];
+        
+        TH1* hfg_TrkTrgPt12_20_rebin[NptRebin]; 
+        TH1* hfg_TrkTrgPt20_30_rebin[NptRebin];  
+        TH1* hfg_TrkTrgPt30above_rebin[NptRebin];  
 
     private: //.. mass distributions for FullTrack trigger
         //histo for trg combination. for all D
         TH1* hfg_ZBiasSglTrkPt0_12_raw[NPT];  //.. 0-12GeV/c before correcting prescale
         TH1* hfg_ZBiasSglTrkPt0_12[NPT];  //.. 0-12GeV/c after correcting prescale
 
+        //
         TH1* hfg_TrkTrgPt12_20_raw[NPT]; //.. 12-20 GeV/c before correcting prescale 
         TH1* hfg_TrkTrgPt12_20[NPT];  //.. 12-20 GeV/c after correcting prescale
-        // for debugging 
-        TH1* hfg_TrkTrgPt12_raw[NPT];
-        TH1* hfg_JetTrgPt20_raw[NPT];
-        TH1* hfg_PhoTrgPt10_raw[NPT];
-        //
 
         TH1* hfg_TrkTrgPt20_30_raw[NPT];  
         TH1* hfg_TrkTrgPt20_30[NPT];  
@@ -136,165 +131,97 @@ class ana_hfforest : public TNamed
 
         TH1* hbgdiff_TrkTrgPt30above_raw[NPT];  
         TH1* hbgdiff_TrkTrgPt30above[NPT];  
-        //
-    private: //.. mass distributions for Jet trigger
-        //histo for trg combination. for all D
-        TH1* hfg_ZBiasSglTrkPt0_20_raw[NPT];  
-        TH1* hfg_ZBiasSglTrkPt0_20[NPT]; 
 
-        TH1* hfg_JetTrgPt20_40_raw[NPT]; 
-        TH1* hfg_JetTrgPt20_40[NPT]; 
+    private: 
+        //.. ppTrack for checking trigger combination
+        //also for filling ntMaxTrgPtAlgo2 histogram to save space.
+        TH1* hPtTrk[NFullTrkTrg];
+        TH1* hPtTrk0_12;
+        TH1* hPtTrk12_20;
+        TH1* hPtTrk20_30;
+        TH1* hPtTrk30Above;
+        TH1* hPtTrkComb;
 
-        TH1* hfg_JetTrgPt40_60_raw[NPT];  
-        TH1* hfg_JetTrgPt40_60[NPT];  
+    private:
+        //.. need for cuts to determine maxTrkTrgPt 
+        bool is_hp;
+        float tDz1;
+        float tDz1Err;
+        float tDxy1;
+        float tDxyErr;
+        float tPtErr;
 
-        TH1* hfg_JetTrgPt60_80_raw[NPT];  
-        TH1* hfg_JetTrgPt60_80[NPT];  
+        //.. for each HF candidate daughter
+        bool is_hp_0;
+        bool is_hp_1;
+        bool is_hp_2;
 
-        TH1* hfg_JetTrgPt80_100_raw[NPT];  
-        TH1* hfg_JetTrgPt80_100[NPT];  
+        float tPt0;
+        float tPt1;
+        float tPt2;
 
-        TH1* hfg_JetTrgPt100above_raw[NPT];  
-        TH1* hfg_JetTrgPt100above[NPT];  
+        float tPtErr0;
+        float tPtErr1;
+        float tPtErr2;
 
-        //.. histo for trg combination for D*
-        TH1* hfgdiff_ZBiasSglTrkPt0_20_raw[NPT]; 
-        TH1* hfgdiff_ZBiasSglTrkPt0_20[NPT];
-
-        TH1* hfgdiff_JetTrgPt20_40_raw[NPT];
-        TH1* hfgdiff_JetTrgPt20_40[NPT];
-
-        TH1* hfgdiff_JetTrgPt40_60_raw[NPT];  
-        TH1* hfgdiff_JetTrgPt40_60[NPT];  
-
-        TH1* hfgdiff_JetTrgPt60_80_raw[NPT];  
-        TH1* hfgdiff_JetTrgPt60_80[NPT];  
-
-        TH1* hfgdiff_JetTrgPt80_100_raw[NPT];  
-        TH1* hfgdiff_JetTrgPt80_100[NPT];  
-
-        TH1* hfgdiff_JetTrgPt100above_raw[NPT];  
-        TH1* hfgdiff_JetTrgPt100above[NPT];  
-
-        TH1* hbgdiff_ZBiasSglTrkPt0_20_raw[NPT];
-        TH1* hbgdiff_ZBiasSglTrkPt0_20[NPT];
-
-        TH1* hbgdiff_JetTrgPt20_40_raw[NPT];
-        TH1* hbgdiff_JetTrgPt20_40[NPT]; 
-
-        TH1* hbgdiff_JetTrgPt40_60_raw[NPT];  
-        TH1* hbgdiff_JetTrgPt40_60[NPT];  
-
-        TH1* hbgdiff_JetTrgPt60_80_raw[NPT];  
-        TH1* hbgdiff_JetTrgPt60_80[NPT];  
-
-        TH1* hbgdiff_JetTrgPt80_100_raw[NPT];  
-        TH1* hbgdiff_JetTrgPt80_100[NPT];  
-
-        TH1* hbgdiff_JetTrgPt100above_raw[NPT];  
-        TH1* hbgdiff_JetTrgPt100above[NPT];  
-        //
-    private: //.. mass distributions for Photon trigger
-        //histo for trg combination. for all D
-        TH1* hfg_ZBiasSglTrkPt0_10_raw[NPT];  
-        TH1* hfg_ZBiasSglTrkPt0_10[NPT]; 
-
-        TH1* hfg_PhoTrgPt10_15_raw[NPT]; 
-        TH1* hfg_PhoTrgPt10_15[NPT]; 
-
-        TH1* hfg_PhoTrgPt15_20_raw[NPT];  
-        TH1* hfg_PhoTrgPt15_20[NPT];  
-
-        TH1* hfg_PhoTrgPt20_30_raw[NPT];  
-        TH1* hfg_PhoTrgPt20_30[NPT];  
-
-        TH1* hfg_PhoTrgPt30above_raw[NPT];  
-        TH1* hfg_PhoTrgPt30above[NPT];  
-
-        //.. histo for trg combination for D*
-        TH1* hfgdiff_ZBiasSglTrkPt0_10_raw[NPT]; 
-        TH1* hfgdiff_ZBiasSglTrkPt0_10[NPT];
-
-        TH1* hfgdiff_PhoTrgPt10_15_raw[NPT];
-        TH1* hfgdiff_PhoTrgPt10_15[NPT];
-
-        TH1* hfgdiff_PhoTrgPt15_20_raw[NPT];  
-        TH1* hfgdiff_PhoTrgPt15_20[NPT];  
-
-        TH1* hfgdiff_PhoTrgPt20_30_raw[NPT];  
-        TH1* hfgdiff_PhoTrgPt20_30[NPT];  
-
-        TH1* hfgdiff_PhoTrgPt30above_raw[NPT];  
-        TH1* hfgdiff_PhoTrgPt30above[NPT];  
-
-        TH1* hbgdiff_ZBiasSglTrkPt0_10_raw[NPT];
-        TH1* hbgdiff_ZBiasSglTrkPt0_10[NPT];
-
-        TH1* hbgdiff_PhoTrgPt10_15_raw[NPT];
-        TH1* hbgdiff_PhoTrgPt10_15[NPT]; 
-
-        TH1* hbgdiff_PhoTrgPt15_20_raw[NPT];  
-        TH1* hbgdiff_PhoTrgPt15_20[NPT];  
-
-        TH1* hbgdiff_PhoTrgPt20_30_raw[NPT];  
-        TH1* hbgdiff_PhoTrgPt20_30[NPT];  
-
-        TH1* hbgdiff_PhoTrgPt30above_raw[NPT];  
-        TH1* hbgdiff_PhoTrgPt30above[NPT];  
 
         // trigger prescale weight for each events 
         float maxTrkTrgPt;
-        float maxJetTrgPt;
-        float maxPhoTrgPt;
 
+        //.. maxPt spectra for triggers and components for debugging
+        TNtuple* ntMaxTrgPt;
+        TNtuple* ntMaxTrgPtAlgo2; //.. for trgCombAlgo = 2
 
-    private: //.. various cuts used to produce results. 
-        float cut_m_low[NCH]; //.. low end of the mass hiso.
-        float cut_m_high[NCH]; //.. high end of the mass hiso
-        float cut_m_dau_low[NCH]; //.. low end of the daughter mass cut
-        float cut_m_dau_high[NCH]; //.. high end of the daughter mass cut
-        float cut_ffls3d[NCH]; 
-        float cut_falpha0[NCH]; 
-        float cut_fprob[NCH];
-        float cut_fdr[NCH]; 
-        float cut_fchi2[NCH];
+        //.. mass ntuple to speed up the analysis
+        TNtuple* ntMass;
+       //.. ppTrack for cross checking with HIN-12-017
+        bool run_ppTrack;
+        TNtuple* ntTrk;
 
     private:
-        void define_cuts();
-        void book_hist(int ich, int iy);
+        void book_hist(int ich);
         bool checkRapidityBoundary(float y);
-        void get_trg_name();
         void get_trg_info(TTree* T1, TTree* T2);
         int  get_pt_bin_num(float pt);
         void get_pt_range(int i, float& pt_low, float& pt_high);
         void reset_trg();
         void Init(int startFile, int endFile, char *filelist, int iy, int ich, char* outfile);
         void write();
+        void write_hist(int ich);
         bool GetRapidity(float m, float pt, float eta, int iY);
         bool GetTreeInfo(TFile* f);
         void LoopOverEvt(TTree* T, int iy, int ich);
+        void LoopOverTrk();
         void LoopOverHFCandidate(int iy, int ich);
         void FillMassHisto(snglhfcand* cand, int iy, int ich);
-        void FillTrgCombineTrkTrg(int id, int ich, int ipt, float mass, float mass_dau);
-        void FillTrgCombineJetTrg(int id, int ich, int ipt, float mass, float mass_dau);
-        void FillTrgCombinePhoTrg(int id, int ich, int ipt, float mass, float mass_dau);
-        void FindMaxTrgPt(trigO* tobj, float& max);
-        void define_combSpec();
-        void define_rebinSpec();
+        void FillTrgMaxPt();
+        void FillTrgCombineTrkTrg_HIN12017(int id, int ich, int ipt, float mass, float mass_dau);
+        void define_combSpec(int ich);
+        void define_rebinSpec(int ich);
         void drawDstar(TH1* h_fg, TH1* h_bg, int nrb, float& sig, float& err);
-        void draw_fit(int mesonID, TH1* h, int nrb, float rlow, float rhigh, float& sig, float& err);
+        void draw_fit(int ich, TH1* h, int nrb, float rlow, float rhigh, float& sig, float& err);
         void GetMaxTrgPt(); //for trigger combination 
+        void find_hp_trkPtErr(float q_in, float pt_in, float eta_in, float phi_in, bool& is_hp, float& pterr);
+        void fill_ntMass(float mass, float ptmax, int ipt, int itrg, bool isbg, float weight);
+        void fill_ntTrk(float pt, float ptErr, float ptmax, float ptmaxErr, bool hp0, bool hp, int itrg, float weight);
+        void book_ppTrk_hist();
     public:
         ana_hfforest();
         virtual ~ana_hfforest();
 
-        void get_hist(TFile* fin);
-        void get_comb_hist(TFile* fin);
-        void rebinSpec(TFile* fout);
-        void CombineSpec(TFile* fout);
+        void set_run_ppTrack(bool in) {run_ppTrack = in;}
         void LoopOverFile(int startFile, int endFile, char *filelist, int iy, int ich, char* outfile);
-        void drawOneTrg(int mesonID, int whichTrg, int Nrebin, bool chk);
-        void drawHighMult(int mesonID, int whichTrg, int Nrebin, TFile* fin);
+        void fillPPTrkHist(bool hp0_in, bool hp_in, float cut,  TFile* fin, TFile*fout);
+        void fillntMaxTrgPtAlgo2Hist(bool hp_in, float cut,  TFile* fin, TFile*fout, bool dcaCut);
+        void fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout, bool noRandFire);
+        //
+        void get_hist(int ich, TFile* fin);
+        void get_comb_hist(int ich, TFile* fin);
+        void rebinSpec(int ich, TFile* fout);
+        void CombineSpec(int ich, TFile* fout);
+        void drawOneHist(int ich, TH1* h, int nrb);
+        void drawOneTrg(int ich, int Nrebin, bool chk, int it, TCanvas* cc);
+        void drawHighMult(int ich, int whichTrg, int Nrebin, TFile* fin, TCanvas* cc);
 
         ClassDef(ana_hfforest, 1)
 };

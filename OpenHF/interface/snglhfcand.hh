@@ -3,11 +3,13 @@
 
 #include "TNamed.h"
 #include <iostream>
-#include "TVector3.h"
+#include <vector>
 using namespace std;
 
 class snglhfcand : public TNamed
 {
+    private: 
+        vector<int> zero;
     public:
         virtual int    get_pvn() const{WarningMSG(); return 0;}
         virtual int    get_pvw8() const{WarningMSG(); return 0;}
@@ -48,17 +50,23 @@ class snglhfcand : public TNamed
         virtual float get_fetadau2() const{WarningMSG(); return 0;}
         virtual float get_fphidau2() const{WarningMSG(); return 0;}
         virtual float get_fqdau2() const{WarningMSG(); return 0;} //.. daughter of parent meson
+        virtual int   get_Index_dau2() const {WarningMSG(); return 0;}
+        virtual vector<int>  get_gIndex_dau2() const {WarningMSG(); return zero;}
 
         //.. daughter of daughter meson info
         virtual float get_fq1() const{WarningMSG(); return 0;} 
         virtual float get_fpt1() const{WarningMSG(); return 0;}
         virtual float get_feta1() const{WarningMSG(); return 0;}
         virtual float get_fphi1() const{WarningMSG(); return 0;}
+        virtual int   get_Index1() const {WarningMSG(); return 0;}
+        virtual vector<int>  get_gIndex1() const {WarningMSG(); return zero;}
 
         virtual float get_fpt2() const{WarningMSG(); return 0;}
         virtual float get_fq2() const{WarningMSG(); return 0;} 
         virtual float get_feta2() const{WarningMSG(); return 0;}
         virtual float get_fphi2() const{WarningMSG(); return 0;}
+        virtual int   get_Index2() const {WarningMSG(); return 0;}
+        virtual vector<int>  get_gIndex2() const {WarningMSG(); return zero;}
 
         virtual int get_nBPixLayer_dau2() const{WarningMSG(); return 0;}
         virtual int get_nPixLayer_dau2() const{WarningMSG(); return 0;}
@@ -117,17 +125,23 @@ class snglhfcand : public TNamed
         virtual void set_fetadau2(const float in) {WarningMSG();}
         virtual void set_fphidau2(const float in) {WarningMSG();}
         virtual void set_fqdau2(const float in) {WarningMSG();} //.. daughter of parent meson
+        virtual void set_Index_dau2(int in) {WarningMSG();} 
+        virtual void set_gIndex_dau2(vector<int>& in) {WarningMSG();} 
 
         //.. daughter of daughter meson info
         virtual void set_fq1(const float in) {WarningMSG();} 
         virtual void set_fpt1(const float in) {WarningMSG();}
         virtual void set_feta1(const float in) {WarningMSG();}
         virtual void set_fphi1(const float in) {WarningMSG();}
+        virtual void set_Index1(int in) {WarningMSG();} 
+        virtual void set_gIndex1(vector<int>& in) {WarningMSG();} 
 
         virtual void set_fpt2(const float in) {WarningMSG();}
         virtual void set_fq2(const float in) {WarningMSG();} 
         virtual void set_feta2(const float in) {WarningMSG();}
         virtual void set_fphi2(const float in) {WarningMSG();}
+        virtual void set_Index2(int in) {WarningMSG();} 
+        virtual void set_gIndex2(vector<int>& in) {WarningMSG();} 
 
         virtual void set_nBPixLayer_dau2(const int in) {WarningMSG();}
         virtual void set_nPixLayer_dau2(const int in) {WarningMSG();}
@@ -147,7 +161,7 @@ class snglhfcand : public TNamed
     private:
         void WarningMSG() const {cout<<"!!!!snglhfcand: the function not implemented in daughter class"<<endl;}
 
-        ClassDef(snglhfcand, 1)
+        ClassDef(snglhfcand, 2)
 };
 
 #endif

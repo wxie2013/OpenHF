@@ -76,8 +76,9 @@ void HFDs2PhiPi::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
         for (unsigned iTrack = 0; iTrack < trkSlowList.size(); iTrack++) {
 
-            if (iTrack == iKaon1st || iTrack == iKaon2nd) continue;
-            reco::TrackBaseRef rTrackView(fTracksHandle, iTrack);
+            unsigned int sPion = trkSlowList[iTrack];
+            if (sPion == iKaon1st || sPion == iKaon2nd) continue;
+            reco::TrackBaseRef rTrackView(fTracksHandle, sPion);
             reco::Track tSlowPion(*rTrackView);
 
             pis.SetXYZM(tSlowPion.px(), tSlowPion.py(), tSlowPion.pz(), MPION);
@@ -93,7 +94,7 @@ void HFDs2PhiPi::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
             iterator->addTrack(iKaon1st,321);
             iterator->addTrack(iKaon2nd,321);
             iterator->setNodeCut(RefCountedHFNodeCut(new HFMaxDocaCut(fMaxDoca)));
-            theTree.addTrack(iTrack,211);
+            theTree.addTrack(sPion,211);
             theTree.setNodeCut(RefCountedHFNodeCut(new HFMaxDocaCut(fMaxDoca)));
 
             fSequentialFitter->doFit(&theTree);

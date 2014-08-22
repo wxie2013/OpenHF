@@ -10,7 +10,7 @@ hltHiForestSync::hltHiForestSync(const edm::ParameterSet& iConfig)
     nameOfMapRunLumiFile = iConfig.getUntrackedParameter<string>("nameOfMapRunLumiFile");
     pathOfhftree = iConfig.getUntrackedParameter<string>("pathOfhftree");
 
-    for(int i = 0; i<NTRG; i++) {
+    for(int i = 0; i<ntrg; i++) {
         trigObject[i] = new trigO;
     }
 
@@ -20,7 +20,7 @@ hltHiForestSync::hltHiForestSync(const edm::ParameterSet& iConfig)
     hltTree = fs->make<TTree>("hltTree" , "rerun hlt tree to add trigObj");
     hltTree->Branch("Run", &fRun, "Run/I");
     hltTree->Branch("Event", &fEvt, "Event/I");
-    for (int itrig = 0; itrig != NTRG; ++itrig) {
+    for (int itrig = 0; itrig != ntrg; ++itrig) {
         TString trigName(trg_name[itrig]);
         hltTree->Branch(trigName,trigflag+itrig,trigName+"/I");
         hltTree->Branch(trigName+"_trigObject",&trigObject[itrig]);
@@ -34,7 +34,7 @@ hltHiForestSync::hltHiForestSync(const edm::ParameterSet& iConfig)
 //_________________________________________
 hltHiForestSync::~hltHiForestSync()
 {
-    for(int i = 0; i<NTRG; i++)
+    for(int i = 0; i<ntrg; i++)
         delete trigObject[i];
 }
 
@@ -212,7 +212,7 @@ void hltHiForestSync::get_trg_info(TTree* T)
     TBranch* branch = 0;
     while ((branch = (TBranch *)branch_iter.Next())) {
         TString branch_name = branch->GetName();
-        for(int it = 0; it<NTRG; it++) {
+        for(int it = 0; it<ntrg; it++) {
             if (branch_name.Contains(trg_name[it])){
                 if(branch_name.Contains("Prescl")) {
                     //.. do nothing here
@@ -231,7 +231,7 @@ void hltHiForestSync::get_trg_info(TTree* T)
 //
 void hltHiForestSync::reset()
 {//.. reset trigger decision every event
-    for(int i = 0; i<NTRG; i++) {
+    for(int i = 0; i<ntrg; i++) {
         trigflag[i] = 0;
         trigObject[i]->clear();
     }

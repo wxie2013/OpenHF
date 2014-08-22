@@ -78,8 +78,9 @@ void HFDs2KstarKaon::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
         for (unsigned iTrack = 0; iTrack < trkSlowList.size(); iTrack++) {
 
-            if (iTrack == iKaon || iTrack == iPion) continue;
-            reco::TrackBaseRef rTrackView(fTracksHandle, iTrack);
+            unsigned int sPion = trkSlowList[iTrack];
+            if (sPion == iKaon || sPion == iPion) continue;
+            reco::TrackBaseRef rTrackView(fTracksHandle, sPion);
             reco::Track tSlowKaon(*rTrackView);
 
             // -- the pion has the same charge like the pion
@@ -98,7 +99,7 @@ void HFDs2KstarKaon::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
             iterator->addTrack(iKaon,321);
             iterator->addTrack(iPion,211);
             iterator->setNodeCut(RefCountedHFNodeCut(new HFMaxDocaCut(fMaxDoca)));
-            theTree.addTrack(iTrack,321);
+            theTree.addTrack(sPion,321);
             theTree.setNodeCut(RefCountedHFNodeCut(new HFMaxDocaCut(fMaxDoca)));
 
             fSequentialFitter->doFit(&theTree);

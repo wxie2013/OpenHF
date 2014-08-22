@@ -14,11 +14,10 @@
 
 ClassImp(ana_hfforest)
 
-// for unknown reason this can not be placed in ana_common.hh
-const char* MesonName[NCH] = {"Dstar2D0Pi", "D02KPi", "Ds2PhiPi", "Ds2KstarK", "Dpm2KPiPi"};
-
 ana_hfforest::ana_hfforest()
-{;}
+{
+    run_ppTrack = false;
+}
 
 //
 ana_hfforest::~ana_hfforest()
@@ -26,9 +25,6 @@ ana_hfforest::~ana_hfforest()
     delete filename;
     delete result;
     delete hfcandidate;
-
-    for(int i = 0; i<NTRG; i++) 
-        delete trg_obj[i];
 
     for(int itrg = 0; itrg<NTRG; itrg++) 
         for(short i = 0; i<NPT; i++) {
@@ -50,34 +46,6 @@ ana_hfforest::~ana_hfforest()
         delete hfg_TrkTrgPt30above_raw[i];
         delete hfg_TrkTrgPt30above[i];
 
-        // Jet trigger ..
-        delete hfg_ZBiasSglTrkPt0_20_raw[i];
-        delete hfg_ZBiasSglTrkPt0_20[i];
-
-        delete hfg_JetTrgPt20_40_raw[i];
-        delete hfg_JetTrgPt20_40[i];
-        delete hfg_JetTrgPt40_60_raw[i];
-        delete hfg_JetTrgPt40_60[i];
-        delete hfg_JetTrgPt60_80_raw[i];
-        delete hfg_JetTrgPt60_80[i];
-        delete hfg_JetTrgPt80_100_raw[i];
-        delete hfg_JetTrgPt80_100[i];
-        delete hfg_JetTrgPt100above_raw[i];
-        delete hfg_JetTrgPt100above[i];
-
-        //.. photon trigger 
-        delete hfg_ZBiasSglTrkPt0_10_raw[i];
-        delete hfg_ZBiasSglTrkPt0_10[i];
-
-        delete hfg_PhoTrgPt10_15_raw[i];
-        delete hfg_PhoTrgPt10_15[i];
-        delete hfg_PhoTrgPt15_20_raw[i];
-        delete hfg_PhoTrgPt15_20[i];
-        delete hfg_PhoTrgPt20_30_raw[i];
-        delete hfg_PhoTrgPt20_30[i];
-        delete hfg_PhoTrgPt30above_raw[i];
-        delete hfg_PhoTrgPt30above[i];
-
         //.. track trigger 
         delete hfgdiff_ZBiasSglTrkPt0_12_raw[i];
         delete hfgdiff_ZBiasSglTrkPt0_12[i];
@@ -98,61 +66,10 @@ ana_hfforest::~ana_hfforest()
         delete hbgdiff_TrkTrgPt20_30[i];
         delete hbgdiff_TrkTrgPt30above_raw[i];
         delete hbgdiff_TrkTrgPt30above[i];
-
-        //. Jet trigger 
-        delete hfgdiff_ZBiasSglTrkPt0_20_raw[i];
-        delete hfgdiff_ZBiasSglTrkPt0_20[i];
-
-        delete hfgdiff_JetTrgPt20_40_raw[i];
-        delete hfgdiff_JetTrgPt20_40[i];
-        delete hfgdiff_JetTrgPt40_60_raw[i];
-        delete hfgdiff_JetTrgPt40_60[i];
-        delete hfgdiff_JetTrgPt60_80_raw[i];
-        delete hfgdiff_JetTrgPt60_80[i];
-        delete hfgdiff_JetTrgPt80_100_raw[i];
-        delete hfgdiff_JetTrgPt80_100[i];
-        delete hfgdiff_JetTrgPt100above_raw[i];
-        delete hfgdiff_JetTrgPt100above[i];
-
-        delete hbgdiff_ZBiasSglTrkPt0_20_raw[i];
-        delete hbgdiff_ZBiasSglTrkPt0_20[i];
-
-        delete hbgdiff_JetTrgPt20_40_raw[i];
-        delete hbgdiff_JetTrgPt20_40[i];
-        delete hbgdiff_JetTrgPt40_60_raw[i];
-        delete hbgdiff_JetTrgPt40_60[i];
-        delete hbgdiff_JetTrgPt60_80_raw[i];
-        delete hbgdiff_JetTrgPt60_80[i];
-        delete hbgdiff_JetTrgPt80_100_raw[i];
-        delete hbgdiff_JetTrgPt80_100[i];
-        delete hbgdiff_JetTrgPt100above_raw[i];
-        delete hbgdiff_JetTrgPt100above[i];
-
-        //. photon trigger 
-        delete hfgdiff_ZBiasSglTrkPt0_10_raw[i];
-        delete hfgdiff_ZBiasSglTrkPt0_10[i];
-
-        delete hfgdiff_PhoTrgPt10_15_raw[i];
-        delete hfgdiff_PhoTrgPt10_15[i];
-        delete hfgdiff_PhoTrgPt15_20_raw[i];
-        delete hfgdiff_PhoTrgPt15_20[i];
-        delete hfgdiff_PhoTrgPt20_30_raw[i];
-        delete hfgdiff_PhoTrgPt20_30[i];
-        delete hfgdiff_PhoTrgPt30above_raw[i];
-        delete hfgdiff_PhoTrgPt30above[i];
-
-        delete hbgdiff_ZBiasSglTrkPt0_10_raw[i];
-        delete hbgdiff_ZBiasSglTrkPt0_10[i];
-
-        delete hbgdiff_PhoTrgPt10_15_raw[i];
-        delete hbgdiff_PhoTrgPt10_15[i];
-        delete hbgdiff_PhoTrgPt15_20_raw[i];
-        delete hbgdiff_PhoTrgPt15_20[i];
-        delete hbgdiff_PhoTrgPt20_30_raw[i];
-        delete hbgdiff_PhoTrgPt20_30[i];
-        delete hbgdiff_PhoTrgPt30above_raw[i];
-        delete hbgdiff_PhoTrgPt30above[i];
     }
+
+    delete ntMaxTrgPt;
+    delete ntMaxTrgPtAlgo2;
 }
 
 //
@@ -178,10 +95,10 @@ void ana_hfforest::Init(int startFile, int endFile, char *filelist, int iy, int 
     //sprintf(filename, "ana_hhforest_%s_%dTo%d_rapidity_%3.1f_%3.1f_%s.root",  filelist, startFile, endFile, ydn, yup, MesonName[ich]);
     result = new TFile(outfile, "recreate");
 
-    //
-    define_cuts();
-    get_trg_name();
-    book_hist(ich, iy);
+    ntMaxTrgPt = new TNtuple("ntMaxTrgPt", "maximum trigger pT spectra for debugging", "ptmax:ptmax_org:itrg:weight");
+    ntMaxTrgPtAlgo2 = new TNtuple("ntMaxTrgPtAlgo2", "maximum trigger pT spectra for debugging for algo#2", "ptmax:hp:tDz1:tDz1Err:tDxy1:tDxyErr:tPtErr:itrg:weight");
+    ntMass = new TNtuple("ntMass", "mass spectra", "mass:ptmax:ipt:itrg:isbg:weight:hp0:hp1:hp2:pt0:pt1:pt2:ptErr0:ptErr1:ptErr2:hp:tPtErr");
+    ntTrk = new TNtuple("ntTrk", "trk spectra", "pt:ptErr:ptmax:ptmaxErr:hp0:hp:itrg:weight");
 
     //
     hfcandidate = new hfcand_v0;
@@ -190,461 +107,184 @@ void ana_hfforest::Init(int startFile, int endFile, char *filelist, int iy, int 
     HltTree = 0;
     hltTreeReRun = 0;
     hftree = 0;
+    trackTree = 0;
 
     //.. trigger object ...
     for(int i = 0; i<NTRG; i++) {
         trg_obj[i] = new trigO;
+        org_trg_obj[i] = new trigO;
     }
 
 }
 
 //
-void ana_hfforest::book_hist(int ich, int iy)
+void ana_hfforest::book_hist(int ich)
 {
     float pt_low = 0, pt_high = 0;
     char hname[100], pt_range[1000];
 
-    // all D mesons
-    for(short it = 0; it<NTRG; it++) 
+    if(ich!=0) {
+        // all D mesons
+        for(short it = 0; it<NTRG; it++) {
+            for(short i = 0; i<NPT; i++) {
+
+                get_pt_range(i, pt_low, pt_high);
+
+                sprintf(pt_range, "trg: %s,  pt: %f %f", trg_name[it], pt_low, pt_high);
+
+                //
+                sprintf(hname, "hfg%d_%d", it, i);
+                hfg[it][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+                sprintf(hname, "hfg_raw%d_%d", it, i);
+                hfg_raw[it][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+                //.. track error ...
+                hfg[it][i]->Sumw2();
+                hfg_raw[it][i]->Sumw2();
+            }
+        }
+        // components for trigger combination for all D..
         for(short i = 0; i<NPT; i++) {
 
             get_pt_range(i, pt_low, pt_high);
 
-            sprintf(pt_range, "trg: %s,  pt: %f %f", trg_name[it], pt_low, pt_high);
+            //FullTrack trigger 
+            sprintf(pt_range, "ch: %s, pt: %f %f", MesonName[ich], pt_low, pt_high);
 
-            //
-            sprintf(hname, "hfg%d_%d", it, i);
-            hfg[it][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-            sprintf(hname, "hfg_raw%d_%d", it, i);
-            hfg_raw[it][i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_ZBiasSglTrkPt0_12_raw%d", i);
+            hfg_ZBiasSglTrkPt0_12_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_ZBiasSglTrkPt0_12%d", i);
+            hfg_ZBiasSglTrkPt0_12[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
 
-            //.. track error ...
-            hfg[it][i]->Sumw2();
-            hfg_raw[it][i]->Sumw2();
+            sprintf(hname, "hfg_TrkTrgPt12_20_raw%d", i);
+            hfg_TrkTrgPt12_20_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_TrkTrgPt12_20%d", i);
+            hfg_TrkTrgPt12_20[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+            sprintf(hname, "hfg_TrkTrgPt20_30_raw%d", i);
+            hfg_TrkTrgPt20_30_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_TrkTrgPt20_30%d", i);
+            hfg_TrkTrgPt20_30[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+            sprintf(hname, "hfg_TrkTrgPt30above_raw%d", i);
+            hfg_TrkTrgPt30above_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_TrkTrgPt30above%d", i);
+            hfg_TrkTrgPt30above[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+            hfg_ZBiasSglTrkPt0_12_raw[i]->Sumw2();
+            hfg_ZBiasSglTrkPt0_12[i]->Sumw2();
+
+            hfg_TrkTrgPt12_20_raw[i]->Sumw2();
+            hfg_TrkTrgPt12_20[i]->Sumw2();
+
+            hfg_TrkTrgPt20_30_raw[i]->Sumw2();
+            hfg_TrkTrgPt20_30[i]->Sumw2();
+
+            hfg_TrkTrgPt30above_raw[i]->Sumw2();
+            hfg_TrkTrgPt30above[i]->Sumw2();
+        }
+    } else {
+        // D*
+        for(short it = 0; it<NTRG; it++) {
+            for(short i = 0; i<NPT; i++) {
+
+                get_pt_range(i, pt_low, pt_high);
+
+                sprintf(pt_range, "trg: %s,  pt: %f %f", trg_name[it], pt_low, pt_high);
+
+                sprintf(hname, "hfgdiff%d_%d", it, i);
+                hfgdiff[it][i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+                sprintf(hname, "hfgdiff_raw%d_%d", it, i);
+                hfgdiff_raw[it][i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+                sprintf(hname, "hbgdiff%d_%d", it, i);
+                hbgdiff[it][i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+                sprintf(hname, "hbgdiff_raw%d_%d", it, i);
+                hbgdiff_raw[it][i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+                //.. track error ...
+                hfgdiff[it][i]->Sumw2();
+                hbgdiff[it][i]->Sumw2();
+                hfgdiff_raw[it][i]->Sumw2();
+                hbgdiff_raw[it][i]->Sumw2();
+            }
         }
 
-    // D*
-    for(short it = 0; it<NTRG; it++) 
+        // components for trigger combination for D*
         for(short i = 0; i<NPT; i++) {
 
             get_pt_range(i, pt_low, pt_high);
 
-            sprintf(pt_range, "trg: %s,  pt: %f %f", trg_name[it], pt_low, pt_high);
+            sprintf(pt_range, "pt: %f %f", pt_low, pt_high);
 
-            sprintf(hname, "hfgdiff%d_%d", it, i);
-            hfgdiff[it][i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-            sprintf(hname, "hfgdiff_raw%d_%d", it, i);
-            hfgdiff_raw[it][i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            // FullTrack trigger
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12_raw%d", i);
+            hfgdiff_ZBiasSglTrkPt0_12_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12%d", i);
+            hfgdiff_ZBiasSglTrkPt0_12[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
 
-            sprintf(hname, "hbgdiff%d_%d", it, i);
-            hbgdiff[it][i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-            sprintf(hname, "hbgdiff_raw%d_%d", it, i);
-            hbgdiff_raw[it][i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_TrkTrgPt12_20_raw%d", i);
+            hfgdiff_TrkTrgPt12_20_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_TrkTrgPt12_20%d", i);
+            hfgdiff_TrkTrgPt12_20[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
 
-            //.. track error ...
-            hfgdiff[it][i]->Sumw2();
-            hbgdiff[it][i]->Sumw2();
-            hfgdiff_raw[it][i]->Sumw2();
-            hbgdiff_raw[it][i]->Sumw2();
+            sprintf(hname, "hfgdiff_TrkTrgPt20_30_raw%d", i);
+            hfgdiff_TrkTrgPt20_30_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_TrkTrgPt20_30%d", i);
+            hfgdiff_TrkTrgPt20_30[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hfgdiff_TrkTrgPt30above_raw%d", i);
+            hfgdiff_TrkTrgPt30above_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_TrkTrgPt30above%d", i);
+            hfgdiff_TrkTrgPt30above[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12_raw%d", i);
+            hbgdiff_ZBiasSglTrkPt0_12_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12%d", i);
+            hbgdiff_ZBiasSglTrkPt0_12[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hbgdiff_TrkTrgPt12_20_raw%d", i);
+            hbgdiff_TrkTrgPt12_20_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hbgdiff_TrkTrgPt12_20%d", i);
+            hbgdiff_TrkTrgPt12_20[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hbgdiff_TrkTrgPt20_30_raw%d", i);
+            hbgdiff_TrkTrgPt20_30_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hbgdiff_TrkTrgPt20_30%d", i);
+            hbgdiff_TrkTrgPt20_30[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hbgdiff_TrkTrgPt30above_raw%d", i);
+            hbgdiff_TrkTrgPt30above_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hbgdiff_TrkTrgPt30above%d", i);
+            hbgdiff_TrkTrgPt30above[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            hfgdiff_ZBiasSglTrkPt0_12_raw[i]->Sumw2();
+            hfgdiff_ZBiasSglTrkPt0_12[i]->Sumw2();
+
+            hfgdiff_TrkTrgPt12_20_raw[i]->Sumw2();
+            hfgdiff_TrkTrgPt12_20[i]->Sumw2();
+
+            hfgdiff_TrkTrgPt20_30_raw[i]->Sumw2();
+            hfgdiff_TrkTrgPt20_30[i]->Sumw2();
+
+            hfgdiff_TrkTrgPt30above_raw[i]->Sumw2();
+            hfgdiff_TrkTrgPt30above[i]->Sumw2();
+
+            hbgdiff_ZBiasSglTrkPt0_12_raw[i]->Sumw2();
+            hbgdiff_ZBiasSglTrkPt0_12[i]->Sumw2();
+
+            hbgdiff_TrkTrgPt12_20_raw[i]->Sumw2();
+            hbgdiff_TrkTrgPt12_20[i]->Sumw2();
+
+            hbgdiff_TrkTrgPt20_30_raw[i]->Sumw2();
+            hbgdiff_TrkTrgPt20_30[i]->Sumw2();
+
+            hbgdiff_TrkTrgPt30above_raw[i]->Sumw2();
+            hbgdiff_TrkTrgPt30above[i]->Sumw2();
+
         }
-
-    // components for trigger combination for all D..
-    for(short i = 0; i<NPT; i++) {
-
-        get_pt_range(i, pt_low, pt_high);
-
-        //FullTrack trigger 
-        sprintf(pt_range, "pt: %f %f", pt_low, pt_high);
-
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_12_raw%d", i);
-        hfg_ZBiasSglTrkPt0_12_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_12%d", i);
-        hfg_ZBiasSglTrkPt0_12[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_TrkTrgPt12_raw%d", i);
-        hfg_TrkTrgPt12_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_TrkTrgPt12_20_raw%d", i);
-        hfg_TrkTrgPt12_20_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_TrkTrgPt12_20%d", i);
-        hfg_TrkTrgPt12_20[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_TrkTrgPt20_30_raw%d", i);
-        hfg_TrkTrgPt20_30_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_TrkTrgPt20_30%d", i);
-        hfg_TrkTrgPt20_30[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_TrkTrgPt30above_raw%d", i);
-        hfg_TrkTrgPt30above_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_TrkTrgPt30above%d", i);
-        hfg_TrkTrgPt30above[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        hfg_ZBiasSglTrkPt0_12_raw[i]->Sumw2();
-        hfg_ZBiasSglTrkPt0_12[i]->Sumw2();
-
-        hfg_TrkTrgPt12_20_raw[i]->Sumw2();
-        hfg_TrkTrgPt12_20[i]->Sumw2();
-
-        hfg_TrkTrgPt20_30_raw[i]->Sumw2();
-        hfg_TrkTrgPt20_30[i]->Sumw2();
-
-        hfg_TrkTrgPt30above_raw[i]->Sumw2();
-        hfg_TrkTrgPt30above[i]->Sumw2();
-
-        //Jet trigger 
-        sprintf(pt_range, "ch: %s, rapidity:%d, pt: %f %f", MesonName[ich], iy, pt_low, pt_high);
-
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_20_raw%d", i);
-        hfg_ZBiasSglTrkPt0_20_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_20%d", i);
-        hfg_ZBiasSglTrkPt0_20[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_JetTrgPt20_raw%d", i);
-        hfg_JetTrgPt20_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_JetTrgPt20_40_raw%d", i);
-        hfg_JetTrgPt20_40_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_JetTrgPt20_40%d", i);
-        hfg_JetTrgPt20_40[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_JetTrgPt40_60_raw%d", i);
-        hfg_JetTrgPt40_60_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_JetTrgPt40_60%d", i);
-        hfg_JetTrgPt40_60[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_JetTrgPt60_80_raw%d", i);
-        hfg_JetTrgPt60_80_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_JetTrgPt60_80%d", i);
-        hfg_JetTrgPt60_80[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_JetTrgPt80_100_raw%d", i);
-        hfg_JetTrgPt80_100_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_JetTrgPt80_100%d", i);
-        hfg_JetTrgPt80_100[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_JetTrgPt100above_raw%d", i);
-        hfg_JetTrgPt100above_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_JetTrgPt100above%d", i);
-        hfg_JetTrgPt100above[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        hfg_ZBiasSglTrkPt0_20_raw[i]->Sumw2();
-        hfg_ZBiasSglTrkPt0_20[i]->Sumw2();
-
-        hfg_JetTrgPt20_40_raw[i]->Sumw2();
-        hfg_JetTrgPt20_40[i]->Sumw2();
-
-        hfg_JetTrgPt40_60_raw[i]->Sumw2();
-        hfg_JetTrgPt40_60[i]->Sumw2();
-
-        hfg_JetTrgPt60_80_raw[i]->Sumw2();
-        hfg_JetTrgPt60_80[i]->Sumw2();
-
-        hfg_JetTrgPt80_100_raw[i]->Sumw2();
-        hfg_JetTrgPt80_100[i]->Sumw2();
-
-        hfg_JetTrgPt100above_raw[i]->Sumw2();
-        hfg_JetTrgPt100above[i]->Sumw2();
-
-        //Photon trigger 
-        sprintf(pt_range, "ch: %s, rapidity:%d, pt: %f %f", MesonName[ich], iy, pt_low, pt_high);
-
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_10_raw%d", i);
-        hfg_ZBiasSglTrkPt0_10_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_10%d", i);
-        hfg_ZBiasSglTrkPt0_10[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_PhoTrgPt10_raw%d", i);
-        hfg_PhoTrgPt10_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_PhoTrgPt10_15_raw%d", i);
-        hfg_PhoTrgPt10_15_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_PhoTrgPt10_15%d", i);
-        hfg_PhoTrgPt10_15[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_PhoTrgPt15_20_raw%d", i);
-        hfg_PhoTrgPt15_20_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_PhoTrgPt15_20%d", i);
-        hfg_PhoTrgPt15_20[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_PhoTrgPt20_30_raw%d", i);
-        hfg_PhoTrgPt20_30_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_PhoTrgPt20_30%d", i);
-        hfg_PhoTrgPt20_30[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        sprintf(hname, "hfg_PhoTrgPt30above_raw%d", i);
-        hfg_PhoTrgPt30above_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-        sprintf(hname, "hfg_PhoTrgPt30above%d", i);
-        hfg_PhoTrgPt30above[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
-
-        hfg_ZBiasSglTrkPt0_10_raw[i]->Sumw2();
-        hfg_ZBiasSglTrkPt0_10[i]->Sumw2();
-
-        hfg_PhoTrgPt10_15_raw[i]->Sumw2();
-        hfg_PhoTrgPt10_15[i]->Sumw2();
-
-        hfg_PhoTrgPt15_20_raw[i]->Sumw2();
-        hfg_PhoTrgPt15_20[i]->Sumw2();
-
-        hfg_PhoTrgPt20_30_raw[i]->Sumw2();
-        hfg_PhoTrgPt20_30[i]->Sumw2();
-
-        hfg_PhoTrgPt30above_raw[i]->Sumw2();
-        hfg_PhoTrgPt30above[i]->Sumw2();
     }
-
-    // components for trigger combination for D*
-    for(short i = 0; i<NPT; i++) {
-
-        get_pt_range(i, pt_low, pt_high);
-
-        sprintf(pt_range, "pt: %f %f", pt_low, pt_high);
-
-        // FullTrack trigger
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12_raw%d", i);
-        hfgdiff_ZBiasSglTrkPt0_12_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12%d", i);
-        hfgdiff_ZBiasSglTrkPt0_12[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_TrkTrgPt12_20_raw%d", i);
-        hfgdiff_TrkTrgPt12_20_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_TrkTrgPt12_20%d", i);
-        hfgdiff_TrkTrgPt12_20[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_TrkTrgPt20_30_raw%d", i);
-        hfgdiff_TrkTrgPt20_30_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_TrkTrgPt20_30%d", i);
-        hfgdiff_TrkTrgPt20_30[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_TrkTrgPt30above_raw%d", i);
-        hfgdiff_TrkTrgPt30above_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_TrkTrgPt30above%d", i);
-        hfgdiff_TrkTrgPt30above[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12_raw%d", i);
-        hbgdiff_ZBiasSglTrkPt0_12_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12%d", i);
-        hbgdiff_ZBiasSglTrkPt0_12[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_TrkTrgPt12_20_raw%d", i);
-        hbgdiff_TrkTrgPt12_20_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_TrkTrgPt12_20%d", i);
-        hbgdiff_TrkTrgPt12_20[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_TrkTrgPt20_30_raw%d", i);
-        hbgdiff_TrkTrgPt20_30_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_TrkTrgPt20_30%d", i);
-        hbgdiff_TrkTrgPt20_30[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_TrkTrgPt30above_raw%d", i);
-        hbgdiff_TrkTrgPt30above_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_TrkTrgPt30above%d", i);
-        hbgdiff_TrkTrgPt30above[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        hfgdiff_ZBiasSglTrkPt0_12_raw[i]->Sumw2();
-        hfgdiff_ZBiasSglTrkPt0_12[i]->Sumw2();
-
-        hfgdiff_TrkTrgPt12_20_raw[i]->Sumw2();
-        hfgdiff_TrkTrgPt12_20[i]->Sumw2();
-
-        hfgdiff_TrkTrgPt20_30_raw[i]->Sumw2();
-        hfgdiff_TrkTrgPt20_30[i]->Sumw2();
-
-        hfgdiff_TrkTrgPt30above_raw[i]->Sumw2();
-        hfgdiff_TrkTrgPt30above[i]->Sumw2();
-
-        hbgdiff_ZBiasSglTrkPt0_12_raw[i]->Sumw2();
-        hbgdiff_ZBiasSglTrkPt0_12[i]->Sumw2();
-
-        hbgdiff_TrkTrgPt12_20_raw[i]->Sumw2();
-        hbgdiff_TrkTrgPt12_20[i]->Sumw2();
-
-        hbgdiff_TrkTrgPt20_30_raw[i]->Sumw2();
-        hbgdiff_TrkTrgPt20_30[i]->Sumw2();
-
-        hbgdiff_TrkTrgPt30above_raw[i]->Sumw2();
-        hbgdiff_TrkTrgPt30above[i]->Sumw2();
-
-        // Jet trigger
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20_raw%d", i);
-        hfgdiff_ZBiasSglTrkPt0_20_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20%d", i);
-        hfgdiff_ZBiasSglTrkPt0_20[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_JetTrgPt20_40_raw%d", i);
-        hfgdiff_JetTrgPt20_40_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_JetTrgPt20_40%d", i);
-        hfgdiff_JetTrgPt20_40[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_JetTrgPt40_60_raw%d", i);
-        hfgdiff_JetTrgPt40_60_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_JetTrgPt40_60%d", i);
-        hfgdiff_JetTrgPt40_60[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_JetTrgPt60_80_raw%d", i);
-        hfgdiff_JetTrgPt60_80_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_JetTrgPt60_80%d", i);
-        hfgdiff_JetTrgPt60_80[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_JetTrgPt80_100_raw%d", i);
-        hfgdiff_JetTrgPt80_100_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_JetTrgPt80_100%d", i);
-        hfgdiff_JetTrgPt80_100[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_JetTrgPt100above_raw%d", i);
-        hfgdiff_JetTrgPt100above_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_JetTrgPt100above%d", i);
-        hfgdiff_JetTrgPt100above[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20_raw%d", i);
-        hbgdiff_ZBiasSglTrkPt0_20_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20%d", i);
-        hbgdiff_ZBiasSglTrkPt0_20[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_JetTrgPt20_40_raw%d", i);
-        hbgdiff_JetTrgPt20_40_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_JetTrgPt20_40%d", i);
-        hbgdiff_JetTrgPt20_40[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_JetTrgPt40_60_raw%d", i);
-        hbgdiff_JetTrgPt40_60_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_JetTrgPt40_60%d", i);
-        hbgdiff_JetTrgPt40_60[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_JetTrgPt60_80_raw%d", i);
-        hbgdiff_JetTrgPt60_80_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_JetTrgPt60_80%d", i);
-        hbgdiff_JetTrgPt60_80[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_JetTrgPt80_100_raw%d", i);
-        hbgdiff_JetTrgPt80_100_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_JetTrgPt80_100%d", i);
-        hbgdiff_JetTrgPt80_100[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_JetTrgPt100above_raw%d", i);
-        hbgdiff_JetTrgPt100above_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_JetTrgPt100above%d", i);
-        hbgdiff_JetTrgPt100above[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        hfgdiff_ZBiasSglTrkPt0_20_raw[i]->Sumw2();
-        hfgdiff_ZBiasSglTrkPt0_20[i]->Sumw2();
-
-        hfgdiff_JetTrgPt20_40_raw[i]->Sumw2();
-        hfgdiff_JetTrgPt20_40[i]->Sumw2();
-
-        hfgdiff_JetTrgPt40_60_raw[i]->Sumw2();
-        hfgdiff_JetTrgPt40_60[i]->Sumw2();
-
-        hfgdiff_JetTrgPt60_80_raw[i]->Sumw2();
-        hfgdiff_JetTrgPt60_80[i]->Sumw2();
-
-        hfgdiff_JetTrgPt80_100_raw[i]->Sumw2();
-        hfgdiff_JetTrgPt80_100[i]->Sumw2();
-
-        hfgdiff_JetTrgPt100above_raw[i]->Sumw2();
-        hfgdiff_JetTrgPt100above[i]->Sumw2();
-
-        hbgdiff_ZBiasSglTrkPt0_20_raw[i]->Sumw2();
-        hbgdiff_ZBiasSglTrkPt0_20[i]->Sumw2();
-
-        hbgdiff_JetTrgPt20_40_raw[i]->Sumw2();
-        hbgdiff_JetTrgPt20_40[i]->Sumw2();
-
-        hbgdiff_JetTrgPt40_60_raw[i]->Sumw2();
-        hbgdiff_JetTrgPt40_60[i]->Sumw2();
-
-        hbgdiff_JetTrgPt60_80_raw[i]->Sumw2();
-        hbgdiff_JetTrgPt60_80[i]->Sumw2();
-
-        hbgdiff_JetTrgPt80_100_raw[i]->Sumw2();
-        hbgdiff_JetTrgPt80_100[i]->Sumw2();
-
-        hbgdiff_JetTrgPt100above_raw[i]->Sumw2();
-        hbgdiff_JetTrgPt100above[i]->Sumw2();
-
-        // Photon trigger
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_10_raw%d", i);
-        hfgdiff_ZBiasSglTrkPt0_10_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_10%d", i);
-        hfgdiff_ZBiasSglTrkPt0_10[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_PhoTrgPt10_15_raw%d", i);
-        hfgdiff_PhoTrgPt10_15_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_PhoTrgPt10_15%d", i);
-        hfgdiff_PhoTrgPt10_15[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_PhoTrgPt15_20_raw%d", i);
-        hfgdiff_PhoTrgPt15_20_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_PhoTrgPt15_20%d", i);
-        hfgdiff_PhoTrgPt15_20[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_PhoTrgPt20_30_raw%d", i);
-        hfgdiff_PhoTrgPt20_30_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_PhoTrgPt20_30%d", i);
-        hfgdiff_PhoTrgPt20_30[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hfgdiff_PhoTrgPt30above_raw%d", i);
-        hfgdiff_PhoTrgPt30above_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hfgdiff_PhoTrgPt30above%d", i);
-        hfgdiff_PhoTrgPt30above[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_10_raw%d", i);
-        hbgdiff_ZBiasSglTrkPt0_10_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_10%d", i);
-        hbgdiff_ZBiasSglTrkPt0_10[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_PhoTrgPt10_15_raw%d", i);
-        hbgdiff_PhoTrgPt10_15_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_PhoTrgPt10_15%d", i);
-        hbgdiff_PhoTrgPt10_15[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_PhoTrgPt15_20_raw%d", i);
-        hbgdiff_PhoTrgPt15_20_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_PhoTrgPt15_20%d", i);
-        hbgdiff_PhoTrgPt15_20[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_PhoTrgPt20_30_raw%d", i);
-        hbgdiff_PhoTrgPt20_30_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_PhoTrgPt20_30%d", i);
-        hbgdiff_PhoTrgPt20_30[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        sprintf(hname, "hbgdiff_PhoTrgPt30above_raw%d", i);
-        hbgdiff_PhoTrgPt30above_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-        sprintf(hname, "hbgdiff_PhoTrgPt30above%d", i);
-        hbgdiff_PhoTrgPt30above[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
-
-        hfgdiff_ZBiasSglTrkPt0_10_raw[i]->Sumw2();
-        hfgdiff_ZBiasSglTrkPt0_10[i]->Sumw2();
-
-        hfgdiff_PhoTrgPt10_15_raw[i]->Sumw2();
-        hfgdiff_PhoTrgPt10_15[i]->Sumw2();
-
-        hfgdiff_PhoTrgPt15_20_raw[i]->Sumw2();
-        hfgdiff_PhoTrgPt15_20[i]->Sumw2();
-
-        hfgdiff_PhoTrgPt20_30_raw[i]->Sumw2();
-        hfgdiff_PhoTrgPt20_30[i]->Sumw2();
-
-        hfgdiff_PhoTrgPt30above_raw[i]->Sumw2();
-        hfgdiff_PhoTrgPt30above[i]->Sumw2();
-
-        hbgdiff_ZBiasSglTrkPt0_10_raw[i]->Sumw2();
-        hbgdiff_ZBiasSglTrkPt0_10[i]->Sumw2();
-
-        hbgdiff_PhoTrgPt10_15_raw[i]->Sumw2();
-        hbgdiff_PhoTrgPt10_15[i]->Sumw2();
-
-        hbgdiff_PhoTrgPt15_20_raw[i]->Sumw2();
-        hbgdiff_PhoTrgPt15_20[i]->Sumw2();
-
-        hbgdiff_PhoTrgPt20_30_raw[i]->Sumw2();
-        hbgdiff_PhoTrgPt20_30[i]->Sumw2();
-
-        hbgdiff_PhoTrgPt30above_raw[i]->Sumw2();
-        hbgdiff_PhoTrgPt30above[i]->Sumw2();
-    }
-
 }
 
 //
@@ -713,18 +353,32 @@ bool ana_hfforest::GetTreeInfo(TFile* f)
     HltTree  = (TTree*)f->Get("hltanalysis/HltTree");
     hltTreeReRun  = (TTree*)f->Get("hltReRun/hltTree");
     hftree = (TTree*)f->Get("OpenHfTree/hftree");
+    trackTree  = (TTree*)f->Get("ppTrack/trackTree");
 
     //if(!hftree || !HltTree || !HiTree) {
-    if(!hftree || !HltTree || !hltTreeReRun) {
-        cout<<"==> missing hftree or HltTree or hltTreeReRun <=="<<endl;
+    if(!hftree || !HltTree || !hltTreeReRun || !trackTree) {
+        cout<<"==> missing hftree or HltTree or hltTreeReRun or trackTree <=="<<endl;
         return false;
     }
 
     HltTree->AddFriend(hftree);
     HltTree->AddFriend(hltTreeReRun);
+    HltTree->AddFriend(trackTree);
     //HltTree->AddFriend(HiTree);
 
     hftree->SetBranchAddress("hfcandidate", &hfcandidate);
+    trackTree->SetBranchAddress("nTrk", &nTrk);
+    trackTree->SetBranchAddress("trkCharge", trkCharge);
+    trackTree->SetBranchAddress("trkPhi", trkPhi);
+    trackTree->SetBranchAddress("trkEta", trkEta);
+    trackTree->SetBranchAddress("highPurity", highPurity);
+    trackTree->SetBranchAddress("trkPt", trkPt);
+    trackTree->SetBranchAddress("trkPtError", trkPtError);
+    trackTree->SetBranchAddress("trkDz1", trkDz1);
+    trackTree->SetBranchAddress("trkDzError1", trkDzError1);
+    trackTree->SetBranchAddress("trkDxy1", trkDxy1);
+    trackTree->SetBranchAddress("trkDxyError1", trkDxyError1);
+
 
     get_trg_info(HltTree, hltTreeReRun);
 
@@ -736,136 +390,60 @@ void ana_hfforest::write()
 {//.. results 
     result->cd();
 
-    for(int itrg = 0; itrg<NTRG; itrg++) 
+    ntMaxTrgPt->Write();
+    ntMaxTrgPtAlgo2->Write();
+    ntMass->Write();
+    if(run_ppTrack)
+        ntTrk->Write();
+
+}
+//
+void ana_hfforest::write_hist(int ich)
+{
+    for(int itrg = 0; itrg<NTRG; itrg++) {
         for(short i = 0; i<NPT; i++) {
-            hfg_raw[itrg][i]->Write();
-            hfg[itrg][i]->Write();
-            hfgdiff_raw[itrg][i]->Write();
-            hfgdiff[itrg][i]->Write();
-            hbgdiff_raw[itrg][i]->Write();
-            hbgdiff[itrg][i]->Write();
+            if(ich!=0) {
+                hfg_raw[itrg][i]->Write();
+                hfg[itrg][i]->Write();
+            } else {
+                hfgdiff_raw[itrg][i]->Write();
+                hfgdiff[itrg][i]->Write();
+                hbgdiff_raw[itrg][i]->Write();
+                hbgdiff[itrg][i]->Write();
+            }
         }
-
-    for(short i = 0; i<NPT; i++) {
-        //FullTrack trigger ...
-        hfg_ZBiasSglTrkPt0_12_raw[i]->Write();
-        hfg_ZBiasSglTrkPt0_12[i]->Write();
-
-	hfg_TrkTrgPt12_raw[i]->Write();
-        hfg_TrkTrgPt12_20_raw[i]->Write();
-        hfg_TrkTrgPt12_20[i]->Write();
-        hfg_TrkTrgPt20_30_raw[i]->Write();
-        hfg_TrkTrgPt20_30[i]->Write();
-        hfg_TrkTrgPt30above_raw[i]->Write();
-        hfg_TrkTrgPt30above[i]->Write();
-
-        // Jet trigger ..
-        hfg_ZBiasSglTrkPt0_20_raw[i]->Write();
-        hfg_ZBiasSglTrkPt0_20[i]->Write();
-
-        hfg_JetTrgPt20_raw[i]->Write();
-        hfg_JetTrgPt20_40_raw[i]->Write();
-        hfg_JetTrgPt20_40[i]->Write();
-        hfg_JetTrgPt40_60_raw[i]->Write();
-        hfg_JetTrgPt40_60[i]->Write();
-        hfg_JetTrgPt60_80_raw[i]->Write();
-        hfg_JetTrgPt60_80[i]->Write();
-        hfg_JetTrgPt80_100_raw[i]->Write();
-        hfg_JetTrgPt80_100[i]->Write();
-        hfg_JetTrgPt100above_raw[i]->Write();
-        hfg_JetTrgPt100above[i]->Write();
-
-        //.. photon trigger 
-        hfg_ZBiasSglTrkPt0_10_raw[i]->Write();
-        hfg_ZBiasSglTrkPt0_10[i]->Write();
-
-        hfg_PhoTrgPt10_raw[i]->Write();
-        hfg_PhoTrgPt10_15_raw[i]->Write();
-        hfg_PhoTrgPt10_15[i]->Write();
-        hfg_PhoTrgPt15_20_raw[i]->Write();
-        hfg_PhoTrgPt15_20[i]->Write();
-        hfg_PhoTrgPt20_30_raw[i]->Write();
-        hfg_PhoTrgPt20_30[i]->Write();
-        hfg_PhoTrgPt30above_raw[i]->Write();
-        hfg_PhoTrgPt30above[i]->Write();
-
-        //.. track trigger 
-        hfgdiff_ZBiasSglTrkPt0_12_raw[i]->Write();
-        hfgdiff_ZBiasSglTrkPt0_12[i]->Write();
-
-        hfgdiff_TrkTrgPt12_20_raw[i]->Write();
-        hfgdiff_TrkTrgPt12_20[i]->Write();
-        hfgdiff_TrkTrgPt20_30_raw[i]->Write();
-        hfgdiff_TrkTrgPt20_30[i]->Write();
-        hfgdiff_TrkTrgPt30above_raw[i]->Write();
-        hfgdiff_TrkTrgPt30above[i]->Write();
-
-        hbgdiff_ZBiasSglTrkPt0_12_raw[i]->Write();
-        hbgdiff_ZBiasSglTrkPt0_12[i]->Write();
-
-        hbgdiff_TrkTrgPt12_20_raw[i]->Write();
-        hbgdiff_TrkTrgPt12_20[i]->Write();
-        hbgdiff_TrkTrgPt20_30_raw[i]->Write();
-        hbgdiff_TrkTrgPt20_30[i]->Write();
-        hbgdiff_TrkTrgPt30above_raw[i]->Write();
-        hbgdiff_TrkTrgPt30above[i]->Write();
-
-        //. Jet trigger 
-        hfgdiff_ZBiasSglTrkPt0_20_raw[i]->Write();
-        hfgdiff_ZBiasSglTrkPt0_20[i]->Write();
-
-        hfgdiff_JetTrgPt20_40_raw[i]->Write();
-        hfgdiff_JetTrgPt20_40[i]->Write();
-        hfgdiff_JetTrgPt40_60_raw[i]->Write();
-        hfgdiff_JetTrgPt40_60[i]->Write();
-        hfgdiff_JetTrgPt60_80_raw[i]->Write();
-        hfgdiff_JetTrgPt60_80[i]->Write();
-        hfgdiff_JetTrgPt80_100_raw[i]->Write();
-        hfgdiff_JetTrgPt80_100[i]->Write();
-        hfgdiff_JetTrgPt100above_raw[i]->Write();
-        hfgdiff_JetTrgPt100above[i]->Write();
-
-        hbgdiff_ZBiasSglTrkPt0_20_raw[i]->Write();
-        hbgdiff_ZBiasSglTrkPt0_20[i]->Write();
-
-        hbgdiff_JetTrgPt20_40_raw[i]->Write();
-        hbgdiff_JetTrgPt20_40[i]->Write();
-        hbgdiff_JetTrgPt40_60_raw[i]->Write();
-        hbgdiff_JetTrgPt40_60[i]->Write();
-        hbgdiff_JetTrgPt60_80_raw[i]->Write();
-        hbgdiff_JetTrgPt60_80[i]->Write();
-        hbgdiff_JetTrgPt80_100_raw[i]->Write();
-        hbgdiff_JetTrgPt80_100[i]->Write();
-        hbgdiff_JetTrgPt100above_raw[i]->Write();
-        hbgdiff_JetTrgPt100above[i]->Write();
-
-        //. photon trigger 
-        hfgdiff_ZBiasSglTrkPt0_10_raw[i]->Write();
-        hfgdiff_ZBiasSglTrkPt0_10[i]->Write();
-
-        hfgdiff_PhoTrgPt10_15_raw[i]->Write();
-        hfgdiff_PhoTrgPt10_15[i]->Write();
-        hfgdiff_PhoTrgPt15_20_raw[i]->Write();
-        hfgdiff_PhoTrgPt15_20[i]->Write();
-        hfgdiff_PhoTrgPt20_30_raw[i]->Write();
-        hfgdiff_PhoTrgPt20_30[i]->Write();
-        hfgdiff_PhoTrgPt30above_raw[i]->Write();
-        hfgdiff_PhoTrgPt30above[i]->Write();
-
-        hbgdiff_ZBiasSglTrkPt0_10_raw[i]->Write();
-        hbgdiff_ZBiasSglTrkPt0_10[i]->Write();
-
-        hbgdiff_PhoTrgPt10_15_raw[i]->Write();
-        hbgdiff_PhoTrgPt10_15[i]->Write();
-        hbgdiff_PhoTrgPt15_20_raw[i]->Write();
-        hbgdiff_PhoTrgPt15_20[i]->Write();
-        hbgdiff_PhoTrgPt20_30_raw[i]->Write();
-        hbgdiff_PhoTrgPt20_30[i]->Write();
-        hbgdiff_PhoTrgPt30above_raw[i]->Write();
-        hbgdiff_PhoTrgPt30above[i]->Write();
     }
 
-    result->Close();
+    for(short i = 0; i<NPT; i++) {
+        if(ich!=0) {
+            hfg_ZBiasSglTrkPt0_12_raw[i]->Write();
+            hfg_ZBiasSglTrkPt0_12[i]->Write();
+            hfg_TrkTrgPt12_20_raw[i]->Write();
+            hfg_TrkTrgPt12_20[i]->Write();
+            hfg_TrkTrgPt20_30_raw[i]->Write();
+            hfg_TrkTrgPt20_30[i]->Write();
+            hfg_TrkTrgPt30above_raw[i]->Write();
+            hfg_TrkTrgPt30above[i]->Write();
+        } else {
+            hfgdiff_ZBiasSglTrkPt0_12_raw[i]->Write();
+            hfgdiff_ZBiasSglTrkPt0_12[i]->Write();
+            hfgdiff_TrkTrgPt12_20_raw[i]->Write();
+            hfgdiff_TrkTrgPt12_20[i]->Write();
+            hfgdiff_TrkTrgPt20_30_raw[i]->Write();
+            hfgdiff_TrkTrgPt20_30[i]->Write();
+            hfgdiff_TrkTrgPt30above_raw[i]->Write();
+            hfgdiff_TrkTrgPt30above[i]->Write();
+
+            hbgdiff_ZBiasSglTrkPt0_12_raw[i]->Write();
+            hbgdiff_ZBiasSglTrkPt0_12[i]->Write();
+            hbgdiff_TrkTrgPt12_20_raw[i]->Write();
+            hbgdiff_TrkTrgPt12_20[i]->Write();
+            hbgdiff_TrkTrgPt20_30_raw[i]->Write();
+            hbgdiff_TrkTrgPt20_30[i]->Write();
+            hbgdiff_TrkTrgPt30above_raw[i]->Write();
+            hbgdiff_TrkTrgPt30above[i]->Write();
+        }
+    }
 }
 
 //
@@ -878,15 +456,17 @@ void ana_hfforest::get_trg_info(TTree* T1, TTree* T2)
     TBranch* branchT1 = 0;
     while ((branchT1 = (TBranch *)branch_iterT1.Next())) {  
         int tid = -1;
-        TString branch_nameT1 = branchT1->GetName();
+        const char*  branch_nameT1 = branchT1->GetName();
         for(int it = 0; it<NTRG; it++) {
-            if (branch_nameT1.Contains(trg_name[it])){
-                if(!branch_nameT1.Contains("Prescl") && 
-                        !branch_nameT1.Contains("trigObject")) {//.. use original trigger decision
-                    T1->SetBranchAddress(branch_nameT1.Data(), &trg[it]);
+            if (strstr(branch_nameT1, trg_name[it])){
+                if(!strstr(branch_nameT1, "Prescl") && 
+                        !strstr(branch_nameT1, "trigObject")) {//.. use original trigger decision
+                    T1->SetBranchAddress(branch_nameT1, &trg[it]);
                     tid = it;
-                } else  if(branch_nameT1.Contains("Prescl")) {//.. use original prescale
-                    T1->SetBranchAddress(branch_nameT1.Data(), &prscl[it]);
+                } else  if(strstr(branch_nameT1, "Prescl")) {//.. use original prescale
+                    T1->SetBranchAddress(branch_nameT1, &prscl[it]);
+                } else  if(strstr(branch_nameT1, "trigObject")) {
+                    T1->SetBranchAddress(branch_nameT1, &org_trg_obj[it]);
                 }
 
                 break;
@@ -899,9 +479,9 @@ void ana_hfforest::get_trg_info(TTree* T1, TTree* T2)
             TIter branch_iterT2(branchesT2); 
             TBranch* branchT2 = 0;
             while ((branchT2 = (TBranch *)branch_iterT2.Next())) {  
-                TString branch_nameT2 = branchT2->GetName();
-                if (branch_nameT2.Contains(trg_name[tid]) && branch_nameT2.Contains("trigObject")){
-                    T2->SetBranchAddress(branch_nameT2.Data(), &trg_obj[tid]);
+                const char* branch_nameT2 = branchT2->GetName();
+                if (strstr(branch_nameT2, trg_name[tid]) && strstr(branch_nameT2, "trigObject")){
+                    T2->SetBranchAddress(branch_nameT2, &trg_obj[tid]);
                     break;
                 } 
             }
@@ -917,11 +497,18 @@ void ana_hfforest::reset_trg()
         prscl[i] = 0;
         trg[i] = 0;
         trg_obj[i]->clear();
+        org_trg_obj[i]->clear();
     }
 
     maxTrkTrgPt = 0;
-    maxJetTrgPt = 0;
-    maxPhoTrgPt = 0;
+
+    nTrk = 0;
+    is_hp = false;
+    tDz1=-9999;
+    tDz1Err=-9999;
+    tDxy1=-9999;
+    tDxyErr=-9999;
+    tPtErr=-9999;
 }
 
 //
@@ -933,36 +520,62 @@ void ana_hfforest::LoopOverEvt(TTree* T, int iy, int ich)
         T->GetEntry(i);
 
         GetMaxTrgPt();
+        FillTrgMaxPt();
         LoopOverHFCandidate(iy, ich);
+
+        if(run_ppTrack) 
+            LoopOverTrk();
     }
 }
 
 //
 void ana_hfforest::GetMaxTrgPt()
 {
-    //.. track trigger ...
-    for(int it = 1; it<=3; it++) {
-        if(trg[it]) {
-            FindMaxTrgPt(trg_obj[it], maxTrkTrgPt);
-            break;
+    for(int itrk = 0; itrk<nTrk; itrk++) {
+        //.. the cuts are from Eric 
+        //if(highPurity[itrk] && fabs(trkDz1[itrk]/trkDzError1[itrk])<3 &&
+        //   fabs(trkDxy1[itrk]/trkDxyError1[itrk])<3 && trkPtError[itrk]/trkPt[itrk]<0.1) 
+        //    maxTrkTrgPt = TMath::Max(maxTrkTrgPt, trkPt[itrk]);
+        if(trkPt[itrk] > maxTrkTrgPt) {
+            maxTrkTrgPt = trkPt[itrk];
+            tPtErr = trkPtError[itrk];
+            tDz1 = trkDz1[itrk];
+            tDz1Err = trkDzError1[itrk];
+            tDxy1 = trkDxy1[itrk];
+            tDxyErr = trkDxyError1[itrk];
+            is_hp = highPurity[itrk];
         }
     }
 
-    // Jet trigger
-    for(int it = 4; it<=8; it++) {
+    //
+    float weight = 0;
+    for(int it = 0; it<=NTRG; it++) {
         if(trg[it]) {
-            FindMaxTrgPt(trg_obj[it], maxJetTrgPt);
-            break;
+            if(it==0) 
+                weight = prscl[0]*prscl[4];
+            else 
+                weight = prscl[it];
+
+            ntMaxTrgPtAlgo2->Fill(maxTrkTrgPt, is_hp, tDz1, tDz1Err, tDxy1, tDxyErr, tPtErr, it, weight);
         }
     }
 
-    // photon trigger 
-    for(int it = 9; it<=12; it++) {
-        if(trg[it]) {
-            FindMaxTrgPt(trg_obj[it], maxPhoTrgPt);
-            break;
-        }
+    int it = -1;
+    if(trg[0] && maxTrkTrgPt <TrkTrgOffThres[1]) {
+        weight = prscl[0]*prscl[4]; //.. include L1 base
+        it = 100;
+    } else if(trg[1] && maxTrkTrgPt >=TrkTrgOffThres[1] && maxTrkTrgPt < TrkTrgOffThres[2]) {
+        weight = prscl[1];
+        it = 101;
+    } else if(trg[2] && maxTrkTrgPt >=TrkTrgOffThres[2] && maxTrkTrgPt < TrkTrgOffThres[3]) {
+        weight = prscl[2];
+        it = 102;
+    } else if(trg[3] && maxTrkTrgPt >= TrkTrgOffThres[3]) {
+        weight = prscl[3];
+        it = 103;
     }
+    if(it!=-1)
+        ntMaxTrgPtAlgo2->Fill(maxTrkTrgPt, is_hp, tDz1, tDz1Err, tDxy1, tDxyErr, tPtErr, it, weight);
 }
 
 //
@@ -1008,11 +621,17 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
     float feta = cand->get_feta();
     //.. the two daughters of the resonance and they should be unlike-sign. 
     float fq1 = cand->get_fq1();  
-    //float fq2 = cand->get_fq2();
     float fq2 = cand->get_fpt2(); //.. fpt2 is filled by fq2
     float feta1 = cand->get_feta1();
     float feta2 = cand->get_feta2();
-
+    float fpt1 = cand->get_fpt1();
+    float fpt2 = cand->get_fq2();
+    float fphi1 = cand->get_fphi1();
+    float fphi2 = cand->get_fphi2();
+    float fq0 = cand->get_fqdau2();
+    float fpt0 = cand->get_fptdau2();
+    float feta0 = cand->get_fetadau2();
+    float fphi0 = cand->get_fphidau2();
 
     if(!GetRapidity(mass, fpt, feta, iy) || fq1==fq2 || fabs(feta1)>etaMax || fabs(feta2)>etaMax) 
         return;
@@ -1024,10 +643,29 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
     float fchi2 = cand->get_fchi2();
     float mass_dau = cand->get_fmdau1();
 
+    // compare with ppTrack and get high purity bit and trkPtError for algo#2
+    tPt0 = fpt0;
+    tPt1 = fpt1;
+    tPt2 = fpt2;
+    is_hp_0 =false;
+    is_hp_1 =false;
+    is_hp_2 =false;
+    tPtErr0 = -9999;
+    tPtErr1 = -9999;
+    tPtErr2 = -9999;
 
+    if(ich==1) {//D0 does not have 3rd particle
+        is_hp_0 = true;
+        tPtErr0=0;
+    } else {
+        find_hp_trkPtErr(fq0, fpt0, feta0, fphi0, is_hp_0, tPtErr0);
+    }
+    find_hp_trkPtErr(fq1, fpt1, feta1, fphi1, is_hp_1, tPtErr1);
+    find_hp_trkPtErr(fq2, fpt2, feta2, fphi2, is_hp_2, tPtErr2);
+    //
     int ipt = get_pt_bin_num(fpt);
 
-
+    float weight = 0;
     if(mass > cut_m_low[ich] && mass < cut_m_high[ich] && 
             ffls3d > cut_ffls3d[ich] && alpha < cut_falpha0[ich] && 
             fprob > cut_fprob[ich] && fdr < cut_fdr[ich] && fchi2 < cut_fchi2[ich]) {
@@ -1036,51 +674,53 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
         if(ich==1) { //D0 has no daughter mass, treat separately. ...
             for(int itrg = 0; itrg<NTRG; itrg++) {
                 if(trg[itrg]) {
-                    hfg_raw[itrg][ipt]->Fill(mass);
-                    hfg[itrg][ipt]->Fill(mass, prscl[itrg]);
+                    if(itrg==0) 
+                        weight = prscl[0]*prscl[4];
+                    else 
+                        weight = prscl[itrg];
+
+                    fill_ntMass(mass, maxTrkTrgPt, ipt, itrg, false, weight);
                 }
             }
 
-            FillTrgCombineTrkTrg(0, ich, ipt, mass, mass_dau);
-            FillTrgCombineJetTrg(0, ich, ipt, mass, mass_dau);
-            FillTrgCombinePhoTrg(0, ich, ipt, mass, mass_dau);
+            FillTrgCombineTrkTrg_HIN12017(0, ich, ipt, mass, mass_dau);
 
         } else {
             if(mass_dau > cut_m_dau_low[ich] && mass_dau < cut_m_dau_high[ich]) {
                 for(int itrg = 0; itrg<NTRG; itrg++) {
                     if(trg[itrg]) {
-                        hfg_raw[itrg][ipt]->Fill(mass);
-                        hfg[itrg][ipt]->Fill(mass, prscl[itrg]);
+                        if(itrg==0) 
+                            weight = prscl[0]*prscl[4];
+                        else 
+                            weight = prscl[itrg];
 
-                        if(ich==0) {
-                            hfgdiff_raw[itrg][ipt]->Fill(mass-mass_dau);
-                            hfgdiff[itrg][ipt]->Fill(mass-mass_dau, prscl[itrg]);
+                        if(ich==0)
+                            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, itrg, false, weight);
+                        else 
+                            fill_ntMass(mass, maxTrkTrgPt, ipt, itrg, false, weight);
+                    }
+                }
+
+                //
+                if(ich==0) {
+                    FillTrgCombineTrkTrg_HIN12017(1, ich, ipt, mass, mass_dau);
+                } else {
+                    FillTrgCombineTrkTrg_HIN12017(0, ich, ipt, mass, mass_dau);
+                }
+            } else { //.. background through side band ...
+                if(ich==0) {// for D* only
+                    for(int itrg = 0; itrg<NTRG; itrg++) {
+                        if(trg[itrg]) {
+                            if(itrg==0) 
+                                weight = prscl[0]*prscl[4];
+                            else 
+                                weight = prscl[itrg];
+
+                            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, itrg, true, weight);
                         }
                     }
-                }
 
-                FillTrgCombineTrkTrg(0, ich, ipt, mass, mass_dau);
-                FillTrgCombineJetTrg(0, ich, ipt, mass, mass_dau);
-                FillTrgCombinePhoTrg(0, ich, ipt, mass, mass_dau);
-
-                if(ich==0) {
-                    FillTrgCombineTrkTrg(1, ich, ipt, mass, mass_dau);
-                    FillTrgCombineJetTrg(1, ich, ipt, mass, mass_dau);
-                    FillTrgCombinePhoTrg(1, ich, ipt, mass, mass_dau);
-                }
-
-            } else { //.. background through side band ...
-                for(int itrg = 0; itrg<NTRG; itrg++) {
-                    if(trg[itrg] && ich==0) {
-                        hbgdiff_raw[itrg][ipt]->Fill(mass-mass_dau);
-                        hbgdiff[itrg][ipt]->Fill(mass-mass_dau, prscl[itrg]);
-                    }
-                }
-
-                if(ich==0) {
-                    FillTrgCombineTrkTrg(2, ich, ipt, mass, mass_dau);
-                    FillTrgCombineJetTrg(2, ich, ipt, mass, mass_dau);
-                    FillTrgCombinePhoTrg(2, ich, ipt, mass, mass_dau);
+                    FillTrgCombineTrkTrg_HIN12017(2, ich, ipt, mass, mass_dau);
                 }
             }
         }
@@ -1088,284 +728,62 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
 }
 
 //
-void ana_hfforest::FillTrgCombineTrkTrg(int id, int ich, int ipt, float mass, float mass_dau)
+void ana_hfforest::FillTrgCombineTrkTrg_HIN12017(int id, int ich, int ipt, float mass, float mass_dau)
 {//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
-    if(trg[1] && maxTrkTrgPt >=12) 
-        hfg_TrkTrgPt12_raw[ipt]->Fill(mass);
+    float weight = 0;
+    if(trg[0] && maxTrkTrgPt <TrkTrgOffThres[1]) {
 
-    if(trg[1] && maxTrkTrgPt >=12 && maxTrkTrgPt < 20) {
-        if(id==0) {
-            hfg_TrkTrgPt12_20_raw[ipt]->Fill(mass);
-            hfg_TrkTrgPt12_20[ipt]->Fill(mass, prscl[1]); //.. L1 base prescale 1
-        } else if(id==1) {
-            hfgdiff_TrkTrgPt12_20_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_TrkTrgPt12_20[ipt]->Fill(mass-mass_dau, prscl[1]); //.. L1 base prescale 1
-        } else if(id==2) {
-            hbgdiff_TrkTrgPt12_20_raw[ipt]->Fill(mass-mass_dau);
-            hbgdiff_TrkTrgPt12_20[ipt]->Fill(mass-mass_dau, prscl[1]); //.. L1 base prescale 1
-        }
-    } else if(trg[2] && maxTrkTrgPt >=20 && maxTrkTrgPt < 30) {
-        if(id==0) {
-            hfg_TrkTrgPt20_30_raw[ipt]->Fill(mass);
-            hfg_TrkTrgPt20_30[ipt]->Fill(mass, prscl[2]); //.. L1 base prescale 1
-        } else if(id==1) {
-            hfgdiff_TrkTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_TrkTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[2]); //.. L1 base prescale 1
-        } else if(id==2) {
-            hbgdiff_TrkTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
-            hbgdiff_TrkTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[2]); //.. L1 base prescale 1
-        }
-    } else if(trg[3] && maxTrkTrgPt >= 30) {
-        if(id==0) {
-            hfg_TrkTrgPt30above_raw[ipt]->Fill(mass);
-            hfg_TrkTrgPt30above[ipt]->Fill(mass, prscl[3]);// L1 base prescale 1
-        } else if(id==1) {
-            hfgdiff_TrkTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_TrkTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[3]);// L1 base prescale 1
-        } else if(id==2) {
-            hfgdiff_TrkTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_TrkTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[3]);// L1 base prescale 1
-        }
-    }
-}
+        weight = prscl[0]*prscl[4];
 
-//
-void ana_hfforest::FillTrgCombineJetTrg(int id, int ich, int ipt, float mass, float mass_dau)
-{//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
+        if(id==0) {
+            fill_ntMass(mass, maxTrkTrgPt, ipt, 100, false, weight);
+        } else if(id==1) {
+            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 100, false, weight);
+        } else if(id==2) {
+            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 100, true, weight);
+        }
 
-    if(trg[4] && maxJetTrgPt >=20) 
-        hfg_JetTrgPt20_raw[ipt]->Fill(mass);
+    } else if(trg[1] && maxTrkTrgPt >=TrkTrgOffThres[1] && maxTrkTrgPt < TrkTrgOffThres[2]) {
 
-    if(trg[4] && maxJetTrgPt >=20 && maxJetTrgPt < 40) {
+        weight = prscl[1];
+
         if(id==0) {
-            hfg_JetTrgPt20_40_raw[ipt]->Fill(mass);
-            hfg_JetTrgPt20_40[ipt]->Fill(mass, prscl[4]); //.. L1 base prescale 1
+            fill_ntMass(mass, maxTrkTrgPt, ipt, 101, false, weight);
         } else if(id==1) {
-            hfgdiff_JetTrgPt20_40_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_JetTrgPt20_40[ipt]->Fill(mass-mass_dau, prscl[4]); //.. L1 base prescale 1
+            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 101, false, weight);
         } else if(id==2) {
-            hbgdiff_JetTrgPt20_40_raw[ipt]->Fill(mass-mass_dau);
-            hbgdiff_JetTrgPt20_40[ipt]->Fill(mass-mass_dau, prscl[4]); //.. L1 base prescale 1
+            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 101, true, weight);
         }
-    } else if(trg[5] && maxJetTrgPt >=40 && maxJetTrgPt < 60) {
+
+
+    } else if(trg[2] && maxTrkTrgPt >=TrkTrgOffThres[2] && maxTrkTrgPt < TrkTrgOffThres[3]) {
+
+        weight = prscl[2];
+
         if(id==0) {
-            hfg_JetTrgPt40_60_raw[ipt]->Fill(mass);
-            hfg_JetTrgPt40_60[ipt]->Fill(mass, prscl[5]); //.. L1 base prescale 1
+            fill_ntMass(mass, maxTrkTrgPt, ipt, 102, false, weight);
         } else if(id==1) {
-            hfgdiff_JetTrgPt40_60_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_JetTrgPt40_60[ipt]->Fill(mass-mass_dau, prscl[5]); //.. L1 base prescale 1
+            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 102, false, weight);
         } else if(id==2) {
-            hbgdiff_JetTrgPt40_60_raw[ipt]->Fill(mass-mass_dau);
-            hbgdiff_JetTrgPt40_60[ipt]->Fill(mass-mass_dau, prscl[5]); //.. L1 base prescale 1
+            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 102, true, weight);
         }
-    } else if(trg[6] && maxJetTrgPt >=60 && maxJetTrgPt < 80) {
+    } else if(trg[3] && maxTrkTrgPt >= TrkTrgOffThres[3]) {
+
+        weight = prscl[3];
+
         if(id==0) {
-            hfg_JetTrgPt60_80_raw[ipt]->Fill(mass);
-            hfg_JetTrgPt60_80[ipt]->Fill(mass, prscl[6]); //.. L1 base prescale 1
+            fill_ntMass(mass, maxTrkTrgPt, ipt, 103, false, weight);
         } else if(id==1) {
-            hfgdiff_JetTrgPt60_80_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_JetTrgPt60_80[ipt]->Fill(mass-mass_dau, prscl[6]); //.. L1 base prescale 1
+            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 103, false, weight);
         } else if(id==2) {
-            hbgdiff_JetTrgPt60_80_raw[ipt]->Fill(mass-mass_dau);
-            hbgdiff_JetTrgPt60_80[ipt]->Fill(mass-mass_dau, prscl[6]); //.. L1 base prescale 1
-        }
-    } else if(trg[7] && maxJetTrgPt >=80 && maxJetTrgPt < 100) {
-        if(id==0) {
-            hfg_JetTrgPt80_100_raw[ipt]->Fill(mass);
-            hfg_JetTrgPt80_100[ipt]->Fill(mass, prscl[7]); //.. L1 base prescale 1
-        } else if(id==1) {
-            hfgdiff_JetTrgPt80_100_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_JetTrgPt80_100[ipt]->Fill(mass-mass_dau, prscl[7]); //.. L1 base prescale 1
-        } else if(id==2) {
-            hbgdiff_JetTrgPt80_100_raw[ipt]->Fill(mass-mass_dau);
-            hbgdiff_JetTrgPt80_100[ipt]->Fill(mass-mass_dau, prscl[7]); //.. L1 base prescale 1
-        }
-    } else if(trg[8] && maxJetTrgPt >= 100) {
-        if(id==0) {
-            hfg_JetTrgPt100above_raw[ipt]->Fill(mass);
-            hfg_JetTrgPt100above[ipt]->Fill(mass, prscl[8]);// L1 base prescale 1
-        } else if(id==1) {
-            hfgdiff_JetTrgPt100above_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_JetTrgPt100above[ipt]->Fill(mass-mass_dau, prscl[8]);// L1 base prescale 1
-        } else if(id==2) {
-            hfgdiff_JetTrgPt100above_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_JetTrgPt100above[ipt]->Fill(mass-mass_dau, prscl[8]);// L1 base prescale 1
+            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 103, true, weight);
         }
     }
 }
 
 //
-void ana_hfforest::FillTrgCombinePhoTrg(int id, int ich, int ipt, float mass, float mass_dau)
-{//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
-
-    if(trg[9] && maxPhoTrgPt >=10) 
-        hfg_PhoTrgPt10_raw[ipt]->Fill(mass);
-
-    if(trg[9] && maxPhoTrgPt >=10 && maxPhoTrgPt < 15) {
-        if(id==0) {
-            hfg_PhoTrgPt10_15_raw[ipt]->Fill(mass);
-            hfg_PhoTrgPt10_15[ipt]->Fill(mass, prscl[9]); //.. L1 base prescale 1
-        } else if(id==1) {
-            hfgdiff_PhoTrgPt10_15_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_PhoTrgPt10_15[ipt]->Fill(mass-mass_dau, prscl[9]); //.. L1 base prescale 1
-        } else if(id==2) {
-            hbgdiff_PhoTrgPt10_15_raw[ipt]->Fill(mass-mass_dau);
-            hbgdiff_PhoTrgPt10_15[ipt]->Fill(mass-mass_dau, prscl[9]); //.. L1 base prescale 1
-        }
-    } else if(trg[10] && maxPhoTrgPt >=15 && maxPhoTrgPt < 20) {
-        if(id==0) {
-            hfg_PhoTrgPt15_20_raw[ipt]->Fill(mass);
-            hfg_PhoTrgPt15_20[ipt]->Fill(mass, prscl[10]); //.. L1 base prescale 1
-        } else if(id==1) {
-            hfgdiff_PhoTrgPt15_20_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_PhoTrgPt15_20[ipt]->Fill(mass-mass_dau, prscl[10]); //.. L1 base prescale 1
-        } else if(id==2) {
-            hbgdiff_PhoTrgPt15_20_raw[ipt]->Fill(mass-mass_dau);
-            hbgdiff_PhoTrgPt15_20[ipt]->Fill(mass-mass_dau, prscl[10]); //.. L1 base prescale 1
-        }
-    } else if(trg[11] && maxPhoTrgPt >=20 && maxPhoTrgPt < 30) {
-        if(id==0) {
-            hfg_PhoTrgPt20_30_raw[ipt]->Fill(mass);
-            hfg_PhoTrgPt20_30[ipt]->Fill(mass, prscl[11]); //.. L1 base prescale 1
-        } else if(id==1) {
-            hfgdiff_PhoTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_PhoTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[11]); //.. L1 base prescale 1
-        } else if(id==2) {
-            hbgdiff_PhoTrgPt20_30_raw[ipt]->Fill(mass-mass_dau);
-            hbgdiff_PhoTrgPt20_30[ipt]->Fill(mass-mass_dau, prscl[11]); //.. L1 base prescale 1
-        }
-    } else if(trg[12] && maxPhoTrgPt >= 30) {
-        if(id==0) {
-            hfg_PhoTrgPt30above_raw[ipt]->Fill(mass);
-            hfg_PhoTrgPt30above[ipt]->Fill(mass, prscl[12]);// L1 base prescale 1
-        } else if(id==1) {
-            hfgdiff_PhoTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_PhoTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[12]);// L1 base prescale 1
-        } else if(id==2) {
-            hfgdiff_PhoTrgPt30above_raw[ipt]->Fill(mass-mass_dau);
-            hfgdiff_PhoTrgPt30above[ipt]->Fill(mass-mass_dau, prscl[12]);// L1 base prescale 1
-        }
-    }
-}
-
-//
-void ana_hfforest::FindMaxTrgPt(trigO* tobj, float& max)
-{
-    max = 0;
-    for(unsigned int i = 0; i<tobj->size(); i++) {
-        if(tobj->at(i).pt() > max)
-            max = tobj->at(i).pt();
-    }
-}
-
-//
-void ana_hfforest::define_cuts()
-{//.. define different cuts 
-
-    //D*->D0+pi
-    cut_m_low[0] = 1.92; 
-    cut_m_high[0] = 2.10;
-    cut_m_dau_low[0] = 1.8;
-    cut_m_dau_high[0] = 1.92;
-    cut_ffls3d[0] = 2.0;
-    cut_falpha0[0] = 0.2;
-    cut_fprob[0] = 0.05;
-    cut_fdr[0] = 0.25;
-    cut_fchi2[0] = 3;
-
-    //D0->K+pi
-    cut_m_low[1] = 1.70; 
-    cut_m_high[1] = 2.05;
-    cut_m_dau_low[1] = -1;
-    cut_m_dau_high[1] = 1;
-    cut_ffls3d[1] = 2.0;
-    cut_falpha0[1] = 0.2;
-    cut_fprob[1] = 0.05;
-    cut_fdr[1] = 0.25;
-    cut_fchi2[1] = 3;
-
-    //Ds->phi+pi
-    cut_m_low[2] = 1.80; 
-    cut_m_high[2] = 2.15;
-    cut_m_dau_low[2] = 1.0;
-    cut_m_dau_high[2] = 1.04;
-    cut_ffls3d[2] = 2.0;
-    cut_falpha0[2] = 0.2;
-    cut_fprob[2] = 0.05;
-    cut_fdr[2] = 0.25;
-    cut_fchi2[2] = 3;
-
-    //Ds->K*+K
-    cut_m_low[3] = 1.80; 
-    cut_m_high[3] = 2.15;
-    cut_m_dau_low[3] = 0.0;
-    cut_m_dau_high[3] = 2.0;
-    cut_ffls3d[3] = 2.0;
-    cut_falpha0[3] = 0.2;
-    cut_fprob[3] = 0.05;
-    cut_fdr[3] = 0.25;
-    cut_fchi2[3] = 3;
-
-    //D+/- = K+pi+pi
-    cut_m_low[4] = 1.70; 
-    cut_m_high[4] = 2.05;
-    cut_m_dau_low[4] = 0.5;
-    cut_m_dau_high[4] = 2.05;
-    cut_ffls3d[4] = 2.0;
-    cut_falpha0[4] = 0.2;
-    cut_fprob[4] = 0.05;
-    cut_fdr[4] = 0.25;
-    cut_fchi2[4] = 3;
-}
-
-//
-void ana_hfforest::get_trg_name()
-{//.. this code is made by: ./make_code_to_read_hlt_name_pscl.txt.pl
-    //.. all Run2013 pPb triggers. Most are useless. Here is to check which
-    //.. one has most of the D mesons. 
-    //.. trigger list is from, e.g. 
-    //.. https://cmswbm.web.cern.ch/cmswbm/cmsdb/servlet/HLTSummary?RUN=211631&KEY=28422
-
-    trg_name[0]= "HLT_PAZeroBiasPixel_SingleTrack"; //.. dominate in minbiasUPC sample.
-    trg_name[1]= "HLT_PAFullTrack12";   //.. base: L1_SingleJet12_BptxAND w/ prescl=1
-    trg_name[2]= "HLT_PAFullTrack20";   //.. base: L1_SingleJet16_BptxAND w/ prescl=1
-    trg_name[3]= "HLT_PAFullTrack30";   //.. base: L1_SingleJet16_BptxAND w/ prescl=1
-
-    trg_name[4]= "HLT_PAJet20_NoJetID";   //.. base: L1_SingleJet16_BptxAND
-    trg_name[5]= "HLT_PAJet40_NoJetID";   //.. base: L1_SingleJet16_BptxAND
-    trg_name[6]= "HLT_PAJet60_NoJetID";   //.. base: L1_SingleJet36
-    trg_name[7]= "HLT_PAJet80_NoJetID";   //.. base: L1_SingleJet36
-    trg_name[8]= "HLT_PAJet100_NoJetID";   //.. base: L1_SingleJet36
-
-    trg_name[9]= "HLT_PAPhoton10_NoCaloIdVL";   //.. base: L1_SingleEG5_BptxAND
-    trg_name[10]= "HLT_PAPhoton15_NoCaloIdVL";   //.. base: L1_SingleEG5_BptxAND
-    trg_name[11]= "HLT_PAPhoton20_NoCaloIdVL";   //.. base: L1_SingleEG5_BptxAND
-    trg_name[12]= "HLT_PAPhoton30_NoCaloIdVL";   //.. base: L1_SingleEG12
-
-    trg_name[13]= "L1_ZeroBias";  //.. base of HLT_PAZeroBiasPixel_SingleTrack
-    trg_name[14]= "L1_SingleJet12_BptxAND";
-    trg_name[15]= "L1_SingleJet16_BptxAND";
-    trg_name[16]= "L1_SingleJet36";
-    trg_name[17]= "L1_SingleEG5_BptxAND";
-    trg_name[18]= "L1_SingleEG12";
-
-    //.. high multiplicity triggers 
-    trg_name[19]= "HLT_PAPixelTrackMultiplicity100_FullTrack12";
-    trg_name[20]= "HLT_PAPixelTrackMultiplicity100_L2DoubleMu3";
-    trg_name[21]= "HLT_PAPixelTrackMultiplicity130_FullTrack12";
-    trg_name[22]= "HLT_PAPixelTrackMultiplicity140_Jet80_NoJetID";
-    trg_name[23]= "HLT_PAPixelTrackMultiplicity160_FullTrack12";
-    trg_name[24]= "HLT_PAPixelTracks_Multiplicity100";
-    trg_name[25]= "HLT_PAPixelTracks_Multiplicity130";
-    trg_name[26]= "HLT_PAPixelTracks_Multiplicity160";
-    trg_name[27]= "HLT_PAPixelTracks_Multiplicity190";
-    trg_name[28]= "HLT_PAPixelTracks_Multiplicity220";
-
-}
-
-//
-void ana_hfforest::get_comb_hist(TFile* f)
+void ana_hfforest::get_comb_hist(int ich, TFile* f)
 {
     if(!f) {
         cout<<" !!! file does not exist,  exit"<<endl;
@@ -1375,62 +793,50 @@ void ana_hfforest::get_comb_hist(TFile* f)
     cout<<" .... fetching combination file  ..."<<endl;
     char hname[100];
     for(short i = 0; i<NptRebin; i++) {
-        sprintf(hname, "hfg_raw_combTrkTrg%d", i);
-        hfg_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_combTrkTrg%d", i);
-        hfg_combTrkTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_raw_combTrkTrg%d", i);
-        hfgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_combTrkTrg%d", i);
-        hfgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_raw_combTrkTrg%d", i);
-        hbgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_combTrkTrg%d", i);
-        hbgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_raw_combJetTrg%d", i);
-        hfg_raw_combJetTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_combJetTrg%d", i);
-        hfg_combJetTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_raw_combJetTrg%d", i);
-        hfgdiff_raw_combJetTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_combJetTrg%d", i);
-        hfgdiff_combJetTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_raw_combJetTrg%d", i);
-        hbgdiff_raw_combJetTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_combJetTrg%d", i);
-        hbgdiff_combJetTrg[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_raw_combPhoTrg%d", i);
-        hfg_raw_combPhoTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_combPhoTrg%d", i);
-        hfg_combPhoTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_raw_combPhoTrg%d", i);
-        hfgdiff_raw_combPhoTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_combPhoTrg%d", i);
-        hfgdiff_combPhoTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_raw_combPhoTrg%d", i);
-        hbgdiff_raw_combPhoTrg[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_combPhoTrg%d", i);
-        hbgdiff_combPhoTrg[i] = (TH1F*)f->Get(hname);
+        if(ich!=0) {
+            sprintf(hname, "hfg_raw_combTrkTrg%d", i);
+            hfg_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_combTrkTrg%d", i);
+            hfg_combTrkTrg[i] = (TH1F*)f->Get(hname);
+        } else {
+            sprintf(hname, "hfgdiff_raw_combTrkTrg%d", i);
+            hfgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_combTrkTrg%d", i);
+            hfgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_raw_combTrkTrg%d", i);
+            hbgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_combTrkTrg%d", i);
+            hbgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname);
+        }
     }
     // reference hist for checking trigger combination ...
-    for(short it = 0; it<NTRG; it++) {
-        for(short i = 0; i<NptRebin; i++) {
-            sprintf(hname, "hfg_raw_rebin%d_%d", it, i);
-            hfg_raw_rebin[it][i] = (TH1F*)f->Get(hname);
+    for(short i = 0; i<NptRebin; i++) {
+        for(short it = 0; it<NTRG; it++) {
+            if(ich!=0) {
+                sprintf(hname, "hfg_rebin%d_%d", it, i);
+                hfg_rebin[it][i] = (TH1F*)f->Get(hname);
+            } else {
+                sprintf(hname, "hfgdiff_rebin%d_%d", it, i);
+                hfgdiff_rebin[it][i] = (TH1F*)f->Get(hname);
 
-            sprintf(hname, "hfgdiff_raw_rebin%d_%d", it, i);
-            hfgdiff_raw_rebin[it][i] = (TH1F*)f->Get(hname);
-
-            sprintf(hname, "hbgdiff_raw_rebin%d_%d", it, i);
-            hbgdiff_raw_rebin[it][i] = (TH1F*)f->Get(hname);
+                sprintf(hname, "hbgdiff_rebin%d_%d", it, i);
+                hbgdiff_rebin[it][i] = (TH1F*)f->Get(hname);
+            }
         }
+
+        //
+        sprintf(hname, "hfg_TrkTrgPt12_20_rebin%d", i);
+        hfg_TrkTrgPt12_20_rebin[i] = (TH1F*)f->Get(hname);
+        sprintf(hname, "hfg_TrkTrgPt20_30_rebin%d", i);
+        hfg_TrkTrgPt20_30_rebin[i] = (TH1F*)f->Get(hname);
+        sprintf(hname, "hfg_TrkTrgPt30above_rebin%d", i);
+        hfg_TrkTrgPt30above_rebin[i] = (TH1F*)f->Get(hname);
+
     }
     cout<<" .... done ..."<<endl;
 }
 //
-void ana_hfforest::get_hist(TFile* f)
+void ana_hfforest::get_hist(int ich, TFile* f)
 {
     if(!f) {
         cout<<" !!! file does not exist,  exit"<<endl;
@@ -1438,381 +844,179 @@ void ana_hfforest::get_hist(TFile* f)
     }
     cout<<" .... fetching histogram ...."<<endl;
     char hname[100];
-
-    // all D mesons
-    for(short it = 0; it<NTRG; it++) 
-        for(short i = 0; i<NPT; i++) {
-
-            sprintf(hname, "hfg%d_%d", it, i);
-            hfg[it][i] = (TH1F*)f->Get(hname);
-            sprintf(hname, "hfg_raw%d_%d", it, i);
-            hfg_raw[it][i] =  (TH1F*)f->Get(hname);
+    if(ich!=0) {
+        for(short it = 0; it<NTRG; it++) {
+            for(short i = 0; i<NPT; i++) {
+                sprintf(hname, "hfg%d_%d", it, i);
+                hfg[it][i] = (TH1F*)f->Get(hname);
+                sprintf(hname, "hfg_raw%d_%d", it, i);
+                hfg_raw[it][i] =  (TH1F*)f->Get(hname);
+            }
         }
 
-    // D*
-    for(short it = 0; it<NTRG; it++) 
+        // components for trigger combination for all D..
         for(short i = 0; i<NPT; i++) {
-            sprintf(hname, "hfgdiff%d_%d", it, i);
-            hfgdiff[it][i] = (TH1F*)f->Get(hname);
-            sprintf(hname, "hfgdiff_raw%d_%d", it, i);
-            hfgdiff_raw[it][i] = (TH1F*)f->Get(hname);
 
-              sprintf(hname, "hbgdiff%d_%d", it, i);
-              hbgdiff[it][i] = (TH1F*)f->Get(hname);
-              sprintf(hname, "hbgdiff_raw%d_%d", it, i);
-              hbgdiff_raw[it][i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_ZBiasSglTrkPt0_12_raw%d", i);
+            hfg_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_ZBiasSglTrkPt0_12%d", i);
+            hfg_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfg_TrkTrgPt12_20_raw%d", i);
+            hfg_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_TrkTrgPt12_20%d", i);
+            hfg_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfg_TrkTrgPt20_30_raw%d", i);
+            hfg_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_TrkTrgPt20_30%d", i);
+            hfg_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfg_TrkTrgPt30above_raw%d", i);
+            hfg_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_TrkTrgPt30above%d", i);
+            hfg_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
         }
 
+    } else {
+        // D*
+        for(short it = 0; it<NTRG; it++) {
+            for(short i = 0; i<NPT; i++) {
+                sprintf(hname, "hfgdiff%d_%d", it, i);
+                hfgdiff[it][i] = (TH1F*)f->Get(hname);
+                sprintf(hname, "hfgdiff_raw%d_%d", it, i);
+                hfgdiff_raw[it][i] = (TH1F*)f->Get(hname);
 
-    // components for trigger combination for all D..
-    for(short i = 0; i<NPT; i++) {
+                sprintf(hname, "hbgdiff%d_%d", it, i);
+                hbgdiff[it][i] = (TH1F*)f->Get(hname);
+                sprintf(hname, "hbgdiff_raw%d_%d", it, i);
+                hbgdiff_raw[it][i] = (TH1F*)f->Get(hname);
+            }
+        }
+        // components for trigger combination for D*
+        for(short i = 0; i<NPT; i++) {
 
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_12_raw%d", i);
-        hfg_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_12%d", i);
-        hfg_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname);
+            // FullTrack trigger
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12_raw%d", i);
+            hfgdiff_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12%d", i);
+            hfgdiff_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname);
 
-        sprintf(hname, "hfg_TrkTrgPt12_20_raw%d", i);
-        hfg_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_TrkTrgPt12_20%d", i);
-        hfg_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_TrkTrgPt12_20_raw%d", i);
+            hfgdiff_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_TrkTrgPt12_20%d", i);
+            hfgdiff_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname);
 
-        sprintf(hname, "hfg_TrkTrgPt20_30_raw%d", i);
-        hfg_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_TrkTrgPt20_30%d", i);
-        hfg_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_TrkTrgPt20_30_raw%d", i);
+            hfgdiff_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_TrkTrgPt20_30%d", i);
+            hfgdiff_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname);
 
-        sprintf(hname, "hfg_TrkTrgPt30above_raw%d", i);
-        hfg_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_TrkTrgPt30above%d", i);
-        hfg_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
-
-        //Jet trigger 
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_20_raw%d", i);
-        hfg_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_20%d", i);
-        hfg_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_JetTrgPt20_40_raw%d", i);
-        hfg_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_JetTrgPt20_40%d", i);
-        hfg_JetTrgPt20_40[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_JetTrgPt40_60_raw%d", i);
-        hfg_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_JetTrgPt40_60%d", i);
-        hfg_JetTrgPt40_60[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_JetTrgPt60_80_raw%d", i);
-        hfg_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_JetTrgPt60_80%d", i);
-        hfg_JetTrgPt60_80[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_JetTrgPt80_100_raw%d", i);
-        hfg_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_JetTrgPt80_100%d", i);
-        hfg_JetTrgPt80_100[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_JetTrgPt100above_raw%d", i);
-        hfg_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_JetTrgPt100above%d", i);
-        hfg_JetTrgPt100above[i] = (TH1F*)f->Get(hname);
-
-        //Photon trigger 
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_10_raw%d", i);
-        hfg_ZBiasSglTrkPt0_10_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_ZBiasSglTrkPt0_10%d", i);
-        hfg_ZBiasSglTrkPt0_10[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_PhoTrgPt10_15_raw%d", i);
-        hfg_PhoTrgPt10_15_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_PhoTrgPt10_15%d", i);
-        hfg_PhoTrgPt10_15[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_PhoTrgPt15_20_raw%d", i);
-        hfg_PhoTrgPt15_20_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_PhoTrgPt15_20%d", i);
-        hfg_PhoTrgPt15_20[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_PhoTrgPt20_30_raw%d", i);
-        hfg_PhoTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_PhoTrgPt20_30%d", i);
-        hfg_PhoTrgPt20_30[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfg_PhoTrgPt30above_raw%d", i);
-        hfg_PhoTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfg_PhoTrgPt30above%d", i);
-        hfg_PhoTrgPt30above[i] = (TH1F*)f->Get(hname);
-    }
+            sprintf(hname, "hfgdiff_TrkTrgPt30above_raw%d", i);
+            hfgdiff_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_TrkTrgPt30above%d", i);
+            hfgdiff_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
 
 
-    // components for trigger combination for D*
-    for(short i = 0; i<NPT; i++) {
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12_raw%d", i);
+            hbgdiff_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12%d", i);
+            hbgdiff_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname);
 
-        // FullTrack trigger
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12_raw%d", i);
-        hfgdiff_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12%d", i);
-        hfgdiff_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_TrkTrgPt12_20_raw%d", i);
+            hbgdiff_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_TrkTrgPt12_20%d", i);
+            hbgdiff_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname);
 
-        sprintf(hname, "hfgdiff_TrkTrgPt12_20_raw%d", i);
-        hfgdiff_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_TrkTrgPt12_20%d", i);
-        hfgdiff_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_TrkTrgPt20_30_raw%d", i);
+            hbgdiff_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_TrkTrgPt20_30%d", i);
+            hbgdiff_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname);
 
-        sprintf(hname, "hfgdiff_TrkTrgPt20_30_raw%d", i);
-        hfgdiff_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_TrkTrgPt20_30%d", i);
-        hfgdiff_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfgdiff_TrkTrgPt30above_raw%d", i);
-        hfgdiff_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_TrkTrgPt30above%d", i);
-        hfgdiff_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
-
-
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12_raw%d", i);
-        hbgdiff_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_12%d", i);
-        hbgdiff_ZBiasSglTrkPt0_12[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_TrkTrgPt12_20_raw%d", i);
-        hbgdiff_TrkTrgPt12_20_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_TrkTrgPt12_20%d", i);
-        hbgdiff_TrkTrgPt12_20[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_TrkTrgPt20_30_raw%d", i);
-        hbgdiff_TrkTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_TrkTrgPt20_30%d", i);
-        hbgdiff_TrkTrgPt20_30[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_TrkTrgPt30above_raw%d", i);
-        hbgdiff_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_TrkTrgPt30above%d", i);
-        hbgdiff_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
-
-        // Jet trigger
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20_raw%d", i);
-        hfgdiff_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20%d", i);
-        hfgdiff_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfgdiff_JetTrgPt20_40_raw%d", i);
-        hfgdiff_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_JetTrgPt20_40%d", i);
-        hfgdiff_JetTrgPt20_40[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfgdiff_JetTrgPt40_60_raw%d", i);
-        hfgdiff_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_JetTrgPt40_60%d", i);
-        hfgdiff_JetTrgPt40_60[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfgdiff_JetTrgPt60_80_raw%d", i);
-        hfgdiff_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_JetTrgPt60_80%d", i);
-        hfgdiff_JetTrgPt60_80[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfgdiff_JetTrgPt80_100_raw%d", i);
-        hfgdiff_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_JetTrgPt80_100%d", i);
-        hfgdiff_JetTrgPt80_100[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfgdiff_JetTrgPt100above_raw%d", i);
-        hfgdiff_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_JetTrgPt100above%d", i);
-        hfgdiff_JetTrgPt100above[i] = (TH1F*)f->Get(hname);
-
-
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20_raw%d", i);
-        hbgdiff_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20%d", i);
-        hbgdiff_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_JetTrgPt20_40_raw%d", i);
-        hbgdiff_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_JetTrgPt20_40%d", i);
-        hbgdiff_JetTrgPt20_40[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_JetTrgPt40_60_raw%d", i);
-        hbgdiff_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_JetTrgPt40_60%d", i);
-        hbgdiff_JetTrgPt40_60[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_JetTrgPt60_80_raw%d", i);
-        hbgdiff_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_JetTrgPt60_80%d", i);
-        hbgdiff_JetTrgPt60_80[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_JetTrgPt80_100_raw%d", i);
-        hbgdiff_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_JetTrgPt80_100%d", i);
-        hbgdiff_JetTrgPt80_100[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_JetTrgPt100above_raw%d", i);
-        hbgdiff_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_JetTrgPt100above%d", i);
-        hbgdiff_JetTrgPt100above[i] = (TH1F*)f->Get(hname);
-
-        // Photon trigger
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_10_raw%d", i);
-        hfgdiff_ZBiasSglTrkPt0_10_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_10%d", i);
-        hfgdiff_ZBiasSglTrkPt0_10[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfgdiff_PhoTrgPt10_15_raw%d", i);
-        hfgdiff_PhoTrgPt10_15_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_PhoTrgPt10_15%d", i);
-        hfgdiff_PhoTrgPt10_15[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfgdiff_PhoTrgPt15_20_raw%d", i);
-        hfgdiff_PhoTrgPt15_20_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_PhoTrgPt15_20%d", i);
-        hfgdiff_PhoTrgPt15_20[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfgdiff_PhoTrgPt20_30_raw%d", i);
-        hfgdiff_PhoTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_PhoTrgPt20_30%d", i);
-        hfgdiff_PhoTrgPt20_30[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hfgdiff_PhoTrgPt30above_raw%d", i);
-        hfgdiff_PhoTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hfgdiff_PhoTrgPt30above%d", i);
-        hfgdiff_PhoTrgPt30above[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_10_raw%d", i);
-        hbgdiff_ZBiasSglTrkPt0_10_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_10%d", i);
-        hbgdiff_ZBiasSglTrkPt0_10[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_PhoTrgPt10_15_raw%d", i);
-        hbgdiff_PhoTrgPt10_15_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_PhoTrgPt10_15%d", i);
-        hbgdiff_PhoTrgPt10_15[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_PhoTrgPt15_20_raw%d", i);
-        hbgdiff_PhoTrgPt15_20_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_PhoTrgPt15_20%d", i);
-        hbgdiff_PhoTrgPt15_20[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_PhoTrgPt20_30_raw%d", i);
-        hbgdiff_PhoTrgPt20_30_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_PhoTrgPt20_30%d", i);
-        hbgdiff_PhoTrgPt20_30[i] = (TH1F*)f->Get(hname);
-
-        sprintf(hname, "hbgdiff_PhoTrgPt30above_raw%d", i);
-        hbgdiff_PhoTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
-        sprintf(hname, "hbgdiff_PhoTrgPt30above%d", i);
-        hbgdiff_PhoTrgPt30above[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_TrkTrgPt30above_raw%d", i);
+            hbgdiff_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_TrkTrgPt30above%d", i);
+            hbgdiff_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
+        }
     }
     cout<<" .... done ...."<<endl;
 }
 //
 //
-void ana_hfforest::define_rebinSpec()
-{
-    //clone any mass spectrum to define the combined one then reset them to 0 contents
-    char hname[200];
-    for(short it = 0; it<NTRG; it++) 
-        for(short i = 0; i<NptRebin; i++) {
-            sprintf(hname, "hfg_raw_rebin%d_%d", it, i);
-            hfg_raw_rebin[it][i] = (TH1F*)hfg_raw[it][i]->Clone(hname);
-
-            sprintf(hname, "hfgdiff_raw_rebin%d_%d", it, i);
-            hfgdiff_raw_rebin[it][i] = (TH1F*)hfgdiff_raw[it][i]->Clone(hname);
-
-            sprintf(hname, "hbgdiff_raw_rebin%d_%d", it, i);
-            hbgdiff_raw_rebin[it][i] = (TH1F*)hbgdiff_raw[it][i]->Clone(hname);
-
-            hfg_raw_rebin[it][i]->Reset();
-            hfgdiff_raw_rebin[it][i]->Reset();
-            hbgdiff_raw_rebin[it][i]->Reset();
-        }
-}
-
-//
-void ana_hfforest::define_combSpec()
+void ana_hfforest::define_rebinSpec(int ich)
 {
     //clone any mass spectrum to define the combined one then reset them to 0 contents
     char hname[200];
     for(short i = 0; i<NptRebin; i++) {
-        //FullTrack trigger 
-        sprintf(hname, "hfg_raw_combTrkTrg%d", i);
-        hfg_raw_combTrkTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
-        sprintf(hname, "hfg_combTrkTrg%d", i);
-        hfg_combTrkTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
+        for(short it = 0; it<NTRG; it++) {
+            if(ich!=0) {
+                sprintf(hname, "hfg_rebin%d_%d", it, i);
+                hfg_rebin[it][i] = (TH1F*)hfg[it][0]->Clone(hname);
+                hfg_rebin[it][i]->Reset();
 
-        sprintf(hname, "hfgdiff_raw_combTrkTrg%d", i);
-        hfgdiff_raw_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
-        sprintf(hname, "hfgdiff_combTrkTrg%d", i);
-        hfgdiff_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+            } else {
+                sprintf(hname, "hfgdiff_rebin%d_%d", it, i);
+                hfgdiff_rebin[it][i] = (TH1F*)hfgdiff[it][0]->Clone(hname);
 
-        sprintf(hname, "hbgdiff_raw_combTrkTrg%d", i);
-        hbgdiff_raw_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
-        sprintf(hname, "hbgdiff_combTrkTrg%d", i);
-        hbgdiff_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+                sprintf(hname, "hbgdiff_rebin%d_%d", it, i);
+                hbgdiff_rebin[it][i] = (TH1F*)hbgdiff[it][0]->Clone(hname);
 
-        //Jet trigger 
-        sprintf(hname, "hfg_raw_combJetTrg%d", i);
-        hfg_raw_combJetTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
-        sprintf(hname, "hfg_combJetTrg%d", i);
-        hfg_combJetTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
+                hfgdiff_rebin[it][i]->Reset();
+                hbgdiff_rebin[it][i]->Reset();
+            }
+        }
+        //
+        sprintf(hname, "hfg_TrkTrgPt12_20_rebin%d", i);
+        hfg_TrkTrgPt12_20_rebin[i] = (TH1F*)hfg_TrkTrgPt12_20[0]->Clone(hname);
+        sprintf(hname, "hfg_TrkTrgPt20_30_rebin%d", i);
+        hfg_TrkTrgPt20_30_rebin[i] = (TH1F*)hfg_TrkTrgPt20_30[0]->Clone(hname);
+        sprintf(hname, "hfg_TrkTrgPt30above_rebin%d", i);
+        hfg_TrkTrgPt30above_rebin[i] = (TH1F*)hfg_TrkTrgPt30above[0]->Clone(hname);
 
-        sprintf(hname, "hfgdiff_raw_combJetTrg%d", i);
-        hfgdiff_raw_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
-        sprintf(hname, "hfgdiff_combJetTrg%d", i);
-        hfgdiff_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+        hfg_TrkTrgPt12_20_rebin[i]->Reset();
+        hfg_TrkTrgPt20_30_rebin[i]->Reset();
+        hfg_TrkTrgPt30above_rebin[i]->Reset();
+    }
+}
 
-        sprintf(hname, "hbgdiff_raw_combJetTrg%d", i);
-        hbgdiff_raw_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
-        sprintf(hname, "hbgdiff_combJetTrg%d", i);
-        hbgdiff_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+//
+void ana_hfforest::define_combSpec(int ich)
+{
+    //clone any mass spectrum to define the combined one then reset them to 0 contents
+    char hname[200];
+    for(short i = 0; i<NptRebin; i++) {
+        if(ich!=0) {
+            sprintf(hname, "hfg_raw_combTrkTrg%d", i);
+            hfg_raw_combTrkTrg[i] = (TH1F*)hfg_TrkTrgPt12_20[i]->Clone(hname);
+            sprintf(hname, "hfg_combTrkTrg%d", i);
+            hfg_combTrkTrg[i] = (TH1F*)hfg_TrkTrgPt12_20[i]->Clone(hname);
+            //.. now reset all bin to zero 
+            hfg_raw_combTrkTrg[i]->Reset();
+            hfg_combTrkTrg[i]->Reset();
+        } else {
+            sprintf(hname, "hfgdiff_raw_combTrkTrg%d", i);
+            hfgdiff_raw_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20[i]->Clone(hname);
+            sprintf(hname, "hfgdiff_combTrkTrg%d", i);
+            hfgdiff_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20[i]->Clone(hname);
 
-        //Photon trigger 
-        sprintf(hname, "hfg_raw_combPhoTrg%d", i);
-        hfg_raw_combPhoTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
-        sprintf(hname, "hfg_combPhoTrg%d", i);
-        hfg_combPhoTrg[i] = (TH1F*)hfg_TrkTrgPt12_20_raw[i]->Clone(hname);
+            sprintf(hname, "hbgdiff_raw_combTrkTrg%d", i);
+            hbgdiff_raw_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20[i]->Clone(hname);
+            sprintf(hname, "hbgdiff_combTrkTrg%d", i);
+            hbgdiff_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20[i]->Clone(hname);
 
-        sprintf(hname, "hfgdiff_raw_combPhoTrg%d", i);
-        hfgdiff_raw_combPhoTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
-        sprintf(hname, "hfgdiff_combPhoTrg%d", i);
-        hfgdiff_combPhoTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
-
-        sprintf(hname, "hbgdiff_raw_combPhoTrg%d", i);
-        hbgdiff_raw_combPhoTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
-        sprintf(hname, "hbgdiff_combPhoTrg%d", i);
-        hbgdiff_combPhoTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
-
-        //.. now reset all bin to zero 
-        hfg_raw_combTrkTrg[i]->Reset();
-        hfg_combTrkTrg[i]->Reset();
-        hfgdiff_raw_combTrkTrg[i]->Reset();
-        hfgdiff_combTrkTrg[i]->Reset();
-        hbgdiff_raw_combTrkTrg[i]->Reset();
-        hbgdiff_combTrkTrg[i]->Reset();
-
-        //Jet trigger 
-        hfg_raw_combJetTrg[i]->Reset();
-        hfg_combJetTrg[i]->Reset();
-        hfgdiff_raw_combJetTrg[i]->Reset();
-        hfgdiff_combJetTrg[i]->Reset();
-        hbgdiff_raw_combJetTrg[i]->Reset();
-        hbgdiff_combJetTrg[i]->Reset();
-
-        //Photon trigger 
-        hfg_raw_combPhoTrg[i]->Reset();
-        hfg_combPhoTrg[i]->Reset();
-        hfgdiff_raw_combPhoTrg[i]->Reset();
-        hfgdiff_combPhoTrg[i]->Reset();
-        hbgdiff_raw_combPhoTrg[i]->Reset();
-        hbgdiff_combPhoTrg[i]->Reset();
+            //.. now reset all bin to zero 
+            hfgdiff_raw_combTrkTrg[i]->Reset();
+            hfgdiff_combTrkTrg[i]->Reset();
+            hbgdiff_raw_combTrkTrg[i]->Reset();
+            hbgdiff_combTrkTrg[i]->Reset();
+        }
     }
 }
 //
-void ana_hfforest::rebinSpec(TFile* fout)
+void ana_hfforest::rebinSpec(int ich, TFile* fout)
 {
     cout<<".... rebining the spectra ...."<<endl;
-    define_rebinSpec();
+    define_rebinSpec(ich);
 
     for(short it = 0; it<NTRG; it++) {
         int im = 0; //.. bin id for merged histogram
@@ -1830,40 +1034,17 @@ void ana_hfforest::rebinSpec(TFile* fout)
             if(pt_low >= ptRebin[im+1] && pt_high <= ptRebin[im+2])
                 im++;
 
-            //Track trigger
-            if(hfg[it][i]->Integral())
-                hfg_raw[it][i]->Scale(hfg[it][i]->Integral()/hfg_raw[it][i]->Integral());
-            if(hfgdiff[it][i]->Integral())
-                hfgdiff_raw[it][i]->Scale(hfgdiff[it][i]->Integral()/hfgdiff_raw[it][i]->Integral());
-            if(hbgdiff[it][i]->Integral())
-                hbgdiff_raw[it][i]->Scale(hbgdiff[it][i]->Integral()/hbgdiff_raw[it][i]->Integral());
+            if(ich!=0) {
+                hfg_rebin[it][im]->Add(hfg[it][i]);
 
-            hfg_raw_rebin[it][im]->Add(hfg_raw[it][i]);
-            hfgdiff_raw_rebin[it][im]->Add(hfgdiff_raw[it][i]);
-            hbgdiff_raw_rebin[it][im]->Add(hbgdiff_raw[it][i]);
+            } else {
+                hfgdiff_rebin[it][im]->Add(hfgdiff[it][i]);
+                hbgdiff_rebin[it][im]->Add(hbgdiff[it][i]);
+            }
         }
     }
 
-    cout<<" ....Writing the spectra ...."<<endl;
-    fout->cd();
-    //.. save 
-    for(short it = 0; it<NTRG; it++) {
-        for(short i = 0; i<NptRebin; i++) {
-            // track trigger 
-            hfg_raw_rebin[it][i]->Write(); 
-            hfgdiff_raw_rebin[it][i]->Write(); 
-            hbgdiff_raw_rebin[it][i]->Write(); 
-        }
-    }
-    cout<<"... done ..."<<endl;
-}
-
-//
-void ana_hfforest::CombineSpec(TFile* fout)
-{
-    cout<<".... combining the spectra ...."<<endl;
-    define_combSpec();
-
+    //
     int im = 0; //.. bin id for merged histogram
     for(short i = 0; i<NPT; i++) {
 
@@ -1880,248 +1061,108 @@ void ana_hfforest::CombineSpec(TFile* fout)
             im++;
 
         //Track trigger
-        if(hfg_TrkTrgPt12_20_raw[i]->Integral())
-            hfg_TrkTrgPt12_20_raw[i]->Scale(hfg_TrkTrgPt12_20[i]->Integral()/hfg_TrkTrgPt12_20_raw[i]->Integral());
-        if(hfg_TrkTrgPt20_30_raw[i]->Integral())
-            hfg_TrkTrgPt20_30_raw[i]->Scale(hfg_TrkTrgPt20_30[i]->Integral()/hfg_TrkTrgPt20_30_raw[i]->Integral());
-        if(hfg_TrkTrgPt30above_raw[i]->Integral())
-            hfg_TrkTrgPt30above_raw[i]->Scale(hfg_TrkTrgPt30above[i]->Integral()/hfg_TrkTrgPt30above_raw[i]->Integral());
-
-        hfg_raw_combTrkTrg[im]->Add(hfg_TrkTrgPt12_20_raw[i]);
-        hfg_raw_combTrkTrg[im]->Add(hfg_TrkTrgPt20_30_raw[i]);
-        hfg_raw_combTrkTrg[im]->Add(hfg_TrkTrgPt30above_raw[i]);
-
-        hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt12_20[i]);
-        hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt20_30[i]);
-        hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt30above[i]);
-        //
-        //
-        //Jet trigger 
-        if(hfg_JetTrgPt20_40_raw[i]->Integral())
-            hfg_JetTrgPt20_40_raw[i]->Scale(hfg_JetTrgPt20_40[i]->Integral()/hfg_JetTrgPt20_40_raw[i]->Integral());
-        if(hfg_JetTrgPt40_60_raw[i]->Integral())
-            hfg_JetTrgPt40_60_raw[i]->Scale(hfg_JetTrgPt40_60[i]->Integral()/hfg_JetTrgPt40_60_raw[i]->Integral());
-        if(hfg_JetTrgPt60_80_raw[i]->Integral())
-            hfg_JetTrgPt60_80_raw[i]->Scale(hfg_JetTrgPt60_80[i]->Integral()/hfg_JetTrgPt60_80_raw[i]->Integral());
-        if(hfg_JetTrgPt80_100_raw[i]->Integral())
-            hfg_JetTrgPt80_100_raw[i]->Scale(hfg_JetTrgPt80_100[i]->Integral()/hfg_JetTrgPt80_100_raw[i]->Integral());
-        if(hfg_JetTrgPt100above_raw[i]->Integral())
-            hfg_JetTrgPt100above_raw[i]->Scale(hfg_JetTrgPt100above[i]->Integral()/hfg_JetTrgPt100above_raw[i]->Integral());
-
-        hfg_raw_combJetTrg[im]->Add( hfg_JetTrgPt20_40_raw[i]);
-        hfg_raw_combJetTrg[im]->Add(hfg_JetTrgPt40_60_raw[i]);
-        hfg_raw_combJetTrg[im]->Add(hfg_JetTrgPt60_80_raw[i]);
-        hfg_raw_combJetTrg[im]->Add(hfg_JetTrgPt80_100_raw[i]);
-        hfg_raw_combJetTrg[im]->Add(hfg_JetTrgPt100above_raw[i]);
-
-        hfg_combJetTrg[im]->Add( hfg_JetTrgPt20_40[i]);
-        hfg_combJetTrg[im]->Add(hfg_JetTrgPt40_60[i]);
-        hfg_combJetTrg[im]->Add(hfg_JetTrgPt60_80[i]);
-        hfg_combJetTrg[im]->Add(hfg_JetTrgPt80_100[i]);
-        hfg_combJetTrg[im]->Add(hfg_JetTrgPt100above[i]);
-
-
-
-        //Photon trigger 
-        if(hfg_PhoTrgPt10_15_raw[i]->Integral())
-            hfg_PhoTrgPt10_15_raw[i]->Scale(hfg_PhoTrgPt10_15[i]->Integral()/hfg_PhoTrgPt10_15_raw[i]->Integral());
-        if(hfg_PhoTrgPt15_20_raw[i]->Integral())
-            hfg_PhoTrgPt15_20_raw[i]->Scale(hfg_PhoTrgPt15_20[i]->Integral()/hfg_PhoTrgPt15_20_raw[i]->Integral());
-        if(hfg_PhoTrgPt20_30_raw[i]->Integral())
-            hfg_PhoTrgPt20_30_raw[i]->Scale(hfg_PhoTrgPt20_30[i]->Integral()/hfg_PhoTrgPt20_30_raw[i]->Integral());
-        if(hfg_PhoTrgPt30above_raw[i]->Integral())
-            hfg_PhoTrgPt30above_raw[i]->Scale(hfg_PhoTrgPt30above[i]->Integral()/hfg_PhoTrgPt30above_raw[i]->Integral());
-
-        hfg_raw_combPhoTrg[im]->Add(hfg_PhoTrgPt10_15_raw[i]);
-        hfg_raw_combPhoTrg[im]->Add(hfg_PhoTrgPt15_20_raw[i]);
-        hfg_raw_combPhoTrg[im]->Add(hfg_PhoTrgPt20_30_raw[i]);
-        hfg_raw_combPhoTrg[im]->Add(hfg_PhoTrgPt30above_raw[i]);
-
-        hfg_combPhoTrg[im]->Add( hfg_PhoTrgPt10_15[i]);
-        hfg_combPhoTrg[im]->Add(hfg_PhoTrgPt15_20[i]);
-        hfg_combPhoTrg[im]->Add(hfg_PhoTrgPt20_30[i]);
-        hfg_combPhoTrg[im]->Add(hfg_PhoTrgPt30above[i]);
-
-        // components for trigger combination for D*
-        // fulltrack trigger
-        if(hfgdiff_TrkTrgPt12_20_raw[i]->Integral())
-            hfgdiff_TrkTrgPt12_20_raw[i]->Scale(hfgdiff_TrkTrgPt12_20[i]->Integral()/hfgdiff_TrkTrgPt12_20_raw[i]->Integral());
-        if(hfgdiff_TrkTrgPt20_30_raw[i]->Integral())
-            hfgdiff_TrkTrgPt20_30_raw[i]->Scale(hfgdiff_TrkTrgPt20_30[i]->Integral()/hfgdiff_TrkTrgPt20_30_raw[i]->Integral());
-        if(hfgdiff_TrkTrgPt30above_raw[i]->Integral())
-            hfgdiff_TrkTrgPt30above_raw[i]->Scale(hfgdiff_TrkTrgPt30above[i]->Integral()/hfgdiff_TrkTrgPt30above_raw[i]->Integral());
-
-        hfgdiff_raw_combTrkTrg[im]->Add( hfgdiff_TrkTrgPt12_20_raw[i]);
-        hfgdiff_raw_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt20_30_raw[i]);
-        hfgdiff_raw_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt30above_raw[i]);
-
-        hfgdiff_combTrkTrg[im]->Add( hfgdiff_TrkTrgPt12_20[i]);
-        hfgdiff_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt20_30[i]);
-        hfgdiff_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt30above[i]);
-
-        //
-        if(hbgdiff_TrkTrgPt12_20_raw[i]->Integral())
-            hbgdiff_TrkTrgPt12_20_raw[i]->Scale(hbgdiff_TrkTrgPt12_20[i]->Integral()/hbgdiff_TrkTrgPt12_20_raw[i]->Integral());
-        if(hbgdiff_TrkTrgPt20_30_raw[i]->Integral())
-            hbgdiff_TrkTrgPt20_30_raw[i]->Scale(hbgdiff_TrkTrgPt20_30[i]->Integral()/hbgdiff_TrkTrgPt20_30_raw[i]->Integral());
-        if(hbgdiff_TrkTrgPt30above_raw[i]->Integral())
-            hbgdiff_TrkTrgPt30above_raw[i]->Scale(hbgdiff_TrkTrgPt30above[i]->Integral()/hbgdiff_TrkTrgPt30above_raw[i]->Integral());
-
-        hbgdiff_raw_combTrkTrg[im]->Add( hbgdiff_TrkTrgPt12_20_raw[i]);
-        hbgdiff_raw_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt20_30_raw[i]);
-        hbgdiff_raw_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt30above_raw[i]);
-
-        hbgdiff_combTrkTrg[im]->Add( hbgdiff_TrkTrgPt12_20[i]);
-        hbgdiff_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt20_30[i]);
-        hbgdiff_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt30above[i]);
-
-
-        // Jet trigger
-        if(hfgdiff_JetTrgPt20_40_raw[i]->Integral())
-            hfgdiff_JetTrgPt20_40_raw[i]->Scale(hfgdiff_JetTrgPt20_40[i]->Integral()/hfgdiff_JetTrgPt20_40_raw[i]->Integral());
-        if(hfgdiff_JetTrgPt40_60_raw[i]->Integral())
-            hfgdiff_JetTrgPt40_60_raw[i]->Scale(hfgdiff_JetTrgPt40_60[i]->Integral()/hfgdiff_JetTrgPt40_60_raw[i]->Integral());
-        if(hfgdiff_JetTrgPt60_80_raw[i]->Integral())
-            hfgdiff_JetTrgPt60_80_raw[i]->Scale(hfgdiff_JetTrgPt60_80[i]->Integral()/hfgdiff_JetTrgPt60_80_raw[i]->Integral());
-        if(hfgdiff_JetTrgPt80_100_raw[i]->Integral())
-            hfgdiff_JetTrgPt80_100_raw[i]->Scale(hfgdiff_JetTrgPt80_100[i]->Integral()/hfgdiff_JetTrgPt80_100_raw[i]->Integral());
-        if(hfgdiff_JetTrgPt100above_raw[i]->Integral())
-            hfgdiff_JetTrgPt100above_raw[i]->Scale(hfgdiff_JetTrgPt100above[i]->Integral()/hfgdiff_JetTrgPt100above_raw[i]->Integral());
-
-        hfgdiff_raw_combJetTrg[im]->Add(hfgdiff_JetTrgPt20_40_raw[i]);
-        hfgdiff_raw_combJetTrg[im]->Add(hfgdiff_JetTrgPt40_60_raw[i]);
-        hfgdiff_raw_combJetTrg[im]->Add(hfgdiff_JetTrgPt60_80_raw[i]);
-        hfgdiff_raw_combJetTrg[im]->Add(hfgdiff_JetTrgPt80_100_raw[i]);
-        hfgdiff_raw_combJetTrg[im]->Add(hfgdiff_JetTrgPt100above_raw[i]);
-
-        hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt20_40[i]);
-        hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt40_60[i]);
-        hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt60_80[i]);
-        hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt80_100[i]);
-        hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt100above[i]);
-
-
-        //
-        if(hbgdiff_JetTrgPt20_40_raw[i]->Integral())
-            hbgdiff_JetTrgPt20_40_raw[i]->Scale(hbgdiff_JetTrgPt20_40[i]->Integral()/hbgdiff_JetTrgPt20_40_raw[i]->Integral());
-        if(hbgdiff_JetTrgPt40_60_raw[i]->Integral())
-            hbgdiff_JetTrgPt40_60_raw[i]->Scale(hbgdiff_JetTrgPt40_60[i]->Integral()/hbgdiff_JetTrgPt40_60_raw[i]->Integral());
-        if(hbgdiff_JetTrgPt60_80_raw[i]->Integral())
-            hbgdiff_JetTrgPt60_80_raw[i]->Scale(hbgdiff_JetTrgPt60_80[i]->Integral()/hbgdiff_JetTrgPt60_80_raw[i]->Integral());
-        if(hbgdiff_JetTrgPt80_100_raw[i]->Integral())
-            hbgdiff_JetTrgPt80_100_raw[i]->Scale(hbgdiff_JetTrgPt80_100[i]->Integral()/hbgdiff_JetTrgPt80_100_raw[i]->Integral());
-        if(hbgdiff_JetTrgPt100above_raw[i]->Integral())
-            hbgdiff_JetTrgPt100above_raw[i]->Scale(hbgdiff_JetTrgPt100above[i]->Integral()/hbgdiff_JetTrgPt100above_raw[i]->Integral());
-
-        hbgdiff_raw_combJetTrg[im]->Add(hbgdiff_JetTrgPt20_40_raw[i]);
-        hbgdiff_raw_combJetTrg[im]->Add(hbgdiff_JetTrgPt40_60_raw[i]);
-        hbgdiff_raw_combJetTrg[im]->Add(hbgdiff_JetTrgPt60_80_raw[i]);
-        hbgdiff_raw_combJetTrg[im]->Add(hbgdiff_JetTrgPt80_100_raw[i]);
-        hbgdiff_raw_combJetTrg[im]->Add(hbgdiff_JetTrgPt100above_raw[i]);
-
-        hbgdiff_combJetTrg[im]->Add(hbgdiff_JetTrgPt20_40[i]);
-        hbgdiff_combJetTrg[im]->Add(hbgdiff_JetTrgPt40_60[i]);
-        hbgdiff_combJetTrg[im]->Add(hbgdiff_JetTrgPt60_80[i]);
-        hbgdiff_combJetTrg[im]->Add(hbgdiff_JetTrgPt80_100[i]);
-        hbgdiff_combJetTrg[im]->Add(hbgdiff_JetTrgPt100above[i]);
-
-
-        // Photon trigger
-        if(hfgdiff_PhoTrgPt10_15_raw[i]->Integral())
-            hfgdiff_PhoTrgPt10_15_raw[i]->Scale(hfgdiff_PhoTrgPt10_15[i]->Integral()/hfgdiff_PhoTrgPt10_15_raw[i]->Integral());
-        if(hfgdiff_PhoTrgPt15_20_raw[i]->Integral())
-            hfgdiff_PhoTrgPt15_20_raw[i]->Scale(hfgdiff_PhoTrgPt15_20[i]->Integral()/hfgdiff_PhoTrgPt15_20_raw[i]->Integral());
-        if(hfgdiff_PhoTrgPt20_30_raw[i]->Integral())
-            hfgdiff_PhoTrgPt20_30_raw[i]->Scale(hfgdiff_PhoTrgPt20_30[i]->Integral()/hfgdiff_PhoTrgPt20_30_raw[i]->Integral());
-        if(hfgdiff_PhoTrgPt30above_raw[i]->Integral())
-            hfgdiff_PhoTrgPt30above_raw[i]->Scale(hfgdiff_PhoTrgPt30above[i]->Integral()/hfgdiff_PhoTrgPt30above_raw[i]->Integral());
-
-        hfgdiff_raw_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt10_15_raw[i]);
-        hfgdiff_raw_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt15_20_raw[i]);
-        hfgdiff_raw_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt20_30_raw[i]);
-        hfgdiff_raw_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt30above_raw[i]);
-
-        hfgdiff_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt10_15[i]);
-        hfgdiff_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt15_20[i]);
-        hfgdiff_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt20_30[i]);
-        hfgdiff_combPhoTrg[im]->Add(hfgdiff_PhoTrgPt30above[i]);
-
-        //
-        if(hbgdiff_PhoTrgPt10_15_raw[i]->Integral())
-            hbgdiff_PhoTrgPt10_15_raw[i]->Scale(hbgdiff_PhoTrgPt10_15[i]->Integral()/hbgdiff_PhoTrgPt10_15_raw[i]->Integral());
-        if(hbgdiff_PhoTrgPt15_20_raw[i]->Integral())
-            hbgdiff_PhoTrgPt15_20_raw[i]->Scale(hbgdiff_PhoTrgPt15_20[i]->Integral()/hbgdiff_PhoTrgPt15_20_raw[i]->Integral());
-        if(hbgdiff_PhoTrgPt20_30_raw[i]->Integral())
-            hbgdiff_PhoTrgPt20_30_raw[i]->Scale(hbgdiff_PhoTrgPt20_30[i]->Integral()/hbgdiff_PhoTrgPt20_30_raw[i]->Integral());
-        if(hbgdiff_PhoTrgPt30above_raw[i]->Integral())
-            hbgdiff_PhoTrgPt30above_raw[i]->Scale(hbgdiff_PhoTrgPt30above[i]->Integral()/hbgdiff_PhoTrgPt30above_raw[i]->Integral());
-
-        hbgdiff_raw_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt10_15_raw[i]);
-        hbgdiff_raw_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt15_20_raw[i]);
-        hbgdiff_raw_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt20_30_raw[i]);
-        hbgdiff_raw_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt30above_raw[i]);
-
-        hbgdiff_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt10_15[i]);
-        hbgdiff_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt15_20[i]);
-        hbgdiff_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt20_30[i]);
-        hbgdiff_combPhoTrg[im]->Add(hbgdiff_PhoTrgPt30above[i]);
+        hfg_TrkTrgPt12_20_rebin[im]->Add(hfg_TrkTrgPt12_20[i]);
+        hfg_TrkTrgPt20_30_rebin[im]->Add(hfg_TrkTrgPt20_30[i]);
+        hfg_TrkTrgPt30above_rebin[im]->Add(hfg_TrkTrgPt30above[i]);
 
     }
+
     cout<<" ....Writing the spectra ...."<<endl;
     fout->cd();
     //.. save 
     for(short i = 0; i<NptRebin; i++) {
-        // track trigger 
-        hfg_raw_combTrkTrg[i]->Write(); 
-        hfg_combTrkTrg[i]->Write();   
+        for(short it = 0; it<NTRG; it++) {
+            if(ich!=0) {
+                hfg_rebin[it][i]->Write(); 
+            } else {
+                hfgdiff_rebin[it][i]->Write(); 
+                hbgdiff_rebin[it][i]->Write(); 
+            }
+        }
 
-        hfgdiff_raw_combTrkTrg[i]->Write();
-        hfgdiff_combTrkTrg[i]->Write();
+        //
+        hfg_TrkTrgPt12_20_rebin[i]->Write();
+        hfg_TrkTrgPt20_30_rebin[i]->Write();
+        hfg_TrkTrgPt30above_rebin[i]->Write();
 
-        hbgdiff_raw_combTrkTrg[i]->Write();
-        hbgdiff_combTrkTrg[i]->Write();
+    }
+    cout<<"... done ..."<<endl;
+}
 
-        // Jet trigger 
-        hfg_raw_combJetTrg[i]->Write(); 
-        hfg_combJetTrg[i]->Write();   
+//
+void ana_hfforest::CombineSpec(int ich, TFile* fout)
+{
+    cout<<".... combining the spectra ...."<<endl;
+    define_combSpec(ich);
 
-        hfgdiff_raw_combJetTrg[i]->Write();
-        hfgdiff_combJetTrg[i]->Write();
+    int im = 0; //.. bin id for merged histogram
+    for(short i = 0; i<NPT; i++) {
 
-        hbgdiff_raw_combJetTrg[i]->Write();
-        hbgdiff_combJetTrg[i]->Write();
+        float pt_low = 0, pt_high = 0;
+        get_pt_range(i, pt_low, pt_high);
+        //
+        //.. check if the merged bin range is incorrectly assigned...
+        if(pt_low < ptRebin[im+1] && pt_high > ptRebin[im+1]) {
+            cout<<"!!  merged bin range: "<<ptRebin[im]<<" - "<<ptRebin[im+1]<<" is not a integer number of the basic bin range: "<<pt_low<<" - "<<pt_high<<". exit !!"<<endl;
+            exit(0);
+        }
+        //.. check if merging of one bin is done
+        if(pt_low >= ptRebin[im+1] && pt_high <= ptRebin[im+2])
+            im++;
 
-        // Photon trigger 
-        hfg_raw_combPhoTrg[i]->Write(); 
-        hfg_combPhoTrg[i]->Write();   
+        if(ich!=0) {
+            hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt12_20[i]);
+            hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt20_30[i]);
+            hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt30above[i]);
+        } else {
+            hfgdiff_combTrkTrg[im]->Add( hfgdiff_TrkTrgPt12_20[i]);
+            hfgdiff_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt20_30[i]);
+            hfgdiff_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt30above[i]);
 
-        hfgdiff_raw_combPhoTrg[i]->Write();
-        hfgdiff_combPhoTrg[i]->Write();
+            //
+            hbgdiff_combTrkTrg[im]->Add( hbgdiff_TrkTrgPt12_20[i]);
+            hbgdiff_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt20_30[i]);
+            hbgdiff_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt30above[i]);
+        }
+    }
 
-        hbgdiff_raw_combPhoTrg[i]->Write();
-        hbgdiff_combPhoTrg[i]->Write();
+    cout<<" ....Writing the spectra ...."<<endl;
+    fout->cd();
+    //.. save 
+    for(short i = 0; i<NptRebin; i++) {
+        if(ich!=0) {
+            hfg_combTrkTrg[i]->Write();   
+        } else {
+            hfgdiff_combTrkTrg[i]->Write();
+            hbgdiff_combTrkTrg[i]->Write();
+        }
     }
     cout<<" ... done ...."<<endl;
 }
 
 //
-void ana_hfforest::drawOneTrg(int ich, int whichTrg, int Nrebin, bool chk)
+void ana_hfforest::drawOneHist(int ich, TH1* h, int nrb)
+{
+    float sig= 0, err= 0;
+    draw_fit(ich, h, nrb, mlow[ich], mup[ich], sig, err);
+}
+//
+void ana_hfforest::drawOneTrg(int ich, int Nrebin, bool chk, int it, TCanvas* cc)
 {//..ich: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
- //.. whichTrg: 0=TrkTrg, 1=JetTrg, 2=PhoTrg
+ //.. it: which single trigger 
     char plotName[200];
     char outName[200];
     //
     if(!chk) 
-        sprintf(outName, "%s_trg%d_comb.root", MesonName[ich], whichTrg);
+        sprintf(outName, "%s_comb.root", MesonName[ich]);
     else 
-        sprintf(outName, "%s_trg%d_check.root", MesonName[ich], whichTrg);
+        sprintf(outName, "%s_check_it%d.root", MesonName[ich], it);
 
     TFile outFile(outName, "recreate");
     TH1F* hpt = new TH1F("hpt", "", NptRebin, ptRebin);
     hpt->SetMinimum(1);
 
     //
-    TCanvas* cc = new TCanvas("cc", "", 1000, 800);
     int nrow = 4, ncol = 4;
     cc->Divide(nrow, ncol);
 
@@ -2131,54 +1172,26 @@ void ana_hfforest::drawOneTrg(int ich, int whichTrg, int Nrebin, bool chk)
         cc->cd(ic+1);
 
         if(ich==0) {
-            if(whichTrg==0) {
-                if(!chk) 
-                    drawDstar(hfgdiff_raw_combTrkTrg[i], hbgdiff_raw_combTrkTrg[i], Nrebin, sig, err);
-                    //draw_fit(ich, hfgdiff_raw_combTrkTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
-                else
-                    drawDstar(hfgdiff_raw_rebin[1][i], hbgdiff_raw_rebin[1][i], Nrebin, sig, err);
-                    //draw_fit(ich, hfgdiff_raw_rebin[1][i], Nrebin, mlow[ich], mup[ich], sig, err);
-            } else if(whichTrg==1) {
-                if(!chk) 
-                    drawDstar(hfgdiff_raw_combJetTrg[i], hbgdiff_raw_combJetTrg[i], Nrebin, sig, err);
-                    //draw_fit(ich, hfgdiff_raw_combJetTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
-                else
-                    drawDstar(hfgdiff_raw_rebin[4][i], hbgdiff_raw_rebin[1][i], Nrebin, sig, err);
-                    //draw_fit(ich, hfgdiff_raw_rebin[4][i], Nrebin, mlow[ich], mup[ich], sig, err);
-            } else if(whichTrg==2) {
-                if(!chk) 
-                    drawDstar(hfgdiff_raw_combPhoTrg[i], hbgdiff_combPhoTrg[i], Nrebin, sig, err);
-                    //draw_fit(ich, hfgdiff_raw_combPhoTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
-                else
-                    drawDstar(hfgdiff_raw_rebin[9][i], hbgdiff_raw_rebin[1][i], Nrebin, sig, err);
-                    //draw_fit(ich, hfgdiff_raw_rebin[9][i], Nrebin, mlow[ich], mup[ich], sig, err);
-            }
+            if(!chk) 
+                drawDstar(hfgdiff_combTrkTrg[i], hbgdiff_combTrkTrg[i], Nrebin, sig, err);
+            //draw_fit(ich, hfgdiff_combTrkTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+            else
+                drawDstar(hfgdiff_rebin[it][i], hbgdiff_rebin[it][i], Nrebin, sig, err);
+            //draw_fit(ich, hfgdiff_rebin[it][i], Nrebin, mlow[ich], mup[ich], sig, err);
         } else if(ich <NCH) {
-            if(whichTrg==0) {
-                if(!chk)
-                    draw_fit(ich, hfg_raw_combTrkTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
-                else
-                    draw_fit(ich, hfg_raw_rebin[1][i], Nrebin, mlow[ich], mup[ich], sig, err);
-            } else if(whichTrg==1) {
-                if(!chk) 
-                    draw_fit(ich, hfg_raw_combJetTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
-                else
-                    draw_fit(ich, hfg_raw_rebin[4][i], Nrebin, mlow[ich], mup[ich], sig, err);
-            } else if(whichTrg==2) {
-                if(!chk) 
-                    draw_fit(ich, hfg_raw_combPhoTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
-                else
-                    draw_fit(ich, hfg_raw_rebin[9][i], Nrebin, mlow[ich], mup[ich], sig, err);
-            }
+            if(!chk)
+                draw_fit(ich, hfg_combTrkTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+            else
+                draw_fit(ich, hfg_rebin[it][i], Nrebin, mlow[ich], mup[ich], sig, err);
         } else {
             cout<<" !!! no such D meson  !!!"<<endl;
         }
 
         if(ic == nrow*ncol-1 || i==NptRebin-1) {
             if(!chk)
-                sprintf(plotName, "%s_Trg%d_plot%d_comb.gif", MesonName[ich], whichTrg, iplt);
+                sprintf(plotName, "%s_plot%d_comb.gif", MesonName[ich], iplt);
             else
-                sprintf(plotName, "%s_Trg%d_plot%d_check.gif", MesonName[ich], whichTrg, iplt);
+                sprintf(plotName, "%s_plot%d_check_it%d.gif", MesonName[ich], iplt, it);
 
             cc->SaveAs(plotName);
             cc->Clear();
@@ -2188,7 +1201,9 @@ void ana_hfforest::drawOneTrg(int ich, int whichTrg, int Nrebin, bool chk)
         } else 
             ic++;
 
-        //
+        // correct pT bin width ..
+        sig /= hpt->GetBinWidth(i+1);
+        err /= hpt->GetBinWidth(i+1);
         hpt->SetBinContent(i+1, sig);
         hpt->SetBinError(i+1, err);
     }
@@ -2231,14 +1246,13 @@ void ana_hfforest::drawDstar(TH1* h_fg, TH1* h_bg, int nrb, float& sig, float& e
 }
 
 //
-void ana_hfforest::drawHighMult(int ich, int whichTrg, int Nrebin, TFile* f)
+void ana_hfforest::drawHighMult(int ich, int whichTrg, int Nrebin, TFile* f, TCanvas* cc)
 {//..ich: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
  //.. whichTrg: see trg_name ..
     char plotName[200];
 
-    get_hist(f);
+    get_hist(ich, f);
 
-    TCanvas* cc = new TCanvas("cc", "", 1000, 800);
     int nrow = 4, ncol = 4;
     cc->Divide(nrow, ncol);
     int ic = 0, iplt= 0;
@@ -2293,8 +1307,9 @@ void ana_hfforest::draw_fit(int ich, TH1* h, int nrb, float rlow, float rhigh, f
     h->GetXaxis()->SetNdivisions(505);
 
     h->GetXaxis()->SetRangeUser(rlow, rhigh);
-    //.. fit with a Gaussian and pol
-    TF1* fit_fun = new TF1("fit_fun", "[0]*(1/[2]/sqrt(6.28)*exp(-0.5*pow((x-[1])/[2], 2))) + pol2(3) + [6]*(1/[8]/sqrt(6.28)*exp(-0.5*pow((x-[7])/[8], 2)))", rlow, rhigh);
+    //.. fit with a Gaussian and pol or expo
+    //TF1* fit_fun = new TF1("fit_fun", "[0]*(1/[2]/sqrt(6.28)*exp(-0.5*pow((x-[1])/[2], 2))) + pol2(3) + [6]*(1/[8]/sqrt(6.28)*exp(-0.5*pow((x-[7])/[8], 2)))", rlow, rhigh);
+    TF1* fit_fun = new TF1("fit_fun", "[0]*(1/[2]/sqrt(6.28)*exp(-0.5*pow((x-[1])/[2], 2))) + expo(3) + [6]*(1/[8]/sqrt(6.28)*exp(-0.5*pow((x-[7])/[8], 2)))", rlow, rhigh);
     float tot = h->Integral();
 
     float var_mean = 0.01, var_width = 0.01;
@@ -2319,13 +1334,13 @@ void ana_hfforest::draw_fit(int ich, TH1* h, int nrb, float rlow, float rhigh, f
         }
 
         //.. fit constraint ..
-        fit_fun->SetParLimits(0, 0, 1e10);
-        fit_fun->SetParLimits(1, TMath::Max(zero, MesonMass[ich]-var_mean), MesonMass[ich]+var_mean);
+        //fit_fun->SetParLimits(0, 0, 1e20);
+        fit_fun->SetParLimits(1,TMath::Max(zero,MesonMass[ich]-var_mean), MesonMass[ich]+var_mean);
         fit_fun->SetParLimits(2, TMath::Max(zero, p2-var_width),  p2+var_width);
 
         if(ich==2) {
-            fit_fun->SetParLimits(6, 0, 1e10);
-            fit_fun->SetParLimits(7, TMath::Max(zero, MesonMass[4]-var_mean), MesonMass[4]+var_mean);
+            //fit_fun->SetParLimits(6, 0, 1e20);
+            fit_fun->SetParLimits(7,TMath::Max(zero, MesonMass[4]-var_mean), MesonMass[4]+var_mean);
             fit_fun->SetParLimits(8, TMath::Max(zero, p8-var_width),  p8+var_width);
         } else {//.. all D except Ds->phi+pi have only one peak. remove the 2nd peak
             fit_fun->FixParameter(6, 0);
@@ -2335,9 +1350,13 @@ void ana_hfforest::draw_fit(int ich, TH1* h, int nrb, float rlow, float rhigh, f
 
         //.. using likelyhood. Chi2 bias total counts
         for(int ii = 0; ii<10; ii++)
-            h->Fit(fit_fun,  "LQ", "", rlow, rhigh);
+            h->Fit(fit_fun,  "", "", rlow, rhigh);
+            //!!!-- I can't get the fit error from likelihood fit right 
+            //!!!-- the mean is usable for systematic check
+            //h->Fit(fit_fun,  "WL", "", rlow, rhigh);
 
         //.. draw foreground and background ..
+        cout<<" hist: "<<h->GetName()<<endl;
         h->Draw();
 
         TF1* fit_fun_bg = (TF1*)fit_fun->Clone("fit_fun_bg");
@@ -2356,20 +1375,459 @@ void ana_hfforest::draw_fit(int ich, TH1* h, int nrb, float rlow, float rhigh, f
         cout<<" good fit? (0: no refit, 1: refit w/o range change. 2: refit w/ range change"<<endl;
         scanf("%d", &pass);
 
-        if(pass) {
+        if(pass==1) {//.. change the par range only
             cout<<" var(mean), var(width) ?"<<endl;
             scanf("%f%f", &var_mean, &var_width);
+        } else if(pass==2) {//.. change the fitting range only
+            cout<<" rlow, rhigh? "<<endl;
+            scanf("%f%f", &rlow, &rhigh);
+        } else if(pass==3) {// change both par and fitting range
+            cout<<" var(mean), var(width) ?"<<endl;
+            scanf("%f%f", &var_mean, &var_width);
+            cout<<" rlow, rhigh? "<<endl;
+            scanf("%f%f", &rlow, &rhigh);
+        }
+    }
 
-            if(pass==2) {
-                cout<<" rlow, rhigh? "<<endl;
-                scanf("%f%f", &rlow, &rhigh);
+    // correct mass bin width
+    sig = fit_fun->GetParameter(0)/h->GetBinWidth(1);
+    err = fit_fun->GetParError(0)/h->GetBinWidth(1);
+
+    cout<<"total number of D: "<<sig<<"+/-"<<err<<endl;
+}
+
+//
+void ana_hfforest::FillTrgMaxPt()
+{
+    //.. max pT for trktrg, jetTrg and photrg
+    for(int it = 0; it<=3; it++) {
+        if(trg[it]) 
+            ntMaxTrgPt->Fill(maxTrkTrgPt, 0, it, prscl[it]);
+    }
+    //
+    float weight = 0;
+    if(trg[0] && maxTrkTrgPt <TrkTrgOffThres[1]) {
+        weight = prscl[0]*prscl[4];
+        ntMaxTrgPt->Fill(maxTrkTrgPt,0,  100, weight);
+    } else if(trg[1] && maxTrkTrgPt >=TrkTrgOffThres[1] && maxTrkTrgPt < TrkTrgOffThres[2]) {
+        weight = prscl[1];
+        ntMaxTrgPt->Fill(maxTrkTrgPt,0,  101, weight);
+    } else if(trg[2] && maxTrkTrgPt >=TrkTrgOffThres[2] && maxTrkTrgPt <TrkTrgOffThres[3]) {
+        weight = prscl[2];
+        ntMaxTrgPt->Fill(maxTrkTrgPt,0,  102, weight);
+    } else if(trg[3] && maxTrkTrgPt >=TrkTrgOffThres[3]) {
+        weight = prscl[3];
+        ntMaxTrgPt->Fill(maxTrkTrgPt,0,  103, weight);
+    }
+}
+
+//
+void ana_hfforest::find_hp_trkPtErr(float q_in, float pt_in, float eta_in, float phi_in, bool& hp, float& pterr)
+{
+    for(int itrk = 0; itrk<nTrk; itrk++) {
+        if(q_in == trkCharge[itrk] && 
+           fabs(pt_in/trkPt[itrk] -1) < maxDiff && 
+           fabs(eta_in/trkEta[itrk] -1) < maxDiff && 
+           fabs(phi_in/trkPhi[itrk] -1) < maxDiff) {  
+
+            hp = highPurity[itrk];
+            pterr = trkPtError[itrk];
+
+            return;
+        }
+    }
+}
+
+//..
+void ana_hfforest::fill_ntMass(float mass, float ptmax, int ipt, int itrg, bool isbg, float weight)
+{
+    float nt_nt[200] = {};
+    int i = 0;
+    nt_nt[i++] = mass; 
+    nt_nt[i++] = ptmax;
+    nt_nt[i++] = ipt;
+    nt_nt[i++] = itrg;
+    nt_nt[i++] = isbg;
+    nt_nt[i++] = weight;
+    nt_nt[i++] = is_hp_0;
+    nt_nt[i++] = is_hp_1;
+    nt_nt[i++] = is_hp_2;
+    nt_nt[i++] = tPt0;
+    nt_nt[i++] = tPt1;
+    nt_nt[i++] = tPt2;
+    nt_nt[i++] = tPtErr0;
+    nt_nt[i++] = tPtErr1;
+    nt_nt[i++] = tPtErr2;
+    nt_nt[i++] = is_hp;
+    nt_nt[i++] = tPtErr;
+
+    ntMass->Fill(nt_nt);
+}
+//
+void ana_hfforest::LoopOverTrk()
+{
+    float weight = 0;
+    for(int itrg = 0; itrg<=3; itrg++) {
+        if(trg[itrg]) {
+            if(itrg==0) 
+                weight = prscl[0]*prscl[4];
+            else 
+                weight = prscl[itrg];
+
+            for(int itrk = 0; itrk<nTrk; itrk++) {
+                fill_ntTrk(trkPt[itrk], trkPtError[itrk], maxTrkTrgPt, tPtErr, highPurity[itrk], is_hp, itrg, weight);
             }
         }
     }
 
     //
-    sig = fit_fun->GetParameter(0)/h->GetBinWidth(1);
-    err = fit_fun->GetParError(0)/h->GetBinWidth(1);
+    int itrg = -1;
+    if(trg[0] && maxTrkTrgPt <TrkTrgOffThres[1]) {
+        weight = prscl[0]*prscl[4];
+        itrg = 100;
+    } else if(trg[1] && maxTrkTrgPt >=TrkTrgOffThres[1] && maxTrkTrgPt < TrkTrgOffThres[2]) {
+        weight = prscl[1];
+        itrg = 101;
+    } else if(trg[2] && maxTrkTrgPt >=TrkTrgOffThres[2] && maxTrkTrgPt < TrkTrgOffThres[3]) {
+        weight = prscl[2];
+        itrg = 102;
+    } else if(trg[3] && maxTrkTrgPt >= TrkTrgOffThres[3]) {
+        weight = prscl[3];
+        itrg = 103;
+    }
 
-    cout<<"total number of D: "<<sig<<"+/-"<<err<<endl;
+    if(itrg!=-1) {
+        for(int itrk = 0; itrk<nTrk; itrk++) 
+            fill_ntTrk(trkPt[itrk], trkPtError[itrk], maxTrkTrgPt, tPtErr, highPurity[itrk], is_hp, itrg, weight);
+    }
+}
+
+//
+void ana_hfforest::fill_ntTrk(float pt, float ptErr, float ptmax, float ptmaxErr, bool hp0, bool hp, int itrg, float weight)
+{
+    float nt_nt[200] = {};
+    int i = 0;
+    nt_nt[i++] = pt; 
+    nt_nt[i++] = ptErr; 
+    nt_nt[i++] = ptmax;
+    nt_nt[i++] = ptmaxErr;
+    nt_nt[i++] = hp0;
+    nt_nt[i++] = hp;
+    nt_nt[i++] = itrg;
+    nt_nt[i++] = weight;
+
+    ntTrk->Fill(nt_nt);
+}
+
+//
+void ana_hfforest::book_ppTrk_hist()
+{
+    char hname[100];
+    for(short it = 0; it<NFullTrkTrg; it++) {
+        sprintf(hname, "hPtTrk%d", it);
+        hPtTrk[it] = new TH1F(hname, "", 1000, 0, 1000);
+        hPtTrk[it]->Sumw2();
+    }
+
+    hPtTrk0_12 = new TH1F("hPtTrk0_12", "", 1000, 0, 1000);
+    hPtTrk12_20 = new TH1F("hPtTrk12_20", "", 1000, 0, 1000);
+    hPtTrk20_30 = new TH1F("hPtTrk20_30", "", 1000, 0, 1000);
+    hPtTrk30Above = new TH1F("hPtTrk30Above", "", 1000, 0, 1000);
+    hPtTrkComb = new TH1F("hPtTrkComb", "", 1000, 0, 1000);
+    hPtTrk0_12->Sumw2();
+    hPtTrk12_20->Sumw2();
+    hPtTrk20_30->Sumw2();
+    hPtTrk30Above->Sumw2();
+    hPtTrkComb->Sumw2();
+}
+
+//
+void ana_hfforest::fillPPTrkHist(bool hp0_in, bool hp_in, float cut,  TFile* fin, TFile*fout)
+{
+    book_ppTrk_hist();
+
+    float pt=-1, ptErr=-1, ptmax=-1, ptmaxErr = -1, hp0=-1, hp=-1, itrg=-1, weight=-1;
+    ntTrk = (TNtuple*) fin->Get("ntTrk");
+    ntTrk->SetBranchAddress("pt", &pt);
+    ntTrk->SetBranchAddress("ptErr", &ptErr);
+    ntTrk->SetBranchAddress("ptmax", &ptmax);
+    ntTrk->SetBranchAddress("ptmaxErr", &ptmaxErr);
+    ntTrk->SetBranchAddress("hp0", &hp0);
+    ntTrk->SetBranchAddress("hp", &hp);
+    ntTrk->SetBranchAddress("itrg", &itrg);
+    ntTrk->SetBranchAddress("weight", &weight);
+
+    long int nentries = ntTrk->GetEntries();
+    for(long int i = 0; i<nentries; i++) {
+        ntTrk->GetEntry(i);
+
+        if(!(i%1000000)) 
+            cout<<i<<" of "<<nentries<<endl;
+
+        if(hp0 == (float)hp0_in && hp == (float) hp_in  && ptErr/pt < cut && ptmaxErr/ptmax<cut) {
+
+            if(itrg<=3)
+                hPtTrk[(int)itrg]->Fill(pt, weight);
+            else if(itrg==100)
+                hPtTrk0_12->Fill(pt, weight);
+            else if(itrg==101)
+                hPtTrk12_20->Fill(pt, weight);
+            else if(itrg==102)
+                hPtTrk20_30->Fill(pt, weight);
+            else if(itrg==103)
+                hPtTrk30Above->Fill(pt, weight);
+
+        }
+    }
+
+    //
+    hPtTrkComb->Add(hPtTrk0_12);
+    hPtTrkComb->Add(hPtTrk12_20);
+    hPtTrkComb->Add(hPtTrk20_30);
+    hPtTrkComb->Add(hPtTrk30Above);
+
+    //
+    fout->cd();
+    for(short it = 0; it<NFullTrkTrg; it++) {
+        hPtTrk[it]->Write();
+    }
+
+    hPtTrk0_12->Write();
+    hPtTrk12_20->Write();
+    hPtTrk20_30->Write();
+    hPtTrk30Above->Write();
+    hPtTrkComb->Write();
+}
+//
+void ana_hfforest::fillntMaxTrgPtAlgo2Hist(bool hp_in, float cut,  TFile* fin, TFile*fout, bool dcaCut)
+{
+    book_ppTrk_hist();
+    //ntMaxTrgPtAlgo2 = new TNtuple("ntMaxTrgPtAlgo2", "maximum trigger pT spectra for debugging for algo#2", "ptmax:hp:tDz1:tDz1Err:tDxy1:tDxyErr:tPtErr:itrg:weight");
+
+    float PtErr=-1, ptmax=-1, hp=-1, itrg=-1, weight=-1, tDz1, tDz1Err, tDxy1, tDxyErr;
+    ntMaxTrgPtAlgo2 = (TNtuple*) fin->Get("ntMaxTrgPtAlgo2");
+
+    ntMaxTrgPtAlgo2->SetBranchAddress("ptmax", &ptmax);
+    ntMaxTrgPtAlgo2->SetBranchAddress("hp", &hp);
+    ntMaxTrgPtAlgo2->SetBranchAddress("tPtErr", &PtErr);
+    ntMaxTrgPtAlgo2->SetBranchAddress("itrg", &itrg);
+    ntMaxTrgPtAlgo2->SetBranchAddress("weight", &weight);
+    ntMaxTrgPtAlgo2->SetBranchAddress("tDz1", &tDz1);
+    ntMaxTrgPtAlgo2->SetBranchAddress("tDz1Err", &tDz1Err);
+    ntMaxTrgPtAlgo2->SetBranchAddress("tDxy1", &tDxy1);
+    ntMaxTrgPtAlgo2->SetBranchAddress("tDxyErr", &tDxyErr);
+
+    int nentries = ntMaxTrgPtAlgo2->GetEntries();
+    for(int i = 0; i<nentries; i++) {
+        ntMaxTrgPtAlgo2->GetEntry(i);
+
+        if(!(i%1000000)) 
+            cout<<i<<" of "<<nentries<<endl;
+
+        if(hp == (float) hp_in  && PtErr/ptmax < cut) {
+            if(dcaCut) {
+                if(fabs(tDz1/tDz1Err) >3 || fabs(tDxy1/tDxyErr)>3) 
+                    continue;
+            }
+
+            if(itrg<=3 && itrg>=0)
+                hPtTrk[(int)itrg]->Fill(ptmax, weight);
+            else if(itrg==100)
+                hPtTrk0_12->Fill(ptmax, weight);
+            else if(itrg==101)
+                hPtTrk12_20->Fill(ptmax, weight);
+            else if(itrg==102)
+                hPtTrk20_30->Fill(ptmax, weight);
+            else if(itrg==103)
+                hPtTrk30Above->Fill(ptmax, weight);
+
+        }
+    }
+
+    //
+    hPtTrkComb->Add(hPtTrk0_12);
+    hPtTrkComb->Add(hPtTrk12_20);
+    hPtTrkComb->Add(hPtTrk20_30);
+    hPtTrkComb->Add(hPtTrk30Above);
+
+    //
+    fout->cd();
+    for(short it = 0; it<NFullTrkTrg; it++) {
+        hPtTrk[it]->Write();
+    }
+
+    hPtTrk0_12->Write();
+    hPtTrk12_20->Write();
+    hPtTrk20_30->Write();
+    hPtTrk30Above->Write();
+    hPtTrkComb->Write();
+}
+//
+//
+void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout, bool noRandFire)
+{
+    if(noRandFire) 
+        cout<<" --- remove all random trigger benefit ----"<<endl;
+    else {
+        cout<<" --- keep all random trigger benefit ----"<<endl;
+        cout<<" Note: combined spectrum will be inconsistent with the FullTrk12"<<endl;
+        cout<<"since the online threshold is 12 but low comb region is 14.  "<<endl;
+    }
+
+    //
+    book_hist(ich);
+
+    float mass = -1;
+    float ptmax = -1;
+    float ipt = -1;
+    float itrg = -1;
+    float isbg = -1;
+    float weight = -1;
+    float hp0 = -1;
+    float hp1 = -1;
+    float hp2 = -1;
+    float pt0 = -1;
+    float pt1 = -1;
+    float pt2 = -1;
+    float ptErr0 = -1;
+    float ptErr1 = -1;
+    float ptErr2 = -1;
+    float hp = -1;
+    float PtErr = -1;
+
+    //
+    ntMass = (TNtuple*) fin->Get("ntMass");
+
+    ntMass->SetBranchAddress("mass", &mass);
+    ntMass->SetBranchAddress("ptmax", &ptmax);
+    ntMass->SetBranchAddress("ipt", &ipt);
+    ntMass->SetBranchAddress("itrg", &itrg);
+    ntMass->SetBranchAddress("isbg", &isbg);
+    ntMass->SetBranchAddress("weight", &weight);
+    ntMass->SetBranchAddress("hp0", &hp0);
+    ntMass->SetBranchAddress("hp1", &hp1);
+    ntMass->SetBranchAddress("hp2", &hp2);
+    ntMass->SetBranchAddress("pt0", &pt0);
+    ntMass->SetBranchAddress("pt1", &pt1);
+    ntMass->SetBranchAddress("pt2", &pt2);
+    ntMass->SetBranchAddress("ptErr0", &ptErr0);
+    ntMass->SetBranchAddress("ptErr1", &ptErr1);
+    ntMass->SetBranchAddress("ptErr2", &ptErr2);
+    ntMass->SetBranchAddress("hp", &hp);
+    ntMass->SetBranchAddress("tPtErr", &PtErr);
+
+
+    long int nentries = ntMass->GetEntries();
+    for(long int i = 0; i<nentries; i++) {
+        ntMass->GetEntry(i);
+
+        if(!(i%1000000)) 
+            cout<<i<<" of "<<nentries<<endl;
+
+        if(hp ==0 || tPtErr/ptmax > cut || 
+                ptErr0/pt0 > cut || 
+                ptErr1/pt1 > cut || 
+                ptErr2/pt2 > cut)
+            continue; 
+
+        if(itrg<=3 && itrg>=0) {
+
+            if(noRandFire && pt0<TrkTrgOffThres[(int)itrg] && 
+               pt1<TrkTrgOffThres[(int)itrg] && pt2<TrkTrgOffThres[(int)itrg]) 
+                continue;
+
+            if(ich!=0) {
+                hfg[(int)itrg][(int)ipt]->Fill(mass, weight);
+                hfg_raw[(int)itrg][(int)ipt]->Fill(mass, weight);
+            } else {
+                if(isbg==0)  {
+                    hfgdiff[(int)itrg][(int)ipt]->Fill(mass, weight);
+                    hfgdiff_raw[(int)itrg][(int)ipt]->Fill(mass, weight);
+                } else {
+                    hbgdiff[(int)itrg][(int)ipt]->Fill(mass, weight);
+                    hbgdiff_raw[(int)itrg][(int)ipt]->Fill(mass, weight);
+                }
+            }
+        } else if(itrg==100) {
+            if(noRandFire && 
+               (pt0>TrkTrgOffThres[1] || pt1>TrkTrgOffThres[1] || pt2>TrkTrgOffThres[1])) 
+                continue;
+
+            if(ich!=0) {
+                hfg_ZBiasSglTrkPt0_12_raw[(int)ipt]->Fill(mass, weight);
+                hfg_ZBiasSglTrkPt0_12[(int)ipt]->Fill(mass, weight); 
+            } else {
+                if(isbg==0) {
+                    hfgdiff_ZBiasSglTrkPt0_12_raw[(int)ipt]->Fill(mass, weight);  
+                    hfgdiff_ZBiasSglTrkPt0_12[(int)ipt]->Fill(mass, weight);  
+                } else {
+                    hbgdiff_ZBiasSglTrkPt0_12_raw[(int)ipt]->Fill(mass, weight);  
+                    hbgdiff_ZBiasSglTrkPt0_12[(int)ipt]->Fill(mass, weight);  
+                }
+            }
+
+        } else if(itrg==101) {
+            if(noRandFire && 
+               (pt0<TrkTrgOffThres[1] || pt0>TrkTrgOffThres[2]) &&
+               (pt1<TrkTrgOffThres[1] || pt1>TrkTrgOffThres[2]) && 
+               (pt2<TrkTrgOffThres[1] || pt2>TrkTrgOffThres[2])) 
+                continue;
+
+            if(ich!=0) {
+                hfg_TrkTrgPt12_20_raw[(int)ipt]->Fill(mass, weight); 
+                hfg_TrkTrgPt12_20[(int)ipt]->Fill(mass, weight);  
+            } else {
+                if(isbg==0) {
+                    hfgdiff_TrkTrgPt12_20_raw[(int)ipt]->Fill(mass, weight); 
+                    hfgdiff_TrkTrgPt12_20[(int)ipt]->Fill(mass, weight);  
+                } else {
+                    hbgdiff_TrkTrgPt12_20_raw[(int)ipt]->Fill(mass, weight); 
+                    hbgdiff_TrkTrgPt12_20[(int)ipt]->Fill(mass, weight);  
+                }
+            }
+        } else if(itrg==102) {
+            if(noRandFire && 
+               (pt0<TrkTrgOffThres[2] || pt0>TrkTrgOffThres[3]) &&
+               (pt1<TrkTrgOffThres[2] || pt1>TrkTrgOffThres[3]) && 
+               (pt2<TrkTrgOffThres[2] || pt2>TrkTrgOffThres[3])) 
+                continue;
+
+            if(ich!=0) {
+                hfg_TrkTrgPt20_30_raw[(int)ipt]->Fill(mass, weight);  
+                hfg_TrkTrgPt20_30[(int)ipt]->Fill(mass, weight);  
+            } else {
+                if(isbg==0) {
+                    hfgdiff_TrkTrgPt20_30_raw[(int)ipt]->Fill(mass, weight);  
+                    hfgdiff_TrkTrgPt20_30[(int)ipt]->Fill(mass, weight);  
+                } else {
+                    hfgdiff_TrkTrgPt30above_raw[(int)ipt]->Fill(mass, weight);  
+                    hfgdiff_TrkTrgPt30above[(int)ipt]->Fill(mass, weight);  
+                }
+            }
+
+        } else if(itrg==103) {
+            if(noRandFire && 
+               (pt0<TrkTrgOffThres[3]) && 
+               (pt1<TrkTrgOffThres[3]) && 
+               (pt2<TrkTrgOffThres[3])) 
+                continue;
+
+            if(ich!=0) {
+                hfg_TrkTrgPt30above_raw[(int)ipt]->Fill(mass, weight);  
+                hfg_TrkTrgPt30above[(int)ipt]->Fill(mass, weight);  
+            } else {
+                if(isbg==0) {
+                    hfgdiff_TrkTrgPt30above_raw[(int)ipt]->Fill(mass, weight);  
+                    hfgdiff_TrkTrgPt30above[(int)ipt]->Fill(mass, weight);  
+                } else {
+                    hbgdiff_TrkTrgPt30above_raw[(int)ipt]->Fill(mass, weight);
+                    hbgdiff_TrkTrgPt30above[(int)ipt]->Fill(mass, weight);
+                }
+            }
+        }
+    }
+
+    //
+    fout->cd();
+    write_hist(ich);
 }

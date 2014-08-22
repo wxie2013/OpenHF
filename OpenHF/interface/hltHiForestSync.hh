@@ -1,3 +1,6 @@
+#ifndef hltHiForestSync_H
+#define hltHiForestSync_H
+ 
 
 // system include files
 #include <memory>
@@ -22,10 +25,10 @@
 #include "DataFormats/HLTReco/interface/TriggerObject.h"
 
 #include "../interface/map_info.hh"
-#include "../interface/ana_common.hh"
 
 typedef std::vector<trigger::TriggerObject> trigO;
 
+const int ntrg = 14;
 using namespace std;
 //..
 class hltHiForestSync : public edm::EDAnalyzer {
@@ -47,9 +50,9 @@ class hltHiForestSync : public edm::EDAnalyzer {
         string filename;
         string path_file; //.. directory path to the data file
 
-        int trigflag[NTRG];
-        const char* trg_name[NTRG];
-        trigO *trigObject[NTRG];
+        int trigflag[ntrg];
+        const char* trg_name[ntrg];
+        trigO *trigObject[ntrg];
 
         int fRun;
         int fEvt;
@@ -73,3 +76,5 @@ class hltHiForestSync : public edm::EDAnalyzer {
         ~hltHiForestSync();
 
 };
+#endif
+

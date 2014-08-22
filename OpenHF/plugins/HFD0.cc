@@ -62,6 +62,8 @@ void HFD0::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         reco::Track tPion(*pionTrackView);
         pi.SetPtEtaPhiM(tPion.pt(), tPion.eta(), tPion.phi(), MPION);
 
+        if( tKaon.charge()*tPion.charge() > 0 ) continue;
+
         d0 = ka + pi;
 
         HFDecayTree theTree(fType, true, MD0, false, -1.0, true);

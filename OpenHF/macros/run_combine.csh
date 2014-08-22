@@ -1,7 +1,8 @@
 #! /bin/csh -f
 
-foreach finName ($1)
-foreach foutName ($2)
+foreach ich($1)
+foreach finName ($2)
+foreach foutName ($3)
 
 root -b<<EOF
 
@@ -12,9 +13,9 @@ TFile* fout = new TFile("$foutName", "recreate");
 
 ana_hfforest *a = new ana_hfforest;
 
-a->get_hist(fin);
-a->rebinSpec(fout);
-a->CombineSpec(fout);
+a->get_hist($ich, fin);
+a->rebinSpec($ich, fout);
+a->CombineSpec($ich, fout);
 
 .q
 #EOF

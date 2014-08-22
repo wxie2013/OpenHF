@@ -8,8 +8,9 @@ $start_from = $ARGV[2];
 $filelist = $ARGV[3];
 $iy = $ARGV[4];
 $ich = $ARGV[5];
-$CMSSW_BASE = $ARGV[6];
-$SCRAM_ARCH = $ARGV[7];
+$ppTrk = $ARGV[6];
+$CMSSW_BASE = $ARGV[7];
+$SCRAM_ARCH = $ARGV[8];
 #
 $workarea = "$CMSSW_BASE/src/UserCode/OpenHF/macros";
 @MesonName = ("Dstar2D0Pi", "D02KPi", "Ds2PhiPi", "Ds2KstarK", "Dpm2KPiPi");
@@ -18,7 +19,7 @@ $workarea = "$CMSSW_BASE/src/UserCode/OpenHF/macros";
 @yup = ("p2.0");
 @ydn = ("m2.0");
 #-- move files in to different directories
-$dir = "$MesonName[$ich]\_ydn\_$ydn[$iy]\_yup\_$yup[$iy]";
+$dir = "$MesonName[$ich]\_ydn\_$ydn[$iy]\_yup\_$yup[$iy]\_$filelist";
 system("mkdir $dir; cd $dir; ln -s ../$filelist .; cd ../.");
 
 #
@@ -82,15 +83,15 @@ system("chmod u+x $chain; mv $chain $dir");
 sub produce_execfile {
     open(EXECFILE,">$job_execfile");
 
-    print EXECFILE ("#!/bin/sh \n");
-    print EXECFILE ("source /cvmfs/cms.cern.ch/cmsset_default.sh \n");
-    print EXECFILE ("export X509_USER_PROXY=/home/wxie/.myproxy  \n");
+#print EXECFILE ("#!/bin/sh \n");
+#print EXECFILE ("source /cvmfs/cms.cern.ch/cmsset_default.sh \n");
+#print EXECFILE ("export X509_USER_PROXY=/home/wxie/.myproxy  \n");
     print EXECFILE ("cd $CMSSW_BASE/src \n");
-    print EXECFILE ("eval `scramv1 runtime -sh` \n");
+#print EXECFILE ("eval `scramv1 runtime -sh` \n");
     print EXECFILE ("cd $workarea/$dir \n");
     print EXECFILE ("root -b<<EOF\n");
     print EXECFILE ("gSystem->Load\(\"$CMSSW_BASE\/lib\/$SCRAM_ARCH\/libUserCodeOpenHF.so\"\)\; \n");
-    print EXECFILE (".x $workarea/$macro($istart, $iend, \"$filelist\", $iy, $ich, \"$outfile\") \n");
+    print EXECFILE (".x $workarea/$macro($istart, $iend, \"$filelist\", $iy, $ich, \"$outfile\", $ppTrk\) \n");
     print EXECFILE ("EOF\n");
 
     system("chmod u+x $job_execfile");
@@ -99,33 +100,33 @@ sub produce_execfile {
 # produce condor configuation file for each file list  
 
 sub produce_config_file {
-    open(CONFIGFILE,">$config_file");
+    open(OUTPUTFILE,">$config_file");
 
-    print CONFIGFILE ("#======================================================================\n");
-    print CONFIGFILE ("#\n");
-    print CONFIGFILE ("# condor_submit condor_job\n");
-    print CONFIGFILE ("#\n");
-    print CONFIGFILE ("#======================================================================\n");
-    print CONFIGFILE ("universe             = vanilla\n");
-    print CONFIGFILE ("executable           = $job_execfile\n");
-    print CONFIGFILE ("initialdir           = $workarea/$dir\n");
-    print CONFIGFILE ("should_Transfer_Files = NO\n");
-    print CONFIGFILE ("#======================================================================\n");
-    print CONFIGFILE ("output               = $job_execfile.out\n");
-    print CONFIGFILE ("error                = $job_execfile.err\n");
-    print CONFIGFILE ("log                  = $job_execfile.log\n");
-    print CONFIGFILE ("#======================================================================\n");
-    print CONFIGFILE ("# get the environment (path, etc.)\n");
-    print CONFIGFILE ("Getenv         = True \n");
-    print CONFIGFILE ("# prefer to run on fast computers\n");
-    print CONFIGFILE ("Rank           = kflops\n");
-    print CONFIGFILE ("#======================================================================\n");
-    print CONFIGFILE ("\n");
-    print CONFIGFILE ("requirements = (Arch == \"X86_64\")||regexp(\"cms\",Name) \n");
-    print CONFIGFILE ("#======================================================================\n");
-    print CONFIGFILE ("+CMSJob = True\n");
-    print CONFIGFILE ("#+LENGTH=\"SHORT\"\n");
-    print CONFIGFILE ("\n");
-    print CONFIGFILE ("queue\n");
-    print CONFIGFILE ("\n");
+    print OUTPUTFILE ("#======================================================================\n");
+    print OUTPUTFILE ("#\n");
+    print OUTPUTFILE ("# condor_submit condor_job\n");
+    print OUTPUTFILE ("#\n");
+    print OUTPUTFILE ("#======================================================================\n");
+    print OUTPUTFILE ("universe             = vanilla\n");
+    print OUTPUTFILE ("executable           = $job_execfile\n");
+    print OUTPUTFILE ("initialdir           = $workarea/$dir\n");
+    print OUTPUTFILE ("should_Transfer_Files = NO\n");
+    print OUTPUTFILE ("#======================================================================\n");
+    print OUTPUTFILE ("output               = $job_execfile.out\n");
+    print OUTPUTFILE ("error                = $job_execfile.err\n");
+    print OUTPUTFILE ("log                  = $job_execfile.log\n");
+    print OUTPUTFILE ("#======================================================================\n");
+    print OUTPUTFILE ("# get the environment (path, etc.)\n");
+    print OUTPUTFILE ("Getenv         = True \n");
+    print OUTPUTFILE ("# prefer to run on fast computers\n");
+    print OUTPUTFILE ("Rank           = kflops\n");
+    print OUTPUTFILE ("#======================================================================\n");
+    print OUTPUTFILE ("\n");
+    print OUTPUTFILE ("Requirements   = Arch == \"X86_64\" && regexp(\"cms\",Name) && TARGET.UidDomain == \"rcac.purdue.edu\" && TARGET.Machine != \"airplay-render1.rcac.purdue.edu\" && TARGET.Machine != \"airplay-render2.rcac.purdue.edu\"\n");
+    print OUTPUTFILE ("#======================================================================\n");
+    print OUTPUTFILE ("+CMSJob = True\n");
+    print OUTPUTFILE ("#+LENGTH=\"SHORT\"\n");
+    print OUTPUTFILE ("\n");
+    print OUTPUTFILE ("queue\n");
+    print OUTPUTFILE ("\n");
 }

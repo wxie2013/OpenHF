@@ -15,6 +15,7 @@
 class TFile;
 class TTree;
 class TAna01Event;
+class hfcand;
 class candAna;
 
 // ----------------------------------------------------------------------
@@ -42,7 +43,16 @@ class HFTree : public edm::EDAnalyzer {
   int          fPrintFrequency;
   int          fEventCounter; 
 
-  candAna*    ana;
+  candAna*     ana;
+
+  //
+  bool         isMC;
+  double       cut_ffls3d_in;
+  double       cut_alpha0_in;
+  bool         associateChi2;
+  edm::InputTag trackSrc_;
+  edm::InputTag tpFakeSrc_;
+  void FillCandMCInfo(hfcand* hfcandidate, const edm::Event& iEvent, const edm::EventSetup& iSetup);
 };
 
 #endif

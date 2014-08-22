@@ -6,10 +6,11 @@ foreach filelist ($3)
 foreach iy ($4)
 foreach ich ($5)
 foreach outfile ($6)
+foreach ppTrk ($7)
 
 root -b<<EOF
 gSystem->Load("$CMSSW_BASE/lib/$SCRAM_ARCH/libUserCodeOpenHF.so");
-.x run_ana_hfforest.C($startFile, $endFile, "$filelist", $iy, $ich, "$outfile")
+.x run_ana_hfforest.C($startFile, $endFile, "$filelist", $iy, $ich, "$outfile", $ppTrk)
 .q
 #EOF
 

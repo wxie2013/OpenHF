@@ -44,7 +44,7 @@ void checkTrgMatch::Init(int startFile, int endFile, char *filelist)
     HltTree = 0;
 
     //.. trigger object ...
-    for(int i = 0; i<NTRG; i++) {
+    for(int i = 0; i<n_trg; i++) {
         trg_obj[i] = new trigO;
     }
 }
@@ -134,7 +134,7 @@ void checkTrgMatch::get_trg_info(TTree* T)
     TBranch* branch = 0;
     while ((branch = (TBranch *)branch_iter.Next())) {  
         TString branch_name = branch->GetName();
-        for(int it = 0; it<NTRG; it++) {
+        for(int it = 0; it<n_trg; it++) {
             if (branch_name.Contains(trg_name[it])){
                 if(branch_name.Contains("Prescl")) {
                     T->SetBranchAddress(branch_name.Data(), &prscl[it]);
@@ -153,7 +153,7 @@ void checkTrgMatch::get_trg_info(TTree* T)
 //
 void checkTrgMatch::reset()
 {//.. reset trigger decision every event
-    for(int i = 0; i<NTRG; i++) {
+    for(int i = 0; i<n_trg; i++) {
         prscl[i] = 0;
         trg[i] = 0;
         trg_obj[i]->clear();
@@ -179,7 +179,7 @@ void checkTrgMatch::LoopOverEvt(TTree* T)
 void checkTrgMatch::LoopOverTracks()
 {//.. loop over Heavy Flavor candidate in an event 
 
-    for(int tid = 0; tid<NTRG; tid++) {
+    for(int tid = 0; tid<n_trg; tid++) {
         if(trg[tid]) {
             for(unsigned int i = 0; i<trg_obj[tid]->size(); i++) {
                 float min = 999;

@@ -2,11 +2,13 @@
 #include <iostream>
 #include <fstream>
 
-#include "../interface/candAna.hh"
 #include "../interface/HFMasses.hh"
 #include "../interface/HFPid.hh"
 
+#include "../interface/candAna.hh"
+
 using namespace std;
+
 
 ClassImp(candAna)
 
@@ -37,7 +39,7 @@ void candAna::Init(TTree* treeIn)
     else 
         fTree = treeIn;
 
-    hfcandidate = new hfcand_v0;
+    hfcandidate = new hfcand_v1;
     fpEvt = new TAna01Event(0);
 
     fTree->Branch("hfcandidate", &hfcandidate);
@@ -90,8 +92,6 @@ void candAna::evtAnalysis(TAna01Event *evt)
             continue;
         }
     }
-
-    fTree->Fill(); 
 }
 
 // ----------------------------------------------------------------------
@@ -137,6 +137,10 @@ void candAna::D0Analysis()
     int qPi   = pPi->fQ;
     int qK  = pK->fQ;
 
+    //.. track index for MC association 
+    int index1 = pPi->fIndex;
+    int index2 = pK->fIndex;
+
     // masses
     double mdz = fpCand->fMass; 
 
@@ -157,25 +161,9 @@ void candAna::D0Analysis()
 
     alpha0 = t1.Angle(fpCand->fPlab);  // Ds pointing angle
 
-    //..
-    int nBPixLayer_dau2 = 0;
-    int nPixLayer_dau2 = 0;
-    int nBPixLayer1Hits_dau2 = 0;
-    int nTrackerLayer_dau2 = 0;
-
-    int nBPixLayer_1 = numberOfBPixLayers(pPi);
-    int nPixLayer_1  = numberOfPixLayers(pPi);
-    int nBPixLayer1Hits_1  = numberOfBPixLayer1Hits(pPi);
-    int nTrackerLayer_1 = numberOfTrackerLayers(pPi);
-
-    int nBPixLayer_2 = numberOfBPixLayers(pK);
-    int nPixLayer_2 = numberOfPixLayers(pK);
-    int nBPixLayer1Hits_2  = numberOfBPixLayer1Hits(pK);
-    int nTrackerLayer_2 = numberOfTrackerLayers(pK);
-
 
     //.. fill the hfcand ...
-    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, -1, fpCand->fType, pt, mdz, eta, phi, -999, -999, -999, -999, -999, -999, -999, -999, qPi, ptPi, etaPi, phiPi, qK, ptK, etaK, phiK, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
+    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, -1, fpCand->fType, pt, mdz, eta, phi, -999, -999, -999, -999, -999, -999, -999, -999, -999, qPi, ptPi, etaPi, phiPi, index1, qK, ptK, etaK, phiK, index2);
 }
 
 //-----------------------------------------------------------------
@@ -238,6 +226,11 @@ void candAna::DstarAnalysis()
     int qPi  = pPi->fQ;
     int qPis = pPis->fQ;
 
+    // track index for MC association  
+    int index1  = pPi->fIndex;
+    int index2   = pK->fIndex;
+    int index_dau2 = pPis->fIndex;
+
     // masses
     double mdstar = fpCand->fMass; 
     double mdz = pC->fMass;
@@ -267,26 +260,8 @@ void candAna::DstarAnalysis()
     // Now the selection cuts cut 
     if( (qPi+qPis)==0 ) return; // skip wrong sign decys 
 
-
-    //..
-    int nBPixLayer_dau2 = numberOfBPixLayers(pPis);
-    int nPixLayer_dau2 = numberOfPixLayers(pPis);
-    int nBPixLayer1Hits_dau2 = numberOfBPixLayer1Hits(pPis);
-    int nTrackerLayer_dau2 = numberOfTrackerLayers(pPis);
-
-    int nBPixLayer_1 = numberOfBPixLayers(pPi);
-    int nPixLayer_1  = numberOfPixLayers(pPi);
-    int nBPixLayer1Hits_1  = numberOfBPixLayer1Hits(pPi);
-    int nTrackerLayer_1 = numberOfTrackerLayers(pPi);
-
-    int nBPixLayer_2 = numberOfBPixLayers(pK);
-    int nPixLayer_2 = numberOfPixLayers(pK);
-    int nBPixLayer1Hits_2  = numberOfBPixLayer1Hits(pK);
-    int nTrackerLayer_2 = numberOfTrackerLayers(pK);
-
-
     //.. fill the hfcand ...
-    addCandidate(prob, svD0.fD3d, svD0.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mdstar, eta, phi, mdz, ptdz, etadz, phidz, qPis, ptPis, etaPis, phiPis, qPi, ptPi, etaPi, phiPi, qK, ptK, etaK, phiK, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
+    addCandidate(prob, svD0.fD3d, svD0.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mdstar, eta, phi, mdz, ptdz, etadz, phidz, qPis, ptPis, etaPis, phiPis, index_dau2, qPi, ptPi, etaPi, phiPi, index1, qK, ptK, etaK, phiK, index2);
 }
 
 //_________________________________________________________________________
@@ -347,6 +322,11 @@ void candAna::Dpm2KaPiPiAnalysis()
     int qK   = pK->fQ;
     int qPi1  = pPi1->fQ;
     int qPi2 = pPi2->fQ;
+    //
+    // track index for MC association  
+    int index1  = pPi1->fIndex;
+    int index2   = pK->fIndex;
+    int index_dau2 = pPi2->fIndex;
 
     // masses
     double mdpm = fpCand->fMass; 
@@ -374,24 +354,8 @@ void candAna::Dpm2KaPiPiAnalysis()
     alpha0 = t1.Angle(fpCand->fPlab);  // Dpm pointing angle
     dr = piSlowMom.Angle(fpCand->fPlab); // pislow openinig
 
-    //..
-    int nBPixLayer_dau2 = numberOfBPixLayers(pPi2);
-    int nPixLayer_dau2 = numberOfPixLayers(pPi2);
-    int nBPixLayer1Hits_dau2 = numberOfBPixLayer1Hits(pPi2);
-    int nTrackerLayer_dau2 = numberOfTrackerLayers(pPi2);
-
-    int nBPixLayer_1 = numberOfBPixLayers(pPi1);
-    int nPixLayer_1  = numberOfPixLayers(pPi1);
-    int nBPixLayer1Hits_1  = numberOfBPixLayer1Hits(pPi1);
-    int nTrackerLayer_1 = numberOfTrackerLayers(pPi1);
-
-    int nBPixLayer_2 = numberOfBPixLayers(pK);
-    int nPixLayer_2 = numberOfPixLayers(pK);
-    int nBPixLayer1Hits_2  = numberOfBPixLayer1Hits(pK);
-    int nTrackerLayer_2 = numberOfTrackerLayers(pK);
-
     //.. fill the hfcand ...
-    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mdpm, eta, phi, mkpi, ptkpi, etakpi, phikpi, qPi2, ptPi2, etaPi2, phiPi2, qPi1, ptPi1, etaPi1, phiPi1, qK, ptK, etaK, phiK, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
+    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mdpm, eta, phi, mkpi, ptkpi, etakpi, phikpi, qPi2, ptPi2, etaPi2, phiPi2, index_dau2, qPi1, ptPi1, etaPi1, phiPi1, index1, qK, ptK, etaK, phiK, index2);
 
 }
 
@@ -457,6 +421,11 @@ void candAna::Ds2KstarKaonAnalysis()
     int qPi  = pPi->fQ;
     int qK2 = pK2->fQ;
 
+    // track index for MC association  
+    int index1  = pPi->fIndex;
+    int index2   = pK1->fIndex;
+    int index_dau2 = pK2->fIndex;
+
     // masses
     double mds = fpCand->fMass; 
     double mkpi = pC->fMass;
@@ -487,25 +456,8 @@ void candAna::Ds2KstarKaonAnalysis()
     alpha0 = t1.Angle(fpCand->fPlab);  // Ds pointing angle
     dr = piSlowMom.Angle(fpCand->fPlab); // pislow openinig
 
-    //..
-    int nBPixLayer_dau2 = numberOfBPixLayers(pK2);
-    int nPixLayer_dau2 = numberOfPixLayers(pK2);
-    int nBPixLayer1Hits_dau2 = numberOfBPixLayer1Hits(pK2);
-    int nTrackerLayer_dau2 = numberOfTrackerLayers(pK2);
-
-    int nBPixLayer_1 = numberOfBPixLayers(pPi);
-    int nPixLayer_1  = numberOfPixLayers(pPi);
-    int nBPixLayer1Hits_1  = numberOfBPixLayer1Hits(pPi);
-    int nTrackerLayer_1 = numberOfTrackerLayers(pPi);
-
-    int nBPixLayer_2 = numberOfBPixLayers(pK1);
-    int nPixLayer_2 = numberOfPixLayers(pK1);
-    int nBPixLayer1Hits_2  = numberOfBPixLayer1Hits(pK1);
-    int nTrackerLayer_2 = numberOfTrackerLayers(pK1);
-
-
     //.. fill the hfcand ...
-    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mds, eta, phi, mkpi, ptkpi, etakpi, phikpi, qK2, ptK2, etaK2, phiK2, qPi, ptPi, etaPi, phiPi, qK1, ptK1, etaK1, phiK1, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
+    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mds, eta, phi, mkpi, ptkpi, etakpi, phikpi, qK2, ptK2, etaK2, phiK2, index_dau2, qPi, ptPi, etaPi, phiPi, index1, qK1, ptK1, etaK1, phiK1, index2);
 
 }
 
@@ -577,6 +529,11 @@ void candAna::Ds2PhiPiAnalysis()
     int qK2  = pK2->fQ;
     int qPi = pPi->fQ;
 
+    // track index for MC association  
+    int index1  = pK1->fIndex;
+    int index2   = pK2->fIndex;
+    int index_dau2 = pPi->fIndex;
+
     // masses
     double mds = fpCand->fMass; 
     double mPhi = pC->fMass;
@@ -603,25 +560,8 @@ void candAna::Ds2PhiPiAnalysis()
     alpha0 = t1.Angle(fpCand->fPlab);  // Ds pointing angle
     dr = piSlowMom.Angle(fpCand->fPlab); // pislow openinig
 
-    //..
-    int nBPixLayer_dau2 = numberOfBPixLayers(pPi);
-    int nPixLayer_dau2 = numberOfPixLayers(pPi);
-    int nBPixLayer1Hits_dau2 = numberOfBPixLayer1Hits(pPi);
-    int nTrackerLayer_dau2 = numberOfTrackerLayers(pPi);
-
-    int nBPixLayer_1 = numberOfBPixLayers(pK1);
-    int nPixLayer_1  = numberOfPixLayers(pK1);
-    int nBPixLayer1Hits_1  = numberOfBPixLayer1Hits(pK1);
-    int nTrackerLayer_1 = numberOfTrackerLayers(pK1);
-
-    int nBPixLayer_2 = numberOfBPixLayers(pK2);
-    int nPixLayer_2 = numberOfPixLayers(pK2);
-    int nBPixLayer1Hits_2  = numberOfBPixLayer1Hits(pK2);
-    int nTrackerLayer_2 = numberOfTrackerLayers(pK2);
-
-
     //.. fill the hfcand ...
-    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mds, eta, phi, mPhi, ptPhi, etaPhi, phiPhi, qPi, ptPi, etaPi, phiPi, qK1, ptK1, etaK1, phiK1, qK2, ptK2, etaK2, phiK2, nBPixLayer_dau2, nPixLayer_dau2, nBPixLayer1Hits_dau2, nTrackerLayer_dau2, nBPixLayer_1, nPixLayer_1, nBPixLayer1Hits_1, nTrackerLayer_1, nBPixLayer_2, nPixLayer_2, nBPixLayer1Hits_2, nTrackerLayer_2); 
+    addCandidate(prob, sv.fD3d, sv.fD3dE, fls3d, chi2, alpha0, dr, fpCand->fType, pt, mds, eta, phi, mPhi, ptPhi, etaPhi, phiPhi, qPi, ptPi, etaPi, phiPi, index_dau2, qK1, ptK1, etaK1, phiK1, index1, qK2, ptK2, etaK2, phiK2, index2);
 }
 
 //__________________________________________
@@ -646,26 +586,17 @@ void candAna::addCandidate(
         float fptdau2,
         float fetadau2,
         float fphidau2,
+        int   index_dau2,
         float fq1,
         float fpt1,
         float feta1,
         float fphi1,
+        int   index1,
         float fq2,
         float fpt2,
         float feta2,
         float fphi2, 
-        int   nBPixLayer_dau2, 
-        int   nPixLayer_dau2,
-        int   nBPixLayer1Hits_dau2,
-        int   nTrackerLayer_dau2,
-        int   nBPixLayer_1,
-        int   nPixLayer_1,
-        int   nBPixLayer1Hits_1,
-        int   nTrackerLayer_1,
-        int   nBPixLayer_2,
-        int   nPixLayer_2,
-        int   nBPixLayer1Hits_2,
-        int   nTrackerLayer_2)
+        int   index2)
 {
 
    if(!pass_cut(ffls3d, falpha0)) 
@@ -702,18 +633,9 @@ void candAna::addCandidate(
     hfcandidate->get_hfcand(ncand)->set_fq2(fq2);
     hfcandidate->get_hfcand(ncand)->set_feta2(feta2);
     hfcandidate->get_hfcand(ncand)->set_fphi2(fphi2);
-    hfcandidate->get_hfcand(ncand)->set_nBPixLayer_dau2(nBPixLayer_dau2);
-    hfcandidate->get_hfcand(ncand)->set_nPixLayer_dau2(nPixLayer_dau2);
-    hfcandidate->get_hfcand(ncand)->set_nBPixLayer1Hits_dau2(nBPixLayer1Hits_dau2);
-    hfcandidate->get_hfcand(ncand)->set_nTrackerLayer_dau2(nTrackerLayer_dau2);
-    hfcandidate->get_hfcand(ncand)->set_nBPixLayer_1(nBPixLayer_1);
-    hfcandidate->get_hfcand(ncand)->set_nPixLayer_1(nPixLayer_1);
-    hfcandidate->get_hfcand(ncand)->set_nBPixLayer1Hits_1(nBPixLayer1Hits_1);
-    hfcandidate->get_hfcand(ncand)->set_nTrackerLayer_1(nTrackerLayer_1);
-    hfcandidate->get_hfcand(ncand)->set_nBPixLayer_2(nBPixLayer_2);
-    hfcandidate->get_hfcand(ncand)->set_nPixLayer_2(nPixLayer_2);
-    hfcandidate->get_hfcand(ncand)->set_nBPixLayer1Hits_2(nBPixLayer1Hits_2);
-    hfcandidate->get_hfcand(ncand)->set_nTrackerLayer_2(nTrackerLayer_2);
+    hfcandidate->get_hfcand(ncand)->set_Index_dau2(index_dau2);
+    hfcandidate->get_hfcand(ncand)->set_Index1(index1);
+    hfcandidate->get_hfcand(ncand)->set_Index2(index2);
 
     ncand++;
 }
@@ -771,7 +693,7 @@ void candAna::LoopOverEvt(TTree* T1, Long64_t& run_hifst, Long64_t& evt_hifst)
 {
     hfcandidate->Reset();
     if(!T1) {
-        fTree->Fill();  //.. no D candidate. Fill in an empty object for that event.
+        fillTree();  //.. no D candidate. Fill in an empty object for that event.
         return;
     }
 
@@ -796,13 +718,13 @@ void candAna::LoopOverEvt(TTree* T1, Long64_t& run_hifst, Long64_t& evt_hifst)
             //.. readout the whole events only when there's match
             T1->GetEntry(jEvent);          
             evtAnalysis(fpEvt); 
-
+            fillTree();
             return;
         } 
     }
     if(!match) {
         cout<<" --> no matching hftree for this event <--"<<endl;
-        fTree->Fill();  //.. no D candidate. Fill in an empty object for that event.
+        fillTree();  //.. no D candidate. Fill in an empty object for that event.
     }
 }
 // ----------------------------------------------------------------------

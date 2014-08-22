@@ -27,7 +27,8 @@ HFVirtualDecay::HFVirtualDecay(const edm::ParameterSet& iConfig) :
 	fMaxD0(iConfig.getUntrackedParameter<double>("maxD0", 999.)),
 	fMaxDz(iConfig.getUntrackedParameter<double>("maxDz", 999.)),
 	fPvWeight(iConfig.getUntrackedParameter<double>("pvWeight", 0.6)),
-	fType(iConfig.getUntrackedParameter<int>("type"))
+	fType(iConfig.getUntrackedParameter<int>("type")), 
+    isPbPb(iConfig.getUntrackedParameter<bool>("isPbPb", false))
 {
 } // HFVirtualDecay()
 
@@ -88,5 +89,5 @@ void HFVirtualDecay::analyze(const edm::Event &iEvent, const edm::EventSetup &iS
 	fListBuilder->setTrackQuality(fTrackQualityString);
 
 	// -- construct the sequential vertex fitter
-	fSequentialFitter.reset(new HFSequentialVertexFit(fTracksHandle, fTTB.product(), vertexHandle, fMagneticField, fBeamSpot, fVerbose));
+	fSequentialFitter.reset(new HFSequentialVertexFit(fTracksHandle, fTTB.product(), vertexHandle, fMagneticField, fBeamSpot, fVerbose, true, isPbPb));
 } // analyze()

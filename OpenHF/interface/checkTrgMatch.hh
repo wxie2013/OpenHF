@@ -16,17 +16,18 @@
 #include "DataFormats/HLTReco/interface/TriggerObject.h"
 
 
-#include "ana_common.hh"
-
+const int nMax = 1000;
+typedef std::vector<trigger::TriggerObject> trigO;
+const int n_trg = 14;
 using namespace std;
 
 class checkTrgMatch : public TNamed 
 {
     private:
-        int prscl[NTRG]; //.. trigger prescale factors
-        int trg[NTRG];  //.. trigger decisions. better bool but the hlttree used int
-        const char* trg_name[NTRG]; //.. trigger name
-        trigO *trg_obj[NTRG]; //.. object to store trigger primitive. 
+        int prscl[n_trg]; //.. trigger prescale factors
+        int trg[n_trg];  //.. trigger decisions. better bool but the hlttree used int
+        const char* trg_name[n_trg]; //.. trigger name
+        trigO *trg_obj[n_trg]; //.. object to store trigger primitive. 
 
         char* filename;
 

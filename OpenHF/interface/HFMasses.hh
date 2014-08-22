@@ -1,3 +1,6 @@
+#ifndef HFMasses_H
+#define HFMasses_H
+
 #define MELECTRON  0.0005
 #define MMUON      0.1057
 #define MPION      0.1396
@@ -17,3 +20,5 @@
 #define MBPLUS     5.2792
 #define MBS        5.3663
 #define MLAMBDA_B  5.6202
+
+#endif
