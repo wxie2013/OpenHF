@@ -10,17 +10,17 @@
 #include "TBranch.h"
 
 #include "../interface/hfcand_v1.hh"
-#include "../interface/ana_hfforest.hh"
+#include "../interface/ana_hfforest_data.hh"
 
-ClassImp(ana_hfforest)
+ClassImp(ana_hfforest_data)
 
-ana_hfforest::ana_hfforest()
+ana_hfforest_data::ana_hfforest_data()
 {
     run_ppTrack = false;
 }
 
 //
-ana_hfforest::~ana_hfforest()
+ana_hfforest_data::~ana_hfforest_data()
 {
     delete filename;
     delete result;
@@ -116,7 +116,7 @@ ana_hfforest::~ana_hfforest()
 }
 
 //
-bool ana_hfforest::checkRapidityBoundary(float y) 
+bool ana_hfforest_data::checkRapidityBoundary(float y) 
 {
     if(y<Ymin || y>Ymin+NY*dY) {
         //cout<<"!! rapidity: "<<y<<" beyond "<<Ymin<<"--"<<Ymin+NY*dY<<". !!!"<<endl;
@@ -127,7 +127,7 @@ bool ana_hfforest::checkRapidityBoundary(float y)
 }
 
 //
-void ana_hfforest::Init(int startFile, int endFile, char *filelist, int iy, int ich, char* outfile)
+void ana_hfforest_data::Init(int startFile, int endFile, char *filelist, int iy, int ich, char* outfile)
 {//.. called right after constructor 
     filename = new char[1000];
     float ydn = iy*dY + Ymin; 
@@ -154,7 +154,7 @@ void ana_hfforest::Init(int startFile, int endFile, char *filelist, int iy, int 
 }
 
 //
-void ana_hfforest::book_hist(int ich)
+void ana_hfforest_data::book_hist(int ich)
 {
     float pt_low = 0, pt_high = 0;
     char hname[100], pt_range[1000];
@@ -473,7 +473,7 @@ void ana_hfforest::book_hist(int ich)
 }
 
 //
-int ana_hfforest::get_pt_bin_num(float pt)
+int ana_hfforest_data::get_pt_bin_num(float pt)
 {
     int ipt = pt/dPt;
     if(ipt >= NPT)
@@ -483,14 +483,14 @@ int ana_hfforest::get_pt_bin_num(float pt)
 }
 
 //
-void ana_hfforest::get_pt_range(int i, float& pt_low, float& pt_high)
+void ana_hfforest_data::get_pt_range(int i, float& pt_low, float& pt_high)
 {
     pt_low = i*dPt;
     pt_high = pt_low +  dPt;
 }
 
 //
-void ana_hfforest::LoopOverFile(int startFile, int endFile, char *filelist, int iy, int ich, char* outfile) 
+void ana_hfforest_data::LoopOverFile(int startFile, int endFile, char *filelist, int iy, int ich, char* outfile) 
 {//.. loop over files in the "*filelist" from startFile to endFile in sequence
     //
     Init(startFile, endFile, filelist, iy, ich, outfile);
@@ -532,7 +532,7 @@ void ana_hfforest::LoopOverFile(int startFile, int endFile, char *filelist, int 
 }
 
 //
-bool ana_hfforest::GetTreeInfo(TFile* f)
+bool ana_hfforest_data::GetTreeInfo(TFile* f)
 {
     //HiTree  = (TTree*)f->Get("hiEvtAnalyzer/HiTree");
     HltTree  = (TTree*)f->Get("hltanalysis/HltTree");
@@ -571,7 +571,7 @@ bool ana_hfforest::GetTreeInfo(TFile* f)
 }
 
 //
-void ana_hfforest::write()
+void ana_hfforest_data::write()
 {//.. results 
     result->cd();
 
@@ -583,7 +583,7 @@ void ana_hfforest::write()
 
 }
 //
-void ana_hfforest::write_hist(int ich)
+void ana_hfforest_data::write_hist(int ich)
 {
     for(int itrg = 0; itrg<NTRG; itrg++) {
         for(short i = 0; i<NPT; i++) {
@@ -677,7 +677,7 @@ void ana_hfforest::write_hist(int ich)
 }
 
 //
-void ana_hfforest::get_trg_info(TTree* T1, TTree* T2) 
+void ana_hfforest_data::get_trg_info(TTree* T1, TTree* T2) 
 {
     reset_trg();
 
@@ -709,7 +709,7 @@ void ana_hfforest::get_trg_info(TTree* T1, TTree* T2)
 
 
 //
-void ana_hfforest::reset_trg()
+void ana_hfforest_data::reset_trg()
 {//.. reset trigger decision every event
     for(int i = 0; i<NTRG; i++) {
         prscl[i] = 0;
@@ -732,7 +732,7 @@ void ana_hfforest::reset_trg()
 }
 
 //
-void ana_hfforest::LoopOverEvt(TTree* T, int iy, int ich)
+void ana_hfforest_data::LoopOverEvt(TTree* T, int iy, int ich)
 {//.. loop over each event. Add different analysis function here. 
 
     for(int i = 0; i<T->GetEntries(); i++) {
@@ -749,7 +749,7 @@ void ana_hfforest::LoopOverEvt(TTree* T, int iy, int ich)
 }
 
 //
-void ana_hfforest::GetMaxTrgPt()
+void ana_hfforest_data::GetMaxTrgPt()
 {
     for(int itrk = 0; itrk<nTrk; itrk++) {
         //.. the cuts are from Eric 
@@ -799,7 +799,7 @@ void ana_hfforest::GetMaxTrgPt()
 }
 
 //
-bool ana_hfforest::GetRapidity(float m, float pt, float eta, int iY)
+bool ana_hfforest_data::GetRapidity(float m, float pt, float eta, int iY)
 {
     float theta = 2*atan(exp(-eta));
     float p = pt/sin(theta);
@@ -818,7 +818,7 @@ bool ana_hfforest::GetRapidity(float m, float pt, float eta, int iY)
 }
 
 //
-void ana_hfforest::LoopOverHFCandidate(int iy, int ich)
+void ana_hfforest_data::LoopOverHFCandidate(int iy, int ich)
 {//.. loop over Heavy Flavor candidate in a event 
     for(int i = 0; i<hfcandidate->get_nhfcand(); i++) {
         snglhfcand* cand = hfcandidate->get_hfcand(i);
@@ -830,7 +830,7 @@ void ana_hfforest::LoopOverHFCandidate(int iy, int ich)
 }
 
 //
-void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
+void ana_hfforest_data::FillMassHisto(snglhfcand* cand, int iy, int ich)
 {//.. fill the histogram of mass distribution ..
 
     if(cand->get_type() != ich+1) 
@@ -944,7 +944,7 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
 }
 
 //
-void ana_hfforest::FillTrgCombineTrkTrg_HIN12017(int id, int ich, int ipt, float mass, float mass_dau, float eta, float phi)
+void ana_hfforest_data::FillTrgCombineTrkTrg_HIN12017(int id, int ich, int ipt, float mass, float mass_dau, float eta, float phi)
 {//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
     float weight = 0;
@@ -999,7 +999,7 @@ void ana_hfforest::FillTrgCombineTrkTrg_HIN12017(int id, int ich, int ipt, float
 }
 
 //
-void ana_hfforest::FillTrgCombineJetTrg(int id, int ich, int ipt, float mass, float mass_dau, float eta, float phi)
+void ana_hfforest_data::FillTrgCombineJetTrg(int id, int ich, int ipt, float mass, float mass_dau, float eta, float phi)
 {//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
     float weight = 0;
@@ -1078,7 +1078,7 @@ void ana_hfforest::FillTrgCombineJetTrg(int id, int ich, int ipt, float mass, fl
 }
 
 //
-void ana_hfforest::get_comb_hist(int ich, TFile* f)
+void ana_hfforest_data::get_comb_hist(int ich, TFile* f)
 {
     if(!f) {
         cout<<" !!! file does not exist,  exit"<<endl;
@@ -1165,7 +1165,7 @@ void ana_hfforest::get_comb_hist(int ich, TFile* f)
     cout<<" .... done ..."<<endl;
 }
 //
-void ana_hfforest::get_comb_hist_from_minbias_JetTrg(int ich, TFile* fmb, TFile* ftrg)
+void ana_hfforest_data::get_comb_hist_from_minbias_JetTrg(int ich, TFile* fmb, TFile* ftrg)
 {
     if(!fmb || !ftrg) {
         cout<<" !!! file does not exist,  exit"<<endl;
@@ -1255,7 +1255,7 @@ void ana_hfforest::get_comb_hist_from_minbias_JetTrg(int ich, TFile* fmb, TFile*
 
     cout<<" .... done ..."<<endl;
 }
-void ana_hfforest::CombineSpec_from_minbias_JetTrg(int ich, TFile* fout)
+void ana_hfforest_data::CombineSpec_from_minbias_JetTrg(int ich, TFile* fout)
 {
     //..
     char hname[100];
@@ -1319,7 +1319,7 @@ void ana_hfforest::CombineSpec_from_minbias_JetTrg(int ich, TFile* fout)
     }
 }
 //
-void ana_hfforest::get_hist(int ich, TFile* f)
+void ana_hfforest_data::get_hist(int ich, TFile* f)
 {
     if(!f) {
         cout<<" !!! file does not exist,  exit"<<endl;
@@ -1521,7 +1521,7 @@ void ana_hfforest::get_hist(int ich, TFile* f)
 }
 //
 //
-void ana_hfforest::define_rebinSpec(int ich)
+void ana_hfforest_data::define_rebinSpec(int ich)
 {
     cout<<" ... define rebinSpec ...."<<endl;
     //clone any mass spectrum to define the combined one then reset them to 0 contents
@@ -1588,7 +1588,7 @@ void ana_hfforest::define_rebinSpec(int ich)
 }
 
 //
-void ana_hfforest::define_combSpec(int ich)
+void ana_hfforest_data::define_combSpec(int ich)
 {
     //clone any mass spectrum to define the combined one then reset them to 0 contents
     char hname[200];
@@ -1639,7 +1639,7 @@ void ana_hfforest::define_combSpec(int ich)
     }
 }
 //
-void ana_hfforest::rebinSpec(int ich, TFile* fout)
+void ana_hfforest_data::rebinSpec(int ich, TFile* fout)
 {
     cout<<".... rebining the spectra ...."<<endl;
     define_rebinSpec(ich);
@@ -1735,7 +1735,7 @@ void ana_hfforest::rebinSpec(int ich, TFile* fout)
 }
 
 //
-void ana_hfforest::CombineSpecJetTrg(int ich, TFile* fout)
+void ana_hfforest_data::CombineSpecJetTrg(int ich, TFile* fout)
 {
     cout<<".... combining the spectra ...."<<endl;
     define_combSpec(ich);
@@ -1809,13 +1809,13 @@ void ana_hfforest::CombineSpecJetTrg(int ich, TFile* fout)
 }
 
 //
-void ana_hfforest::drawOneHist(int ich, TH1* h, int nrb)
+void ana_hfforest_data::drawOneHist(int ich, TH1* h, int nrb)
 {
     float sig= 0, err= 0;
     draw_fit(ich, h, nrb, mlow[ich], mup[ich], sig, err);
 }
 //
-void ana_hfforest::drawOneTrg(int ich, int whichTrg, int Nrebin, bool chk, int it, TCanvas* cc)
+void ana_hfforest_data::drawOneTrg(int ich, int whichTrg, int Nrebin, bool chk, int it, TCanvas* cc)
 {//..ich: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
  //.. it: which single trigger, see trg_name[] in ana_common.hh
  //.. whichTrg: 0=TrkTrg, 1=JetTrg, 2=JetTrg+Minbias
@@ -1894,7 +1894,7 @@ void ana_hfforest::drawOneTrg(int ich, int whichTrg, int Nrebin, bool chk, int i
 }
 
 //
-void ana_hfforest::drawDstar(TH1* h_fg, TH1* h_bg, int nrb, float& sig, float& err)
+void ana_hfforest_data::drawDstar(TH1* h_fg, TH1* h_bg, int nrb, float& sig, float& err)
 {
     int ib1 = h_fg->FindBin(0.142);
     int ib2 = h_fg->FindBin(0.15);
@@ -1927,7 +1927,7 @@ void ana_hfforest::drawDstar(TH1* h_fg, TH1* h_bg, int nrb, float& sig, float& e
 }
 
 //
-void ana_hfforest::drawHighMult(int ich, int whichTrg, int Nrebin, TFile* f, TCanvas* cc)
+void ana_hfforest_data::drawHighMult(int ich, int whichTrg, int Nrebin, TFile* f, TCanvas* cc)
 {//..ich: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
  //.. whichTrg: see trg_name ..
     char plotName[200];
@@ -1978,7 +1978,7 @@ void ana_hfforest::drawHighMult(int ich, int whichTrg, int Nrebin, TFile* f, TCa
     }
 }
 //
-void ana_hfforest::draw_fit(int ich, TH1* h, int nrb, float rlow, float rhigh, float& sig, float& err)
+void ana_hfforest_data::draw_fit(int ich, TH1* h, int nrb, float rlow, float rhigh, float& sig, float& err)
 {
     h->Rebin(nrb);
     h->SetMarkerSize(0.8);
@@ -2078,7 +2078,7 @@ void ana_hfforest::draw_fit(int ich, TH1* h, int nrb, float rlow, float rhigh, f
 }
 
 //
-void ana_hfforest::FillTrgMaxPt()
+void ana_hfforest_data::FillTrgMaxPt()
 {
     //.. max pT for trktrg, jetTrg and photrg
     for(int it = 0; it<=3; it++) {
@@ -2103,7 +2103,7 @@ void ana_hfforest::FillTrgMaxPt()
 }
 
 //
-void ana_hfforest::find_hp_trkPtErr(float q_in, float pt_in, float eta_in, float phi_in, bool& hp, float& pterr)
+void ana_hfforest_data::find_hp_trkPtErr(float q_in, float pt_in, float eta_in, float phi_in, bool& hp, float& pterr)
 {
     for(int itrk = 0; itrk<nTrk; itrk++) {
         if(q_in == trkCharge[itrk] && 
@@ -2120,7 +2120,7 @@ void ana_hfforest::find_hp_trkPtErr(float q_in, float pt_in, float eta_in, float
 }
 
 //..
-void ana_hfforest::fill_ntMass(float mass, float eta, float phi, int ipt, int itrg, bool isbg, float weight)
+void ana_hfforest_data::fill_ntMass(float mass, float eta, float phi, int ipt, int itrg, bool isbg, float weight)
 {
     float nt_nt[200] = {};
     int i = 0;
@@ -2150,7 +2150,7 @@ void ana_hfforest::fill_ntMass(float mass, float eta, float phi, int ipt, int it
     ntMass->Fill(nt_nt);
 }
 //
-void ana_hfforest::LoopOverTrk()
+void ana_hfforest_data::LoopOverTrk()
 {
     float weight = 0;
     for(int itrg = 0; itrg<=3; itrg++) {
@@ -2186,7 +2186,7 @@ void ana_hfforest::LoopOverTrk()
 }
 
 //
-float ana_hfforest::get_trg_weight(int i)
+float ana_hfforest_data::get_trg_weight(int i)
 {
     if(i==0) 
         return prscl[0]*prscl[9];
@@ -2219,7 +2219,7 @@ float ana_hfforest::get_trg_weight(int i)
 }
 
 //
-void ana_hfforest::fill_ntTrk(float pt, float ptErr, float ptmax, float ptmaxErr, bool hp0, bool hp, int itrg, float weight)
+void ana_hfforest_data::fill_ntTrk(float pt, float ptErr, float ptmax, float ptmaxErr, bool hp0, bool hp, int itrg, float weight)
 {
     float nt_nt[200] = {};
     int i = 0;
@@ -2236,7 +2236,7 @@ void ana_hfforest::fill_ntTrk(float pt, float ptErr, float ptmax, float ptmaxErr
 }
 
 //
-void ana_hfforest::book_ppTrk_hist()
+void ana_hfforest_data::book_ppTrk_hist()
 {
     char hname[100];
     for(short it = 0; it<NFullTrkTrg; it++) {
@@ -2258,7 +2258,7 @@ void ana_hfforest::book_ppTrk_hist()
 }
 
 //
-void ana_hfforest::fillPPTrkHist(bool hp0_in, bool hp_in, float cut,  TFile* fin, TFile*fout)
+void ana_hfforest_data::fillPPTrkHist(bool hp0_in, bool hp_in, float cut,  TFile* fin, TFile*fout)
 {
     book_ppTrk_hist();
 
@@ -2315,7 +2315,7 @@ void ana_hfforest::fillPPTrkHist(bool hp0_in, bool hp_in, float cut,  TFile* fin
     hPtTrkComb->Write();
 }
 //
-void ana_hfforest::fillntMaxTrgPtAlgo2Hist(bool hp_in, float cut,  TFile* fin, TFile*fout, bool dcaCut)
+void ana_hfforest_data::fillntMaxTrgPtAlgo2Hist(bool hp_in, float cut,  TFile* fin, TFile*fout, bool dcaCut)
 {
     book_ppTrk_hist();
     //ntMaxTrgPtAlgo2 = new TNtuple("ntMaxTrgPtAlgo2", "maximum trigger pT spectra for debugging for algo#2", "ptmax:hp:tDz1:tDz1Err:tDxy1:tDxyErr:tPtErr:itrg:weight");
@@ -2380,7 +2380,7 @@ void ana_hfforest::fillntMaxTrgPtAlgo2Hist(bool hp_in, float cut,  TFile* fin, T
 }
 //
 //
-void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout, bool noRandFire)
+void ana_hfforest_data::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout, bool noRandFire)
 {
     if(noRandFire) 
         cout<<" --- remove all random trigger benefit ----"<<endl;

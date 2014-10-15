@@ -5,8 +5,8 @@
 // The code thus need these two inputs
 /////////////////////////////////////////////////////////////////////////////////////////  
 //
-#ifndef ana_hfforest_H
-#define ana_hfforest_H
+#ifndef ana_hfforest_data_H
+#define ana_hfforest_data_H
 
 #include <string>
 #include <vector>
@@ -26,7 +26,7 @@
 
 using namespace std;
 
-class ana_hfforest : public TNamed 
+class ana_hfforest_data : public TNamed 
 {
     private:
         int prscl[NTRG]; //.. trigger prescale factors
@@ -293,8 +293,8 @@ class ana_hfforest : public TNamed
         float get_trg_weight(int i);
 
     public:
-        ana_hfforest();
-        virtual ~ana_hfforest();
+        ana_hfforest_data();
+        virtual ~ana_hfforest_data();
 
         void set_run_ppTrack(bool in) {run_ppTrack = in;}
         void LoopOverFile(int startFile, int endFile, char *filelist, int iy, int ich, char* outfile);
@@ -312,7 +312,7 @@ class ana_hfforest : public TNamed
         void drawOneTrg(int ich, int whichTrg, int Nrebin, bool chk, int it, TCanvas* cc);
         void drawHighMult(int ich, int whichTrg, int Nrebin, TFile* fin, TCanvas* cc);
 
-        ClassDef(ana_hfforest, 1)
+        ClassDef(ana_hfforest_data, 1)
 };
 
-#endif //ana_hfforest_H
+#endif //ana_hfforest_data_H
