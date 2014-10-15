@@ -9,7 +9,7 @@
 #include "TNtuple.h"
 #include "TBranch.h"
 
-#include "../interface/hfcand_v0.hh"
+#include "../interface/hfcand_v1.hh"
 #include "../interface/ana_hfforest.hh"
 
 ClassImp(ana_hfforest)
@@ -46,7 +46,6 @@ ana_hfforest::~ana_hfforest()
         delete hfg_TrkTrgPt30above_raw[i];
         delete hfg_TrkTrgPt30above[i];
 
-        //.. track trigger 
         delete hfgdiff_ZBiasSglTrkPt0_12_raw[i];
         delete hfgdiff_ZBiasSglTrkPt0_12[i];
 
@@ -66,6 +65,50 @@ ana_hfforest::~ana_hfforest()
         delete hbgdiff_TrkTrgPt20_30[i];
         delete hbgdiff_TrkTrgPt30above_raw[i];
         delete hbgdiff_TrkTrgPt30above[i];
+
+        // Jet trigger ..
+        delete hfg_ZBiasSglTrkPt0_20_raw[i];
+        delete hfg_ZBiasSglTrkPt0_20[i];
+
+        delete hfg_JetTrgPt20_40_raw[i];
+        delete hfg_JetTrgPt20_40[i];
+        delete hfg_JetTrgPt40_60_raw[i];
+        delete hfg_JetTrgPt40_60[i];
+        delete hfg_JetTrgPt60_80_raw[i];
+        delete hfg_JetTrgPt60_80[i];
+        delete hfg_JetTrgPt80_100_raw[i];
+        delete hfg_JetTrgPt80_100[i];
+        delete hfg_JetTrgPt100above_raw[i];
+        delete hfg_JetTrgPt100above[i];
+
+        delete hfgdiff_ZBiasSglTrkPt0_20_raw[i];
+        delete hfgdiff_ZBiasSglTrkPt0_20[i];
+
+        delete hfgdiff_JetTrgPt20_40_raw[i];
+        delete hfgdiff_JetTrgPt20_40[i];
+        delete hfgdiff_JetTrgPt40_60_raw[i];
+        delete hfgdiff_JetTrgPt40_60[i];
+        delete hfgdiff_JetTrgPt60_80_raw[i];
+        delete hfgdiff_JetTrgPt60_80[i];
+        delete hfgdiff_JetTrgPt80_100_raw[i];
+        delete hfgdiff_JetTrgPt80_100[i];
+        delete hfgdiff_JetTrgPt100above_raw[i];
+        delete hfgdiff_JetTrgPt100above[i];
+
+        delete hbgdiff_ZBiasSglTrkPt0_20_raw[i];
+        delete hbgdiff_ZBiasSglTrkPt0_20[i];
+
+        delete hbgdiff_JetTrgPt20_40_raw[i];
+        delete hbgdiff_JetTrgPt20_40[i];
+        delete hbgdiff_JetTrgPt40_60_raw[i];
+        delete hbgdiff_JetTrgPt40_60[i];
+        delete hbgdiff_JetTrgPt60_80_raw[i];
+        delete hbgdiff_JetTrgPt60_80[i];
+        delete hbgdiff_JetTrgPt80_100_raw[i];
+        delete hbgdiff_JetTrgPt80_100[i];
+        delete hbgdiff_JetTrgPt100above_raw[i];
+        delete hbgdiff_JetTrgPt100above[i];
+
     }
 
     delete ntMaxTrgPt;
@@ -97,24 +140,17 @@ void ana_hfforest::Init(int startFile, int endFile, char *filelist, int iy, int 
 
     ntMaxTrgPt = new TNtuple("ntMaxTrgPt", "maximum trigger pT spectra for debugging", "ptmax:ptmax_org:itrg:weight");
     ntMaxTrgPtAlgo2 = new TNtuple("ntMaxTrgPtAlgo2", "maximum trigger pT spectra for debugging for algo#2", "ptmax:hp:tDz1:tDz1Err:tDxy1:tDxyErr:tPtErr:itrg:weight");
-    ntMass = new TNtuple("ntMass", "mass spectra", "mass:ptmax:ipt:itrg:isbg:weight:hp0:hp1:hp2:pt0:pt1:pt2:ptErr0:ptErr1:ptErr2:hp:tPtErr");
+    ntMass = new TNtuple("ntMass", "mass spectra", "mass:eta:phi:ipt:itrg:isbg:weight:maxTrkTrgPt:hp0:hp1:hp2:pt0:pt1:pt2:ptErr0:ptErr1:ptErr2:hp:tPtErr:maxJetTrgPt:maxJetTrgEta:maxJetTrgPhi");
     ntTrk = new TNtuple("ntTrk", "trk spectra", "pt:ptErr:ptmax:ptmaxErr:hp0:hp:itrg:weight");
 
     //
-    hfcandidate = new hfcand_v0;
+    hfcandidate = new hfcand_v1;
 
     //HiTree = 0;
     HltTree = 0;
-    hltTreeReRun = 0;
     hftree = 0;
     trackTree = 0;
-
-    //.. trigger object ...
-    for(int i = 0; i<NTRG; i++) {
-        trg_obj[i] = new trigO;
-        org_trg_obj[i] = new trigO;
-    }
-
+    jetObjTree = 0;
 }
 
 //
@@ -182,6 +218,57 @@ void ana_hfforest::book_hist(int ich)
 
             hfg_TrkTrgPt30above_raw[i]->Sumw2();
             hfg_TrkTrgPt30above[i]->Sumw2();
+
+            // Jet trigger 
+            sprintf(hname, "hfg_ZBiasSglTrkPt0_20_raw%d", i);
+            hfg_ZBiasSglTrkPt0_20_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_ZBiasSglTrkPt0_20%d", i);
+            hfg_ZBiasSglTrkPt0_20[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+            sprintf(hname, "hfg_JetTrgPt20_40_raw%d", i);
+            hfg_JetTrgPt20_40_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_JetTrgPt20_40%d", i);
+            hfg_JetTrgPt20_40[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+            sprintf(hname, "hfg_JetTrgPt40_60_raw%d", i);
+            hfg_JetTrgPt40_60_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_JetTrgPt40_60%d", i);
+            hfg_JetTrgPt40_60[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+            sprintf(hname, "hfg_JetTrgPt60_80_raw%d", i);
+            hfg_JetTrgPt60_80_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_JetTrgPt60_80%d", i);
+            hfg_JetTrgPt60_80[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+            sprintf(hname, "hfg_JetTrgPt80_100_raw%d", i);
+            hfg_JetTrgPt80_100_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_JetTrgPt80_100%d", i);
+            hfg_JetTrgPt80_100[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+            sprintf(hname, "hfg_JetTrgPt100above_raw%d", i);
+            hfg_JetTrgPt100above_raw[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+            sprintf(hname, "hfg_JetTrgPt100above%d", i);
+            hfg_JetTrgPt100above[i] = new TH1F(hname, pt_range, NBIN, cut_m_low[ich], cut_m_high[ich]);
+
+            hfg_ZBiasSglTrkPt0_20_raw[i]->Sumw2();
+            hfg_ZBiasSglTrkPt0_20[i]->Sumw2();
+
+            hfg_JetTrgPt20_40_raw[i]->Sumw2();
+            hfg_JetTrgPt20_40[i]->Sumw2();
+
+            hfg_JetTrgPt40_60_raw[i]->Sumw2();
+            hfg_JetTrgPt40_60[i]->Sumw2();
+
+            hfg_JetTrgPt60_80_raw[i]->Sumw2();
+
+            hfg_JetTrgPt60_80[i]->Sumw2();
+
+            hfg_JetTrgPt80_100_raw[i]->Sumw2();
+            hfg_JetTrgPt80_100[i]->Sumw2();
+
+            hfg_JetTrgPt100above_raw[i]->Sumw2();
+            hfg_JetTrgPt100above[i]->Sumw2();
+
         }
     } else {
         // D*
@@ -283,6 +370,104 @@ void ana_hfforest::book_hist(int ich)
             hbgdiff_TrkTrgPt30above_raw[i]->Sumw2();
             hbgdiff_TrkTrgPt30above[i]->Sumw2();
 
+            // Jet trigger 
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20_raw%d", i);
+            hfgdiff_ZBiasSglTrkPt0_20_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20%d", i);
+            hfgdiff_ZBiasSglTrkPt0_20[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hfgdiff_JetTrgPt20_40_raw%d", i);
+            hfgdiff_JetTrgPt20_40_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_JetTrgPt20_40%d", i);
+            hfgdiff_JetTrgPt20_40[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hfgdiff_JetTrgPt40_60_raw%d", i);
+            hfgdiff_JetTrgPt40_60_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_JetTrgPt40_60%d", i);
+            hfgdiff_JetTrgPt40_60[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hfgdiff_JetTrgPt60_80_raw%d", i);
+            hfgdiff_JetTrgPt60_80_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_JetTrgPt60_80%d", i);
+            hfgdiff_JetTrgPt60_80[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hfgdiff_JetTrgPt80_100_raw%d", i);
+            hfgdiff_JetTrgPt80_100_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_JetTrgPt80_100%d", i);
+            hfgdiff_JetTrgPt80_100[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hfgdiff_JetTrgPt100above_raw%d", i);
+            hfgdiff_JetTrgPt100above_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hfgdiff_JetTrgPt100above%d", i);
+            hfgdiff_JetTrgPt100above[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20_raw%d", i);
+            hbgdiff_ZBiasSglTrkPt0_20_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20%d", i);
+            hbgdiff_ZBiasSglTrkPt0_20[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hbgdiff_JetTrgPt20_40_raw%d", i);
+            hbgdiff_JetTrgPt20_40_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hbgdiff_JetTrgPt20_40%d", i);
+            hbgdiff_JetTrgPt20_40[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hbgdiff_JetTrgPt40_60_raw%d", i);
+            hbgdiff_JetTrgPt40_60_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hbgdiff_JetTrgPt40_60%d", i);
+            hbgdiff_JetTrgPt40_60[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hbgdiff_JetTrgPt60_80_raw%d", i);
+            hbgdiff_JetTrgPt60_80_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hbgdiff_JetTrgPt60_80%d", i);
+            hbgdiff_JetTrgPt60_80[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hbgdiff_JetTrgPt80_100_raw%d", i);
+            hbgdiff_JetTrgPt80_100_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hbgdiff_JetTrgPt80_100%d", i);
+            hbgdiff_JetTrgPt80_100[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            sprintf(hname, "hbgdiff_JetTrgPt100above_raw%d", i);
+            hbgdiff_JetTrgPt100above_raw[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+            sprintf(hname, "hbgdiff_JetTrgPt100above%d", i);
+
+            hbgdiff_JetTrgPt100above[i] = new TH1F(hname, pt_range, NBIN, mdiffup, mdiffdn);
+
+            hfgdiff_ZBiasSglTrkPt0_20_raw[i]->Sumw2();
+            hfgdiff_ZBiasSglTrkPt0_20[i]->Sumw2();
+
+            hfgdiff_JetTrgPt20_40_raw[i]->Sumw2();
+            hfgdiff_JetTrgPt20_40[i]->Sumw2();
+
+            hfgdiff_JetTrgPt40_60_raw[i]->Sumw2();
+            hfgdiff_JetTrgPt40_60[i]->Sumw2();
+
+            hfgdiff_JetTrgPt60_80_raw[i]->Sumw2();
+            hfgdiff_JetTrgPt60_80[i]->Sumw2();
+
+            hfgdiff_JetTrgPt80_100_raw[i]->Sumw2();
+            hfgdiff_JetTrgPt80_100[i]->Sumw2();
+
+            hfgdiff_JetTrgPt100above_raw[i]->Sumw2();
+            hfgdiff_JetTrgPt100above[i]->Sumw2();
+
+            hbgdiff_ZBiasSglTrkPt0_20_raw[i]->Sumw2();
+            hbgdiff_ZBiasSglTrkPt0_20[i]->Sumw2();
+
+            hbgdiff_JetTrgPt20_40_raw[i]->Sumw2();
+            hbgdiff_JetTrgPt20_40[i]->Sumw2();
+
+            hbgdiff_JetTrgPt40_60_raw[i]->Sumw2();
+            hbgdiff_JetTrgPt40_60[i]->Sumw2();
+
+            hbgdiff_JetTrgPt60_80_raw[i]->Sumw2();
+            hbgdiff_JetTrgPt60_80[i]->Sumw2();
+
+            hbgdiff_JetTrgPt80_100_raw[i]->Sumw2();
+            hbgdiff_JetTrgPt80_100[i]->Sumw2();
+
+            hbgdiff_JetTrgPt100above_raw[i]->Sumw2();
+            hbgdiff_JetTrgPt100above[i]->Sumw2();
         }
     }
 }
@@ -351,19 +536,19 @@ bool ana_hfforest::GetTreeInfo(TFile* f)
 {
     //HiTree  = (TTree*)f->Get("hiEvtAnalyzer/HiTree");
     HltTree  = (TTree*)f->Get("hltanalysis/HltTree");
-    hltTreeReRun  = (TTree*)f->Get("hltReRun/hltTree");
-    hftree = (TTree*)f->Get("OpenHfTree/hftree");
+    //hftree = (TTree*)f->Get("OpenHfTree/hftree");
+    hftree = (TTree*)f->Get("HFtree/hftree");
     trackTree  = (TTree*)f->Get("ppTrack/trackTree");
+    jetObjTree = (TTree*)f->Get("hltobject/jetObjTree");
 
-    //if(!hftree || !HltTree || !HiTree) {
-    if(!hftree || !HltTree || !hltTreeReRun || !trackTree) {
-        cout<<"==> missing hftree or HltTree or hltTreeReRun or trackTree <=="<<endl;
+    if(!hftree || !HltTree || !trackTree || !jetObjTree) {
+        cout<<"==> missing hftree or HltTree or trackTree or jetObjTree <=="<<endl;
         return false;
     }
 
     HltTree->AddFriend(hftree);
-    HltTree->AddFriend(hltTreeReRun);
     HltTree->AddFriend(trackTree);
+    HltTree->AddFriend(jetObjTree);
     //HltTree->AddFriend(HiTree);
 
     hftree->SetBranchAddress("hfcandidate", &hfcandidate);
@@ -380,7 +565,7 @@ bool ana_hfforest::GetTreeInfo(TFile* f)
     trackTree->SetBranchAddress("trkDxyError1", trkDxyError1);
 
 
-    get_trg_info(HltTree, hltTreeReRun);
+    get_trg_info(HltTree, jetObjTree);
 
     return true;
 }
@@ -416,6 +601,7 @@ void ana_hfforest::write_hist(int ich)
 
     for(short i = 0; i<NPT; i++) {
         if(ich!=0) {
+            //.. trk trigger 
             hfg_ZBiasSglTrkPt0_12_raw[i]->Write();
             hfg_ZBiasSglTrkPt0_12[i]->Write();
             hfg_TrkTrgPt12_20_raw[i]->Write();
@@ -424,7 +610,24 @@ void ana_hfforest::write_hist(int ich)
             hfg_TrkTrgPt20_30[i]->Write();
             hfg_TrkTrgPt30above_raw[i]->Write();
             hfg_TrkTrgPt30above[i]->Write();
+
+            // jet trigger 
+            hfg_ZBiasSglTrkPt0_20_raw[i]->Write();
+            hfg_ZBiasSglTrkPt0_20[i]->Write();
+
+            hfg_JetTrgPt20_40_raw[i]->Write();
+            hfg_JetTrgPt20_40[i]->Write();
+            hfg_JetTrgPt40_60_raw[i]->Write();
+            hfg_JetTrgPt40_60[i]->Write();
+            hfg_JetTrgPt60_80_raw[i]->Write();
+            hfg_JetTrgPt60_80[i]->Write();
+            hfg_JetTrgPt80_100_raw[i]->Write();
+            hfg_JetTrgPt80_100[i]->Write();
+            hfg_JetTrgPt100above_raw[i]->Write();
+            hfg_JetTrgPt100above[i]->Write();
+
         } else {
+            // trk trigger 
             hfgdiff_ZBiasSglTrkPt0_12_raw[i]->Write();
             hfgdiff_ZBiasSglTrkPt0_12[i]->Write();
             hfgdiff_TrkTrgPt12_20_raw[i]->Write();
@@ -442,6 +645,33 @@ void ana_hfforest::write_hist(int ich)
             hbgdiff_TrkTrgPt20_30[i]->Write();
             hbgdiff_TrkTrgPt30above_raw[i]->Write();
             hbgdiff_TrkTrgPt30above[i]->Write();
+
+            // jet trigger 
+            hfgdiff_ZBiasSglTrkPt0_20_raw[i]->Write();
+            hfgdiff_ZBiasSglTrkPt0_20[i]->Write();
+            hfgdiff_JetTrgPt20_40_raw[i]->Write();
+            hfgdiff_JetTrgPt20_40[i]->Write();
+            hfgdiff_JetTrgPt40_60_raw[i]->Write();
+            hfgdiff_JetTrgPt40_60[i]->Write();
+            hfgdiff_JetTrgPt60_80_raw[i]->Write();
+            hfgdiff_JetTrgPt60_80[i]->Write();
+            hfgdiff_JetTrgPt80_100_raw[i]->Write();
+            hfgdiff_JetTrgPt80_100[i]->Write();
+            hfgdiff_JetTrgPt100above_raw[i]->Write();
+            hfgdiff_JetTrgPt100above[i]->Write();
+
+            hbgdiff_ZBiasSglTrkPt0_20_raw[i]->Write();
+            hbgdiff_ZBiasSglTrkPt0_20[i]->Write();
+            hbgdiff_JetTrgPt20_40_raw[i]->Write();
+            hbgdiff_JetTrgPt20_40[i]->Write();
+            hbgdiff_JetTrgPt40_60_raw[i]->Write();
+            hbgdiff_JetTrgPt40_60[i]->Write();
+            hbgdiff_JetTrgPt60_80_raw[i]->Write();
+            hbgdiff_JetTrgPt60_80[i]->Write();
+            hbgdiff_JetTrgPt80_100_raw[i]->Write();
+            hbgdiff_JetTrgPt80_100[i]->Write();
+            hbgdiff_JetTrgPt100above_raw[i]->Write();
+            hbgdiff_JetTrgPt100above[i]->Write();
         }
     }
 }
@@ -451,42 +681,30 @@ void ana_hfforest::get_trg_info(TTree* T1, TTree* T2)
 {
     reset_trg();
 
+    //.. information from hltTree
     TObjArray *branchesT1 = (TObjArray *)T1->GetListOfBranches();
     TIter branch_iterT1(branchesT1); 
     TBranch* branchT1 = 0;
     while ((branchT1 = (TBranch *)branch_iterT1.Next())) {  
-        int tid = -1;
         const char*  branch_nameT1 = branchT1->GetName();
         for(int it = 0; it<NTRG; it++) {
             if (strstr(branch_nameT1, trg_name[it])){
                 if(!strstr(branch_nameT1, "Prescl") && 
                         !strstr(branch_nameT1, "trigObject")) {//.. use original trigger decision
                     T1->SetBranchAddress(branch_nameT1, &trg[it]);
-                    tid = it;
                 } else  if(strstr(branch_nameT1, "Prescl")) {//.. use original prescale
                     T1->SetBranchAddress(branch_nameT1, &prscl[it]);
-                } else  if(strstr(branch_nameT1, "trigObject")) {
-                    T1->SetBranchAddress(branch_nameT1, &org_trg_obj[it]);
                 }
 
                 break;
             } 
         }
-        //
-        //
-        if(tid !=-1) {//.. Loop only once since there're multiple objects for the same trigger  
-            TObjArray *branchesT2 = (TObjArray *)T2->GetListOfBranches();
-            TIter branch_iterT2(branchesT2); 
-            TBranch* branchT2 = 0;
-            while ((branchT2 = (TBranch *)branch_iterT2.Next())) {  
-                const char* branch_nameT2 = branchT2->GetName();
-                if (strstr(branch_nameT2, trg_name[tid]) && strstr(branch_nameT2, "trigObject")){
-                    T2->SetBranchAddress(branch_nameT2, &trg_obj[tid]);
-                    break;
-                } 
-            }
-        }
     }
+    //information from hltobject
+    T2->SetBranchAddress("pt", &maxJetTrgPt);
+    T2->SetBranchAddress("eta", &maxJetTrgEta);
+    T2->SetBranchAddress("phi", &maxJetTrgPhi);
+    T2->SetBranchAddress("mass", &maxJetTrgMass);
 }
 
 
@@ -496,11 +714,13 @@ void ana_hfforest::reset_trg()
     for(int i = 0; i<NTRG; i++) {
         prscl[i] = 0;
         trg[i] = 0;
-        trg_obj[i]->clear();
-        org_trg_obj[i]->clear();
     }
 
     maxTrkTrgPt = 0;
+    maxJetTrgPt = 0;
+    maxJetTrgEta = -999;
+    maxJetTrgPhi = -999;
+    maxJetTrgMass = 0;
 
     nTrk = 0;
     is_hp = false;
@@ -552,7 +772,7 @@ void ana_hfforest::GetMaxTrgPt()
     for(int it = 0; it<=NTRG; it++) {
         if(trg[it]) {
             if(it==0) 
-                weight = prscl[0]*prscl[4];
+                weight = prscl[0]*prscl[9];
             else 
                 weight = prscl[it];
 
@@ -562,7 +782,7 @@ void ana_hfforest::GetMaxTrgPt()
 
     int it = -1;
     if(trg[0] && maxTrkTrgPt <TrkTrgOffThres[1]) {
-        weight = prscl[0]*prscl[4]; //.. include L1 base
+        weight = prscl[0]*prscl[9]; //.. include L1 base
         it = 100;
     } else if(trg[1] && maxTrkTrgPt >=TrkTrgOffThres[1] && maxTrkTrgPt < TrkTrgOffThres[2]) {
         weight = prscl[1];
@@ -619,13 +839,14 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
     float mass = cand->get_fm();
     float fpt = cand->get_fpt();
     float feta = cand->get_feta();
+    float fphi = cand->get_fphi();
     //.. the two daughters of the resonance and they should be unlike-sign. 
     float fq1 = cand->get_fq1();  
-    float fq2 = cand->get_fpt2(); //.. fpt2 is filled by fq2
+    float fq2 = cand->get_fq2(); 
     float feta1 = cand->get_feta1();
     float feta2 = cand->get_feta2();
     float fpt1 = cand->get_fpt1();
-    float fpt2 = cand->get_fq2();
+    float fpt2 = cand->get_fpt2();
     float fphi1 = cand->get_fphi1();
     float fphi2 = cand->get_fphi2();
     float fq0 = cand->get_fqdau2();
@@ -674,53 +895,48 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
         if(ich==1) { //D0 has no daughter mass, treat separately. ...
             for(int itrg = 0; itrg<NTRG; itrg++) {
                 if(trg[itrg]) {
-                    if(itrg==0) 
-                        weight = prscl[0]*prscl[4];
-                    else 
-                        weight = prscl[itrg];
+                    weight = get_trg_weight(itrg);
 
-                    fill_ntMass(mass, maxTrkTrgPt, ipt, itrg, false, weight);
+                    fill_ntMass(mass, feta, fphi, ipt, itrg, false, weight);
                 }
             }
 
-            FillTrgCombineTrkTrg_HIN12017(0, ich, ipt, mass, mass_dau);
+            FillTrgCombineTrkTrg_HIN12017(0, ich, ipt, mass, mass_dau, feta, fphi);
+            FillTrgCombineJetTrg(0, ich, ipt, mass, mass_dau, feta, fphi);
 
         } else {
             if(mass_dau > cut_m_dau_low[ich] && mass_dau < cut_m_dau_high[ich]) {
                 for(int itrg = 0; itrg<NTRG; itrg++) {
                     if(trg[itrg]) {
-                        if(itrg==0) 
-                            weight = prscl[0]*prscl[4];
-                        else 
-                            weight = prscl[itrg];
+                        weight = get_trg_weight(itrg);
 
                         if(ich==0)
-                            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, itrg, false, weight);
+                            fill_ntMass(mass-mass_dau, feta, fphi, ipt, itrg, false, weight);
                         else 
-                            fill_ntMass(mass, maxTrkTrgPt, ipt, itrg, false, weight);
+                            fill_ntMass(mass, feta, fphi, ipt, itrg, false, weight);
                     }
                 }
 
                 //
                 if(ich==0) {
-                    FillTrgCombineTrkTrg_HIN12017(1, ich, ipt, mass, mass_dau);
+                    FillTrgCombineTrkTrg_HIN12017(1, ich, ipt, mass, mass_dau, feta, fphi);
+                    FillTrgCombineJetTrg(1, ich, ipt, mass, mass_dau, feta, fphi);
                 } else {
-                    FillTrgCombineTrkTrg_HIN12017(0, ich, ipt, mass, mass_dau);
+                    FillTrgCombineTrkTrg_HIN12017(0, ich, ipt, mass, mass_dau, feta, fphi);
+                    FillTrgCombineJetTrg(0, ich, ipt, mass, mass_dau, feta, fphi);
                 }
             } else { //.. background through side band ...
                 if(ich==0) {// for D* only
                     for(int itrg = 0; itrg<NTRG; itrg++) {
                         if(trg[itrg]) {
-                            if(itrg==0) 
-                                weight = prscl[0]*prscl[4];
-                            else 
-                                weight = prscl[itrg];
+                            weight = get_trg_weight(itrg);
 
-                            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, itrg, true, weight);
+                            fill_ntMass(mass-mass_dau, feta, fphi, ipt, itrg, true, weight);
                         }
                     }
 
-                    FillTrgCombineTrkTrg_HIN12017(2, ich, ipt, mass, mass_dau);
+                    FillTrgCombineTrkTrg_HIN12017(2, ich, ipt, mass, mass_dau, feta, fphi);
+                    FillTrgCombineJetTrg(2, ich, ipt, mass, mass_dau, feta, fphi);
                 }
             }
         }
@@ -728,56 +944,135 @@ void ana_hfforest::FillMassHisto(snglhfcand* cand, int iy, int ich)
 }
 
 //
-void ana_hfforest::FillTrgCombineTrkTrg_HIN12017(int id, int ich, int ipt, float mass, float mass_dau)
+void ana_hfforest::FillTrgCombineTrkTrg_HIN12017(int id, int ich, int ipt, float mass, float mass_dau, float eta, float phi)
 {//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
 
     float weight = 0;
     if(trg[0] && maxTrkTrgPt <TrkTrgOffThres[1]) {
 
-        weight = prscl[0]*prscl[4];
+        weight = get_trg_weight(0);
 
         if(id==0) {
-            fill_ntMass(mass, maxTrkTrgPt, ipt, 100, false, weight);
+            fill_ntMass(mass, eta, phi, ipt, 100, false, weight);
         } else if(id==1) {
-            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 100, false, weight);
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 100, false, weight);
         } else if(id==2) {
-            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 100, true, weight);
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 100, true, weight);
         }
 
     } else if(trg[1] && maxTrkTrgPt >=TrkTrgOffThres[1] && maxTrkTrgPt < TrkTrgOffThres[2]) {
 
-        weight = prscl[1];
+        weight = get_trg_weight(1);
 
         if(id==0) {
-            fill_ntMass(mass, maxTrkTrgPt, ipt, 101, false, weight);
+            fill_ntMass(mass, eta, phi, ipt, 101, false, weight);
         } else if(id==1) {
-            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 101, false, weight);
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 101, false, weight);
         } else if(id==2) {
-            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 101, true, weight);
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 101, true, weight);
         }
 
 
     } else if(trg[2] && maxTrkTrgPt >=TrkTrgOffThres[2] && maxTrkTrgPt < TrkTrgOffThres[3]) {
 
-        weight = prscl[2];
+        weight = get_trg_weight(2);
 
         if(id==0) {
-            fill_ntMass(mass, maxTrkTrgPt, ipt, 102, false, weight);
+            fill_ntMass(mass, eta, phi, ipt, 102, false, weight);
         } else if(id==1) {
-            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 102, false, weight);
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 102, false, weight);
         } else if(id==2) {
-            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 102, true, weight);
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 102, true, weight);
         }
     } else if(trg[3] && maxTrkTrgPt >= TrkTrgOffThres[3]) {
 
-        weight = prscl[3];
+        weight = get_trg_weight(3);
 
         if(id==0) {
-            fill_ntMass(mass, maxTrkTrgPt, ipt, 103, false, weight);
+            fill_ntMass(mass, eta, phi, ipt, 103, false, weight);
         } else if(id==1) {
-            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 103, false, weight);
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 103, false, weight);
         } else if(id==2) {
-            fill_ntMass(mass-mass_dau, maxTrkTrgPt, ipt, 103, true, weight);
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 103, true, weight);
+        }
+    }
+}
+
+//
+void ana_hfforest::FillTrgCombineJetTrg(int id, int ich, int ipt, float mass, float mass_dau, float eta, float phi)
+{//.. id:  0-->hfg,  1-->hfgdiff, 2-->hbgdiff
+
+    float weight = 0;
+    if(trg[0] && maxJetTrgPt < 20) {
+
+        weight = get_trg_weight(0);
+
+        if(id==0) {
+            fill_ntMass(mass, eta, phi, ipt, 200, false, weight);
+        } else if(id==1) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 200, false, weight);
+        } else if(id==2) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 200, true, weight);
+        }
+
+    } else if(trg[4] && maxJetTrgPt >=20 && maxJetTrgPt < 40) {
+
+        weight = get_trg_weight(4);
+
+        if(id==0) {
+            fill_ntMass(mass, eta, phi, ipt, 201, false, weight);
+        } else if(id==1) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 201, false, weight);
+        } else if(id==2) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 201, true, weight);
+        }
+
+    } else if(trg[5] && maxJetTrgPt >=40 && maxJetTrgPt < 60) {
+
+        weight = get_trg_weight(5);
+
+        if(id==0) {
+            fill_ntMass(mass, eta, phi, ipt, 202, false, weight);
+        } else if(id==1) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 202, false, weight);
+        } else if(id==2) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 202, true, weight);
+        }
+
+    } else if(trg[6] && maxJetTrgPt >=60 && maxJetTrgPt < 80) {
+
+        weight = get_trg_weight(6);
+
+        if(id==0) {
+            fill_ntMass(mass, eta, phi, ipt, 203, false, weight);
+        } else if(id==1) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 203, false, weight);
+        } else if(id==2) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 203, true, weight);
+        }
+
+    } else if(trg[7] && maxJetTrgPt >=80 && maxJetTrgPt < 100) {
+
+        weight = get_trg_weight(7);
+
+        if(id==0) {
+            fill_ntMass(mass, eta, phi, ipt, 204, false, weight);
+        } else if(id==1) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 204, false, weight);
+        } else if(id==2) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 204, true, weight);
+        }
+
+    } else if(trg[8] && maxJetTrgPt >= 100) {
+
+        weight = get_trg_weight(8);
+
+        if(id==0) {
+            fill_ntMass(mass, eta, phi, ipt, 205, false, weight);
+        } else if(id==1) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 205, false, weight);
+        } else if(id==2) {
+            fill_ntMass(mass-mass_dau, eta, phi, ipt, 205, true, weight);
         }
     }
 }
@@ -798,6 +1093,12 @@ void ana_hfforest::get_comb_hist(int ich, TFile* f)
             hfg_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
             sprintf(hname, "hfg_combTrkTrg%d", i);
             hfg_combTrkTrg[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfg_raw_combJetTrg%d", i);
+            hfg_raw_combJetTrg[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_combJetTrg%d", i);
+            hfg_combJetTrg[i] = (TH1F*)f->Get(hname);
+
         } else {
             sprintf(hname, "hfgdiff_raw_combTrkTrg%d", i);
             hfgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
@@ -807,6 +1108,15 @@ void ana_hfforest::get_comb_hist(int ich, TFile* f)
             hbgdiff_raw_combTrkTrg[i] = (TH1F*)f->Get(hname);
             sprintf(hname, "hbgdiff_combTrkTrg%d", i);
             hbgdiff_combTrkTrg[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfgdiff_raw_combJetTrg%d", i);
+            hfgdiff_raw_combJetTrg[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_combJetTrg%d", i);
+            hfgdiff_combJetTrg[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_raw_combJetTrg%d", i);
+            hbgdiff_raw_combJetTrg[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_combJetTrg%d", i);
+            hbgdiff_combJetTrg[i] = (TH1F*)f->Get(hname);
         }
     }
     // reference hist for checking trigger combination ...
@@ -832,8 +1142,181 @@ void ana_hfforest::get_comb_hist(int ich, TFile* f)
         sprintf(hname, "hfg_TrkTrgPt30above_rebin%d", i);
         hfg_TrkTrgPt30above_rebin[i] = (TH1F*)f->Get(hname);
 
+        //
+        sprintf(hname, "hfg_ZBiasSglTrkPt0_20_rebin%d", i);
+        hfg_ZBiasSglTrkPt0_20_rebin[i] = (TH1F*)f->Get(hname);
+        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20_rebin%d", i);
+        hfgdiff_ZBiasSglTrkPt0_20_rebin[i] = (TH1F*)f->Get(hname);
+        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20_rebin%d", i);
+        hbgdiff_ZBiasSglTrkPt0_20_rebin[i] = (TH1F*)f->Get(hname);
+
+        sprintf(hname, "hfg_JetTrgPt20_40_rebin%d", i);
+        hfg_JetTrgPt20_40_rebin[i] = (TH1F*)f->Get(hname);
+        sprintf(hname, "hfg_JetTrgPt40_60_rebin%d", i);
+        hfg_JetTrgPt40_60_rebin[i] = (TH1F*)f->Get(hname);
+        sprintf(hname, "hfg_JetTrgPt60_80_rebin%d", i);
+        hfg_JetTrgPt60_80_rebin[i] = (TH1F*)f->Get(hname);
+        sprintf(hname, "hfg_JetTrgPt80_100_rebin%d", i);
+        hfg_JetTrgPt80_100_rebin[i] = (TH1F*)f->Get(hname);
+        sprintf(hname, "hfg_JetTrgPt100above_rebin%d", i);
+        hfg_JetTrgPt100above_rebin[i] = (TH1F*)f->Get(hname);
+
     }
     cout<<" .... done ..."<<endl;
+}
+//
+void ana_hfforest::get_comb_hist_from_minbias_JetTrg(int ich, TFile* fmb, TFile* ftrg)
+{
+    if(!fmb || !ftrg) {
+        cout<<" !!! file does not exist,  exit"<<endl;
+        exit(0);
+    }
+
+    cout<<" .... fetching combination file from "<<fmb->GetName()<<" and "<<fmb->GetName()<<"  ..."<<endl;
+    char hname[100];
+    for(short i = 0; i<NptRebin; i++) {
+        if(ich!=0) {
+            sprintf(hname, "hfg_raw_combJetTrg%d", i);
+            hfg_raw_combJetTrg[i] = (TH1F*)ftrg->Get(hname);
+            sprintf(hname, "hfg_combJetTrg%d", i);
+            hfg_combJetTrg[i] = (TH1F*)ftrg->Get(hname);
+
+            // these complete spectra does not exist in minbas and Jet files yet
+            sprintf(hname, "hfg_combJetTrgMinbias%d", i);
+            if((TH1F*)ftrg->Get(hname)) 
+                hfg_combJetTrgMinbias[i] = (TH1F*)ftrg->Get(hname);
+
+        } else {
+            sprintf(hname, "hfgdiff_raw_combJetTrg%d", i);
+            hfgdiff_raw_combJetTrg[i] = (TH1F*)ftrg->Get(hname);
+            sprintf(hname, "hfgdiff_combJetTrg%d", i);
+            hfgdiff_combJetTrg[i] = (TH1F*)ftrg->Get(hname);
+            sprintf(hname, "hbgdiff_raw_combJetTrg%d", i);
+            hbgdiff_raw_combJetTrg[i] = (TH1F*)ftrg->Get(hname);
+            sprintf(hname, "hbgdiff_combJetTrg%d", i);
+            hbgdiff_combJetTrg[i] = (TH1F*)ftrg->Get(hname);
+            //
+            // these complete spectra does not exist in minbas and Jet files yet
+            sprintf(hname, "hfgdiff_combJetTrgMinbias%d", i);
+            if((TH1F*)ftrg->Get(hname)) 
+                hfgdiff_combJetTrgMinbias[i] = (TH1F*)ftrg->Get(hname);
+            sprintf(hname, "hbgdiff_combJetTrgMinbias%d", i);
+            if((TH1F*)ftrg->Get(hname)) 
+                hbgdiff_combJetTrgMinbias[i] = (TH1F*)ftrg->Get(hname);
+
+        }
+    }
+    // reference hist for checking trigger combination ...
+    for(short i = 0; i<NptRebin; i++) {
+        for(short it = 0; it<NTRG; it++) {
+            if(ich!=0) {
+                sprintf(hname, "hfg_rebin%d_%d", it, i);
+                if(it==0) 
+                    hfg_rebin[it][i] = (TH1F*)fmb->Get(hname);
+                else
+                    hfg_rebin[it][i] = (TH1F*)ftrg->Get(hname);
+            } else {
+                sprintf(hname, "hfgdiff_rebin%d_%d", it, i);
+                if(it==0) 
+                    hfgdiff_rebin[it][i] = (TH1F*)fmb->Get(hname);
+                else
+                    hfgdiff_rebin[it][i] = (TH1F*)ftrg->Get(hname);
+
+                sprintf(hname, "hbgdiff_rebin%d_%d", it, i);
+                if(it==0)
+                    hbgdiff_rebin[it][i] = (TH1F*)fmb->Get(hname);
+                else 
+                    hbgdiff_rebin[it][i] = (TH1F*)ftrg->Get(hname);
+            }
+        }
+
+        if(ich!=0) {
+            sprintf(hname, "hfg_ZBiasSglTrkPt0_20_rebin%d", i);
+            hfg_ZBiasSglTrkPt0_20_rebin[i] = (TH1F*)fmb->Get(hname);
+
+            sprintf(hname, "hfg_JetTrgPt20_40_rebin%d", i);
+            hfg_JetTrgPt20_40_rebin[i] = (TH1F*)ftrg->Get(hname);
+            sprintf(hname, "hfg_JetTrgPt40_60_rebin%d", i);
+            hfg_JetTrgPt40_60_rebin[i] = (TH1F*)ftrg->Get(hname);
+            sprintf(hname, "hfg_JetTrgPt60_80_rebin%d", i);
+            hfg_JetTrgPt60_80_rebin[i] = (TH1F*)ftrg->Get(hname);
+            sprintf(hname, "hfg_JetTrgPt80_100_rebin%d", i);
+            hfg_JetTrgPt80_100_rebin[i] = (TH1F*)ftrg->Get(hname);
+            sprintf(hname, "hfg_JetTrgPt100above_rebin%d", i);
+            hfg_JetTrgPt100above_rebin[i] = (TH1F*)ftrg->Get(hname);
+
+        } else {
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20_rebin%d", i);
+            hfgdiff_ZBiasSglTrkPt0_20_rebin[i] = (TH1F*)fmb->Get(hname);
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20_rebin%d", i);
+            hbgdiff_ZBiasSglTrkPt0_20_rebin[i] = (TH1F*)fmb->Get(hname);
+        }
+    }
+
+    cout<<" .... done ..."<<endl;
+}
+void ana_hfforest::CombineSpec_from_minbias_JetTrg(int ich, TFile* fout)
+{
+    //..
+    char hname[100];
+    for(short i = 0; i<NptRebin; i++) {
+        if(ich!=0) {
+            sprintf(hname, "hfg_combJetTrgMinbias%d", i);
+            hfg_combJetTrgMinbias[i] = (TH1F*)hfg_combJetTrg[i]->Clone(hname);
+            hfg_combJetTrgMinbias[i]->Reset();
+        } else {
+            sprintf(hname, "hfgdiff_combJetTrgMinbias%d", i);
+            hfgdiff_combJetTrgMinbias[i] = (TH1F*)hfgdiff_combJetTrg[i]->Clone(hname);
+            sprintf(hname, "hbgdiff_combJetTrgMinbias%d", i);
+            hbgdiff_combJetTrgMinbias[i] = (TH1F*)hfgdiff_combJetTrg[i]->Clone(hname);
+            hfgdiff_combJetTrgMinbias[i]->Reset();
+            hbgdiff_combJetTrgMinbias[i]->Reset();
+        }
+    }
+
+    //
+    for(short i = 0; i<NptRebin; i++) {
+        if(ptRebin[i] >= pTMinbiasMax) 
+            hfg_ZBiasSglTrkPt0_20_rebin[i]->Reset();  //.. no clear signal after this and Jet20 eff is 100%. Do not contribute to trigger combination
+
+        if(ich!=0) {
+            hfg_combJetTrgMinbias[i]->Add(hfg_ZBiasSglTrkPt0_20_rebin[i], hfg_combJetTrg[i]); 
+        } else {
+            hfgdiff_combJetTrgMinbias[i]->Add(hfgdiff_ZBiasSglTrkPt0_20_rebin[i], hfgdiff_combJetTrg[i]); 
+            hbgdiff_combJetTrgMinbias[i]->Add(hbgdiff_ZBiasSglTrkPt0_20_rebin[i], hbgdiff_combJetTrg[i]); 
+        }
+    }
+
+    //.. save 
+    fout->cd();
+    for(short i = 0; i<NptRebin; i++) {
+        for(short it = 0; it<NTRG; it++) {
+            if(ich!=0) {
+                hfg_rebin[it][i]->Write(); 
+            } else {
+                hfgdiff_rebin[it][i]->Write(); 
+                hbgdiff_rebin[it][i]->Write(); 
+            }
+        }
+
+        if(ich!=0) {
+            hfg_combJetTrg[i]->Write();
+            hfg_combJetTrgMinbias[i]->Write();
+
+            hfg_ZBiasSglTrkPt0_20_rebin[i]->Write();
+            hfg_JetTrgPt20_40_rebin[i]->Write();
+            hfg_JetTrgPt40_60_rebin[i]->Write();
+            hfg_JetTrgPt60_80_rebin[i]->Write();
+            hfg_JetTrgPt80_100_rebin[i]->Write();
+            hfg_JetTrgPt100above_rebin[i]->Write();
+        } else {
+            hfgdiff_combJetTrg[i]->Write();
+            hbgdiff_combJetTrg[i]->Write();
+
+            hfgdiff_combJetTrgMinbias[i]->Write();
+            hbgdiff_combJetTrgMinbias[i]->Write();
+        }
+    }
 }
 //
 void ana_hfforest::get_hist(int ich, TFile* f)
@@ -857,6 +1340,7 @@ void ana_hfforest::get_hist(int ich, TFile* f)
         // components for trigger combination for all D..
         for(short i = 0; i<NPT; i++) {
 
+            //.. trk trigger
             sprintf(hname, "hfg_ZBiasSglTrkPt0_12_raw%d", i);
             hfg_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
             sprintf(hname, "hfg_ZBiasSglTrkPt0_12%d", i);
@@ -876,6 +1360,38 @@ void ana_hfforest::get_hist(int ich, TFile* f)
             hfg_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
             sprintf(hname, "hfg_TrkTrgPt30above%d", i);
             hfg_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
+
+            // jet trigger
+            sprintf(hname, "hfg_ZBiasSglTrkPt0_20_raw%d", i);
+            hfg_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_ZBiasSglTrkPt0_20%d", i);
+            hfg_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfg_JetTrgPt20_40_raw%d", i);
+            hfg_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_JetTrgPt20_40%d", i);
+            hfg_JetTrgPt20_40[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfg_JetTrgPt40_60_raw%d", i);
+            hfg_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_JetTrgPt40_60%d", i);
+            hfg_JetTrgPt40_60[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfg_JetTrgPt60_80_raw%d", i);
+            hfg_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_JetTrgPt60_80%d", i);
+            hfg_JetTrgPt60_80[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfg_JetTrgPt80_100_raw%d", i);
+            hfg_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_JetTrgPt80_100%d", i);
+            hfg_JetTrgPt80_100[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfg_JetTrgPt100above_raw%d", i);
+            hfg_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfg_JetTrgPt100above%d", i);
+            hfg_JetTrgPt100above[i] = (TH1F*)f->Get(hname);
+
         }
 
     } else {
@@ -896,7 +1412,7 @@ void ana_hfforest::get_hist(int ich, TFile* f)
         // components for trigger combination for D*
         for(short i = 0; i<NPT; i++) {
 
-            // FullTrack trigger
+            // trk trigger
             sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12_raw%d", i);
             hfgdiff_ZBiasSglTrkPt0_12_raw[i] = (TH1F*)f->Get(hname);
             sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_12%d", i);
@@ -937,6 +1453,68 @@ void ana_hfforest::get_hist(int ich, TFile* f)
             hbgdiff_TrkTrgPt30above_raw[i] = (TH1F*)f->Get(hname);
             sprintf(hname, "hbgdiff_TrkTrgPt30above%d", i);
             hbgdiff_TrkTrgPt30above[i] = (TH1F*)f->Get(hname);
+
+            // jet trigger 
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20_raw%d", i);
+            hfgdiff_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20%d", i);
+            hfgdiff_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfgdiff_JetTrgPt20_40_raw%d", i);
+            hfgdiff_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_JetTrgPt20_40%d", i);
+            hfgdiff_JetTrgPt20_40[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfgdiff_JetTrgPt40_60_raw%d", i);
+            hfgdiff_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_JetTrgPt40_60%d", i);
+            hfgdiff_JetTrgPt40_60[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfgdiff_JetTrgPt60_80_raw%d", i);
+            hfgdiff_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_JetTrgPt60_80%d", i);
+            hfgdiff_JetTrgPt60_80[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfgdiff_JetTrgPt80_100_raw%d", i);
+            hfgdiff_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_JetTrgPt80_100%d", i);
+            hfgdiff_JetTrgPt80_100[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hfgdiff_JetTrgPt100above_raw%d", i);
+            hfgdiff_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hfgdiff_JetTrgPt100above%d", i);
+            hfgdiff_JetTrgPt100above[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20_raw%d", i);
+            hbgdiff_ZBiasSglTrkPt0_20_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20%d", i);
+            hbgdiff_ZBiasSglTrkPt0_20[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hbgdiff_JetTrgPt20_40_raw%d", i);
+            hbgdiff_JetTrgPt20_40_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_JetTrgPt20_40%d", i);
+            hbgdiff_JetTrgPt20_40[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hbgdiff_JetTrgPt40_60_raw%d", i);
+            hbgdiff_JetTrgPt40_60_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_JetTrgPt40_60%d", i);
+            hbgdiff_JetTrgPt40_60[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hbgdiff_JetTrgPt60_80_raw%d", i);
+            hbgdiff_JetTrgPt60_80_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_JetTrgPt60_80%d", i);
+            hbgdiff_JetTrgPt60_80[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hbgdiff_JetTrgPt80_100_raw%d", i);
+            hbgdiff_JetTrgPt80_100_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_JetTrgPt80_100%d", i);
+            hbgdiff_JetTrgPt80_100[i] = (TH1F*)f->Get(hname);
+
+            sprintf(hname, "hbgdiff_JetTrgPt100above_raw%d", i);
+            hbgdiff_JetTrgPt100above_raw[i] = (TH1F*)f->Get(hname);
+            sprintf(hname, "hbgdiff_JetTrgPt100above%d", i);
+            hbgdiff_JetTrgPt100above[i] = (TH1F*)f->Get(hname);
+
         }
     }
     cout<<" .... done ...."<<endl;
@@ -945,6 +1523,7 @@ void ana_hfforest::get_hist(int ich, TFile* f)
 //
 void ana_hfforest::define_rebinSpec(int ich)
 {
+    cout<<" ... define rebinSpec ...."<<endl;
     //clone any mass spectrum to define the combined one then reset them to 0 contents
     char hname[200];
     for(short i = 0; i<NptRebin; i++) {
@@ -965,7 +1544,7 @@ void ana_hfforest::define_rebinSpec(int ich)
                 hbgdiff_rebin[it][i]->Reset();
             }
         }
-        //
+        // trk trigger
         sprintf(hname, "hfg_TrkTrgPt12_20_rebin%d", i);
         hfg_TrkTrgPt12_20_rebin[i] = (TH1F*)hfg_TrkTrgPt12_20[0]->Clone(hname);
         sprintf(hname, "hfg_TrkTrgPt20_30_rebin%d", i);
@@ -976,6 +1555,35 @@ void ana_hfforest::define_rebinSpec(int ich)
         hfg_TrkTrgPt12_20_rebin[i]->Reset();
         hfg_TrkTrgPt20_30_rebin[i]->Reset();
         hfg_TrkTrgPt30above_rebin[i]->Reset();
+
+        // jet trigger 
+        sprintf(hname, "hfg_ZBiasSglTrkPt0_20_rebin%d", i);
+        hfg_ZBiasSglTrkPt0_20_rebin[i] = (TH1F*)hfg_ZBiasSglTrkPt0_20[i]->Clone(hname);
+        sprintf(hname, "hfgdiff_ZBiasSglTrkPt0_20_rebin%d", i);
+        hfgdiff_ZBiasSglTrkPt0_20_rebin[i] = (TH1F*)hfg_ZBiasSglTrkPt0_20[i]->Clone(hname);
+        sprintf(hname, "hbgdiff_ZBiasSglTrkPt0_20_rebin%d", i);
+        hbgdiff_ZBiasSglTrkPt0_20_rebin[i] = (TH1F*)hfg_ZBiasSglTrkPt0_20[i]->Clone(hname);
+
+        sprintf(hname, "hfg_JetTrgPt20_40_rebin%d", i);
+        hfg_JetTrgPt20_40_rebin[i] = (TH1F*)hfg_JetTrgPt20_40[i]->Clone(hname);
+        sprintf(hname, "hfg_JetTrgPt40_60_rebin%d", i);
+        hfg_JetTrgPt40_60_rebin[i] = (TH1F*)hfg_JetTrgPt40_60[i]->Clone(hname);
+        sprintf(hname, "hfg_JetTrgPt60_80_rebin%d", i);
+        hfg_JetTrgPt60_80_rebin[i] = (TH1F*)hfg_JetTrgPt60_80[i]->Clone(hname);
+        sprintf(hname, "hfg_JetTrgPt80_100_rebin%d", i);
+        hfg_JetTrgPt80_100_rebin[i] = (TH1F*)hfg_JetTrgPt80_100[i]->Clone(hname);
+        sprintf(hname, "hfg_JetTrgPt100above_rebin%d", i);
+        hfg_JetTrgPt100above_rebin[i] = (TH1F*)hfg_JetTrgPt100above[i]->Clone(hname);
+
+        hfg_ZBiasSglTrkPt0_20_rebin[i]->Reset();
+        hfgdiff_ZBiasSglTrkPt0_20_rebin[i]->Reset();
+        hbgdiff_ZBiasSglTrkPt0_20_rebin[i]->Reset();
+
+        hfg_JetTrgPt20_40_rebin[i]->Reset();
+        hfg_JetTrgPt40_60_rebin[i]->Reset();
+        hfg_JetTrgPt60_80_rebin[i]->Reset();
+        hfg_JetTrgPt80_100_rebin[i]->Reset();
+        hfg_JetTrgPt100above_rebin[i]->Reset();
     }
 }
 
@@ -990,25 +1598,43 @@ void ana_hfforest::define_combSpec(int ich)
             hfg_raw_combTrkTrg[i] = (TH1F*)hfg_TrkTrgPt12_20[i]->Clone(hname);
             sprintf(hname, "hfg_combTrkTrg%d", i);
             hfg_combTrkTrg[i] = (TH1F*)hfg_TrkTrgPt12_20[i]->Clone(hname);
-            //.. now reset all bin to zero 
             hfg_raw_combTrkTrg[i]->Reset();
             hfg_combTrkTrg[i]->Reset();
+
+            sprintf(hname, "hfg_raw_combJetTrg%d", i);
+            hfg_raw_combJetTrg[i] = (TH1F*)hfg_TrkTrgPt12_20[i]->Clone(hname);
+            sprintf(hname, "hfg_combJetTrg%d", i);
+            hfg_combJetTrg[i] = (TH1F*)hfg_TrkTrgPt12_20[i]->Clone(hname);
+            hfg_raw_combJetTrg[i]->Reset();
+            hfg_combJetTrg[i]->Reset();
+
         } else {
             sprintf(hname, "hfgdiff_raw_combTrkTrg%d", i);
             hfgdiff_raw_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20[i]->Clone(hname);
             sprintf(hname, "hfgdiff_combTrkTrg%d", i);
             hfgdiff_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20[i]->Clone(hname);
-
             sprintf(hname, "hbgdiff_raw_combTrkTrg%d", i);
             hbgdiff_raw_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20[i]->Clone(hname);
             sprintf(hname, "hbgdiff_combTrkTrg%d", i);
             hbgdiff_combTrkTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20[i]->Clone(hname);
-
-            //.. now reset all bin to zero 
             hfgdiff_raw_combTrkTrg[i]->Reset();
             hfgdiff_combTrkTrg[i]->Reset();
             hbgdiff_raw_combTrkTrg[i]->Reset();
             hbgdiff_combTrkTrg[i]->Reset();
+
+            sprintf(hname, "hfgdiff_raw_combJetTrg%d", i);
+            hfgdiff_raw_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+            sprintf(hname, "hfgdiff_combJetTrg%d", i);
+            hfgdiff_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+            sprintf(hname, "hbgdiff_raw_combJetTrg%d", i);
+            hbgdiff_raw_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+            sprintf(hname, "hbgdiff_combJetTrg%d", i);
+            hbgdiff_combJetTrg[i] = (TH1F*)hfgdiff_TrkTrgPt12_20_raw[i]->Clone(hname);
+            hfgdiff_raw_combJetTrg[i]->Reset();
+            hfgdiff_combJetTrg[i]->Reset();
+            hbgdiff_raw_combJetTrg[i]->Reset();
+            hbgdiff_combJetTrg[i]->Reset();
+
         }
     }
 }
@@ -1065,6 +1691,16 @@ void ana_hfforest::rebinSpec(int ich, TFile* fout)
         hfg_TrkTrgPt20_30_rebin[im]->Add(hfg_TrkTrgPt20_30[i]);
         hfg_TrkTrgPt30above_rebin[im]->Add(hfg_TrkTrgPt30above[i]);
 
+        //..jet trigger 
+        hfg_ZBiasSglTrkPt0_20_rebin[im]->Add(hfg_ZBiasSglTrkPt0_20[i]);
+        hfgdiff_ZBiasSglTrkPt0_20_rebin[im]->Add(hfgdiff_ZBiasSglTrkPt0_20[i]);
+        hbgdiff_ZBiasSglTrkPt0_20_rebin[im]->Add(hbgdiff_ZBiasSglTrkPt0_20[i]);
+
+        hfg_JetTrgPt20_40_rebin[im]->Add(hfg_JetTrgPt20_40[i]);
+        hfg_JetTrgPt40_60_rebin[im]->Add(hfg_JetTrgPt40_60[i]);
+        hfg_JetTrgPt60_80_rebin[im]->Add(hfg_JetTrgPt60_80[i]);
+        hfg_JetTrgPt80_100_rebin[im]->Add(hfg_JetTrgPt80_100[i]);
+        hfg_JetTrgPt100above_rebin[im]->Add(hfg_JetTrgPt100above[i]);
     }
 
     cout<<" ....Writing the spectra ...."<<endl;
@@ -1085,12 +1721,21 @@ void ana_hfforest::rebinSpec(int ich, TFile* fout)
         hfg_TrkTrgPt20_30_rebin[i]->Write();
         hfg_TrkTrgPt30above_rebin[i]->Write();
 
+        hfg_ZBiasSglTrkPt0_20_rebin[i]->Write();
+        hfgdiff_ZBiasSglTrkPt0_20_rebin[i]->Write();
+        hbgdiff_ZBiasSglTrkPt0_20_rebin[i]->Write();
+
+        hfg_JetTrgPt20_40_rebin[i]->Write();
+        hfg_JetTrgPt40_60_rebin[i]->Write();
+        hfg_JetTrgPt60_80_rebin[i]->Write();
+        hfg_JetTrgPt80_100_rebin[i]->Write();
+        hfg_JetTrgPt100above_rebin[i]->Write();
     }
     cout<<"... done ..."<<endl;
 }
 
 //
-void ana_hfforest::CombineSpec(int ich, TFile* fout)
+void ana_hfforest::CombineSpecJetTrg(int ich, TFile* fout)
 {
     cout<<".... combining the spectra ...."<<endl;
     define_combSpec(ich);
@@ -1114,15 +1759,34 @@ void ana_hfforest::CombineSpec(int ich, TFile* fout)
             hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt12_20[i]);
             hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt20_30[i]);
             hfg_combTrkTrg[im]->Add(hfg_TrkTrgPt30above[i]);
+
+            hfg_combJetTrg[im]->Add( hfg_JetTrgPt20_40[i]);
+            hfg_combJetTrg[im]->Add(hfg_JetTrgPt40_60[i]);
+            hfg_combJetTrg[im]->Add(hfg_JetTrgPt60_80[i]);
+            hfg_combJetTrg[im]->Add(hfg_JetTrgPt80_100[i]);
+            hfg_combJetTrg[im]->Add(hfg_JetTrgPt100above[i]);
+
         } else {
             hfgdiff_combTrkTrg[im]->Add( hfgdiff_TrkTrgPt12_20[i]);
             hfgdiff_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt20_30[i]);
             hfgdiff_combTrkTrg[im]->Add(hfgdiff_TrkTrgPt30above[i]);
 
-            //
             hbgdiff_combTrkTrg[im]->Add( hbgdiff_TrkTrgPt12_20[i]);
             hbgdiff_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt20_30[i]);
             hbgdiff_combTrkTrg[im]->Add(hbgdiff_TrkTrgPt30above[i]);
+
+            //
+            hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt20_40[i]);
+            hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt40_60[i]);
+            hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt60_80[i]);
+            hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt80_100[i]);
+            hfgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt100above[i]);
+
+            hbgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt20_40[i]);
+            hbgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt40_60[i]);
+            hbgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt60_80[i]);
+            hbgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt80_100[i]);
+            hbgdiff_combJetTrg[im]->Add(hfgdiff_JetTrgPt100above[i]);
         }
     }
 
@@ -1132,9 +1796,13 @@ void ana_hfforest::CombineSpec(int ich, TFile* fout)
     for(short i = 0; i<NptRebin; i++) {
         if(ich!=0) {
             hfg_combTrkTrg[i]->Write();   
+            hfg_combJetTrg[i]->Write();
         } else {
             hfgdiff_combTrkTrg[i]->Write();
             hbgdiff_combTrkTrg[i]->Write();
+
+            hfgdiff_combJetTrg[i]->Write();
+            hbgdiff_combJetTrg[i]->Write();
         }
     }
     cout<<" ... done ...."<<endl;
@@ -1147,9 +1815,10 @@ void ana_hfforest::drawOneHist(int ich, TH1* h, int nrb)
     draw_fit(ich, h, nrb, mlow[ich], mup[ich], sig, err);
 }
 //
-void ana_hfforest::drawOneTrg(int ich, int Nrebin, bool chk, int it, TCanvas* cc)
+void ana_hfforest::drawOneTrg(int ich, int whichTrg, int Nrebin, bool chk, int it, TCanvas* cc)
 {//..ich: 0=Dstar2D0Pi, 1=D02KPi, 2=Ds2PhiPi, 3=Ds2KstarK, 4=Dpm2KPiPi;
- //.. it: which single trigger 
+ //.. it: which single trigger, see trg_name[] in ana_common.hh
+ //.. whichTrg: 0=TrkTrg, 1=JetTrg, 2=JetTrg+Minbias
     char plotName[200];
     char outName[200];
     //
@@ -1172,17 +1841,29 @@ void ana_hfforest::drawOneTrg(int ich, int Nrebin, bool chk, int it, TCanvas* cc
         cc->cd(ic+1);
 
         if(ich==0) {
-            if(!chk) 
-                drawDstar(hfgdiff_combTrkTrg[i], hbgdiff_combTrkTrg[i], Nrebin, sig, err);
-            //draw_fit(ich, hfgdiff_combTrkTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
-            else
+            if(!chk) {
+                if(whichTrg==0) {
+                    drawDstar(hfgdiff_combTrkTrg[i], hbgdiff_combTrkTrg[i], Nrebin, sig, err);
+                    //draw_fit(ich, hfgdiff_combTrkTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+                } else {
+                    drawDstar(hfgdiff_combJetTrg[i], hbgdiff_combJetTrg[i], Nrebin, sig, err);
+                }
+            }  else {
                 drawDstar(hfgdiff_rebin[it][i], hbgdiff_rebin[it][i], Nrebin, sig, err);
-            //draw_fit(ich, hfgdiff_rebin[it][i], Nrebin, mlow[ich], mup[ich], sig, err);
+                //draw_fit(ich, hfgdiff_rebin[it][i], Nrebin, mlow[ich], mup[ich], sig, err);
+            }
         } else if(ich <NCH) {
-            if(!chk)
-                draw_fit(ich, hfg_combTrkTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
-            else
+            if(!chk) {
+                if(whichTrg==0) {
+                    draw_fit(ich, hfg_combTrkTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+                } else if(whichTrg==1) {
+                    draw_fit(ich, hfg_combJetTrg[i], Nrebin, mlow[ich], mup[ich], sig, err);
+                } else if(whichTrg==2) {
+                    draw_fit(ich, hfg_combJetTrgMinbias[i], Nrebin, mlow[ich], mup[ich], sig, err);
+                }
+            } else {
                 draw_fit(ich, hfg_rebin[it][i], Nrebin, mlow[ich], mup[ich], sig, err);
+            }
         } else {
             cout<<" !!! no such D meson  !!!"<<endl;
         }
@@ -1407,16 +2088,16 @@ void ana_hfforest::FillTrgMaxPt()
     //
     float weight = 0;
     if(trg[0] && maxTrkTrgPt <TrkTrgOffThres[1]) {
-        weight = prscl[0]*prscl[4];
+        weight = get_trg_weight(0);
         ntMaxTrgPt->Fill(maxTrkTrgPt,0,  100, weight);
     } else if(trg[1] && maxTrkTrgPt >=TrkTrgOffThres[1] && maxTrkTrgPt < TrkTrgOffThres[2]) {
-        weight = prscl[1];
+        weight = get_trg_weight(1);
         ntMaxTrgPt->Fill(maxTrkTrgPt,0,  101, weight);
     } else if(trg[2] && maxTrkTrgPt >=TrkTrgOffThres[2] && maxTrkTrgPt <TrkTrgOffThres[3]) {
-        weight = prscl[2];
+        weight = get_trg_weight(2);
         ntMaxTrgPt->Fill(maxTrkTrgPt,0,  102, weight);
     } else if(trg[3] && maxTrkTrgPt >=TrkTrgOffThres[3]) {
-        weight = prscl[3];
+        weight = get_trg_weight(3);
         ntMaxTrgPt->Fill(maxTrkTrgPt,0,  103, weight);
     }
 }
@@ -1439,16 +2120,18 @@ void ana_hfforest::find_hp_trkPtErr(float q_in, float pt_in, float eta_in, float
 }
 
 //..
-void ana_hfforest::fill_ntMass(float mass, float ptmax, int ipt, int itrg, bool isbg, float weight)
+void ana_hfforest::fill_ntMass(float mass, float eta, float phi, int ipt, int itrg, bool isbg, float weight)
 {
     float nt_nt[200] = {};
     int i = 0;
     nt_nt[i++] = mass; 
-    nt_nt[i++] = ptmax;
+    nt_nt[i++] = eta;
+    nt_nt[i++] = phi;
     nt_nt[i++] = ipt;
     nt_nt[i++] = itrg;
     nt_nt[i++] = isbg;
     nt_nt[i++] = weight;
+    nt_nt[i++] = maxTrkTrgPt;
     nt_nt[i++] = is_hp_0;
     nt_nt[i++] = is_hp_1;
     nt_nt[i++] = is_hp_2;
@@ -1460,6 +2143,9 @@ void ana_hfforest::fill_ntMass(float mass, float ptmax, int ipt, int itrg, bool 
     nt_nt[i++] = tPtErr2;
     nt_nt[i++] = is_hp;
     nt_nt[i++] = tPtErr;
+    nt_nt[i++] = maxJetTrgPt;
+    nt_nt[i++] = maxJetTrgEta;
+    nt_nt[i++] = maxJetTrgPhi;
 
     ntMass->Fill(nt_nt);
 }
@@ -1469,10 +2155,7 @@ void ana_hfforest::LoopOverTrk()
     float weight = 0;
     for(int itrg = 0; itrg<=3; itrg++) {
         if(trg[itrg]) {
-            if(itrg==0) 
-                weight = prscl[0]*prscl[4];
-            else 
-                weight = prscl[itrg];
+            weight = get_trg_weight(itrg);
 
             for(int itrk = 0; itrk<nTrk; itrk++) {
                 fill_ntTrk(trkPt[itrk], trkPtError[itrk], maxTrkTrgPt, tPtErr, highPurity[itrk], is_hp, itrg, weight);
@@ -1483,16 +2166,16 @@ void ana_hfforest::LoopOverTrk()
     //
     int itrg = -1;
     if(trg[0] && maxTrkTrgPt <TrkTrgOffThres[1]) {
-        weight = prscl[0]*prscl[4];
+        weight = get_trg_weight(0);
         itrg = 100;
     } else if(trg[1] && maxTrkTrgPt >=TrkTrgOffThres[1] && maxTrkTrgPt < TrkTrgOffThres[2]) {
-        weight = prscl[1];
+        weight = get_trg_weight(1);
         itrg = 101;
     } else if(trg[2] && maxTrkTrgPt >=TrkTrgOffThres[2] && maxTrkTrgPt < TrkTrgOffThres[3]) {
-        weight = prscl[2];
+        weight = get_trg_weight(2);
         itrg = 102;
     } else if(trg[3] && maxTrkTrgPt >= TrkTrgOffThres[3]) {
-        weight = prscl[3];
+        weight = get_trg_weight(3);
         itrg = 103;
     }
 
@@ -1500,6 +2183,39 @@ void ana_hfforest::LoopOverTrk()
         for(int itrk = 0; itrk<nTrk; itrk++) 
             fill_ntTrk(trkPt[itrk], trkPtError[itrk], maxTrkTrgPt, tPtErr, highPurity[itrk], is_hp, itrg, weight);
     }
+}
+
+//
+float ana_hfforest::get_trg_weight(int i)
+{
+    if(i==0) 
+        return prscl[0]*prscl[9];
+    else if(i==1) 
+        return prscl[1]*prscl[10];
+    else if(i==2) 
+        return prscl[2]*prscl[11];
+    else if(i==3) 
+        return prscl[3]*prscl[11];
+    else if(i==4) 
+        return prscl[4]*prscl[11];
+    else if(i==5) 
+        return prscl[5]*prscl[11];
+    else if(i==6) 
+        return prscl[6]*prscl[12];
+    else if(i==7) 
+        return prscl[7]*prscl[12];
+    else if(i==8) 
+        return prscl[8]*prscl[12];
+    else if(i==9) 
+        return prscl[9];
+    else if(i==10) 
+        return prscl[10];
+    else if(i==11) 
+        return prscl[11];
+    else if(i==12) 
+        return prscl[12];
+
+    return 0;
 }
 
 //
@@ -1678,7 +2394,8 @@ void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout,
     book_hist(ich);
 
     float mass = -1;
-    float ptmax = -1;
+    float eta = -99;
+    float phi = -99;
     float ipt = -1;
     float itrg = -1;
     float isbg = -1;
@@ -1699,11 +2416,13 @@ void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout,
     ntMass = (TNtuple*) fin->Get("ntMass");
 
     ntMass->SetBranchAddress("mass", &mass);
-    ntMass->SetBranchAddress("ptmax", &ptmax);
+    ntMass->SetBranchAddress("eta", &eta);
+    ntMass->SetBranchAddress("phi", &phi);
     ntMass->SetBranchAddress("ipt", &ipt);
     ntMass->SetBranchAddress("itrg", &itrg);
     ntMass->SetBranchAddress("isbg", &isbg);
     ntMass->SetBranchAddress("weight", &weight);
+    ntMass->SetBranchAddress("maxTrkTrgPt", &maxTrkTrgPt);
     ntMass->SetBranchAddress("hp0", &hp0);
     ntMass->SetBranchAddress("hp1", &hp1);
     ntMass->SetBranchAddress("hp2", &hp2);
@@ -1715,6 +2434,9 @@ void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout,
     ntMass->SetBranchAddress("ptErr2", &ptErr2);
     ntMass->SetBranchAddress("hp", &hp);
     ntMass->SetBranchAddress("tPtErr", &PtErr);
+    ntMass->SetBranchAddress("maxJetTrgPt", &maxJetTrgPt);
+    ntMass->SetBranchAddress("maxJetTrgEta", &maxJetTrgEta);
+    ntMass->SetBranchAddress("maxJetTrgPhi", &maxJetTrgPhi);
 
 
     long int nentries = ntMass->GetEntries();
@@ -1724,7 +2446,7 @@ void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout,
         if(!(i%1000000)) 
             cout<<i<<" of "<<nentries<<endl;
 
-        if(hp ==0 || tPtErr/ptmax > cut || 
+        if(hp ==0 || tPtErr/maxTrkTrgPt > cut || 
                 ptErr0/pt0 > cut || 
                 ptErr1/pt1 > cut || 
                 ptErr2/pt2 > cut)
@@ -1733,7 +2455,7 @@ void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout,
         if(itrg<=3 && itrg>=0) {
 
             if(noRandFire && pt0<TrkTrgOffThres[(int)itrg] && 
-               pt1<TrkTrgOffThres[(int)itrg] && pt2<TrkTrgOffThres[(int)itrg]) 
+                    pt1<TrkTrgOffThres[(int)itrg] && pt2<TrkTrgOffThres[(int)itrg]) 
                 continue;
 
             if(ich!=0) {
@@ -1750,7 +2472,7 @@ void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout,
             }
         } else if(itrg==100) {
             if(noRandFire && 
-               (pt0>TrkTrgOffThres[1] || pt1>TrkTrgOffThres[1] || pt2>TrkTrgOffThres[1])) 
+                    (pt0>TrkTrgOffThres[1] || pt1>TrkTrgOffThres[1] || pt2>TrkTrgOffThres[1])) 
                 continue;
 
             if(ich!=0) {
@@ -1768,9 +2490,9 @@ void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout,
 
         } else if(itrg==101) {
             if(noRandFire && 
-               (pt0<TrkTrgOffThres[1] || pt0>TrkTrgOffThres[2]) &&
-               (pt1<TrkTrgOffThres[1] || pt1>TrkTrgOffThres[2]) && 
-               (pt2<TrkTrgOffThres[1] || pt2>TrkTrgOffThres[2])) 
+                    (pt0<TrkTrgOffThres[1] || pt0>TrkTrgOffThres[2]) &&
+                    (pt1<TrkTrgOffThres[1] || pt1>TrkTrgOffThres[2]) && 
+                    (pt2<TrkTrgOffThres[1] || pt2>TrkTrgOffThres[2])) 
                 continue;
 
             if(ich!=0) {
@@ -1787,9 +2509,9 @@ void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout,
             }
         } else if(itrg==102) {
             if(noRandFire && 
-               (pt0<TrkTrgOffThres[2] || pt0>TrkTrgOffThres[3]) &&
-               (pt1<TrkTrgOffThres[2] || pt1>TrkTrgOffThres[3]) && 
-               (pt2<TrkTrgOffThres[2] || pt2>TrkTrgOffThres[3])) 
+                    (pt0<TrkTrgOffThres[2] || pt0>TrkTrgOffThres[3]) &&
+                    (pt1<TrkTrgOffThres[2] || pt1>TrkTrgOffThres[3]) && 
+                    (pt2<TrkTrgOffThres[2] || pt2>TrkTrgOffThres[3])) 
                 continue;
 
             if(ich!=0) {
@@ -1807,9 +2529,9 @@ void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout,
 
         } else if(itrg==103) {
             if(noRandFire && 
-               (pt0<TrkTrgOffThres[3]) && 
-               (pt1<TrkTrgOffThres[3]) && 
-               (pt2<TrkTrgOffThres[3])) 
+                    (pt0<TrkTrgOffThres[3]) && 
+                    (pt1<TrkTrgOffThres[3]) && 
+                    (pt2<TrkTrgOffThres[3])) 
                 continue;
 
             if(ich!=0) {
@@ -1822,6 +2544,121 @@ void ana_hfforest::fill_ntMass_hist(int ich, float cut,  TFile* fin, TFile*fout,
                 } else {
                     hbgdiff_TrkTrgPt30above_raw[(int)ipt]->Fill(mass, weight);
                     hbgdiff_TrkTrgPt30above[(int)ipt]->Fill(mass, weight);
+                }
+            }
+        } else if(itrg>=4 && itrg<=8) {
+
+            if(noRandFire && sqrt(pow(eta-maxJetTrgEta,2)+ pow(phi-maxJetTrgPhi, 2))>dRjet )
+                continue;
+
+            if(ich!=0) {
+                hfg[(int)itrg][(int)ipt]->Fill(mass, weight);
+                hfg_raw[(int)itrg][(int)ipt]->Fill(mass, weight);
+            } else {
+                if(isbg==0)  {
+                    hfgdiff[(int)itrg][(int)ipt]->Fill(mass, weight);
+                    hfgdiff_raw[(int)itrg][(int)ipt]->Fill(mass, weight);
+                } else {
+                    hbgdiff[(int)itrg][(int)ipt]->Fill(mass, weight);
+                    hbgdiff_raw[(int)itrg][(int)ipt]->Fill(mass, weight);
+                }
+            }
+        } else if(itrg==200) {
+            if(noRandFire && sqrt(pow(eta-maxJetTrgEta,2)+ pow(phi-maxJetTrgPhi, 2))>dRjet )
+                continue;
+
+            if(ich!=0) {
+                hfg_ZBiasSglTrkPt0_20_raw[(int)ipt]->Fill(mass, weight);
+                hfg_ZBiasSglTrkPt0_20[(int)ipt]->Fill(mass, weight); 
+            } else {
+                if(isbg==0) {
+                    hfgdiff_ZBiasSglTrkPt0_20_raw[(int)ipt]->Fill(mass, weight);  
+                    hfgdiff_ZBiasSglTrkPt0_20[(int)ipt]->Fill(mass, weight);  
+                } else {
+                    hbgdiff_ZBiasSglTrkPt0_20_raw[(int)ipt]->Fill(mass, weight);  
+                    hbgdiff_ZBiasSglTrkPt0_20[(int)ipt]->Fill(mass, weight);  
+                }
+            }
+
+        } else if(itrg==201) {
+            if(noRandFire && sqrt(pow(eta-maxJetTrgEta,2)+ pow(phi-maxJetTrgPhi, 2))>dRjet )
+                continue;
+
+            if(ich!=0) {
+                hfg_JetTrgPt20_40_raw[(int)ipt]->Fill(mass, weight); 
+                hfg_JetTrgPt20_40[(int)ipt]->Fill(mass, weight);  
+            } else {
+                if(isbg==0) {
+                    hfgdiff_JetTrgPt20_40_raw[(int)ipt]->Fill(mass, weight); 
+                    hfgdiff_JetTrgPt20_40[(int)ipt]->Fill(mass, weight);  
+                } else {
+                    hbgdiff_JetTrgPt20_40_raw[(int)ipt]->Fill(mass, weight); 
+                    hbgdiff_JetTrgPt20_40[(int)ipt]->Fill(mass, weight);  
+                }
+            }
+        } else if(itrg==202) {
+            if(noRandFire && sqrt(pow(eta-maxJetTrgEta,2)+ pow(phi-maxJetTrgPhi, 2))>dRjet )
+                continue;
+
+            if(ich!=0) {
+                hfg_JetTrgPt40_60_raw[(int)ipt]->Fill(mass, weight);  
+                hfg_JetTrgPt40_60[(int)ipt]->Fill(mass, weight);  
+            } else {
+                if(isbg==0) {
+                    hfgdiff_JetTrgPt40_60_raw[(int)ipt]->Fill(mass, weight);  
+                    hfgdiff_JetTrgPt40_60[(int)ipt]->Fill(mass, weight);  
+                } else {
+                    hbgdiff_JetTrgPt40_60_raw[(int)ipt]->Fill(mass, weight);  
+                    hbgdiff_JetTrgPt40_60[(int)ipt]->Fill(mass, weight);  
+                }
+            }
+
+        } else if(itrg==203) {
+            if(noRandFire && sqrt(pow(eta-maxJetTrgEta,2)+ pow(phi-maxJetTrgPhi, 2))>dRjet )
+                continue;
+
+            if(ich!=0) {
+                hfg_JetTrgPt60_80_raw[(int)ipt]->Fill(mass, weight);  
+                hfg_JetTrgPt60_80[(int)ipt]->Fill(mass, weight);  
+            } else {
+                if(isbg==0) {
+                    hfgdiff_JetTrgPt60_80_raw[(int)ipt]->Fill(mass, weight);  
+                    hfgdiff_JetTrgPt60_80[(int)ipt]->Fill(mass, weight);  
+                } else {
+                    hbgdiff_JetTrgPt60_80_raw[(int)ipt]->Fill(mass, weight);
+                    hbgdiff_JetTrgPt60_80[(int)ipt]->Fill(mass, weight);
+                }
+            }
+        } else if(itrg==204) {
+            if(noRandFire && sqrt(pow(eta-maxJetTrgEta,2)+ pow(phi-maxJetTrgPhi, 2))>dRjet )
+                continue;
+
+            if(ich!=0) {
+                hfg_JetTrgPt80_100_raw[(int)ipt]->Fill(mass, weight);  
+                hfg_JetTrgPt80_100[(int)ipt]->Fill(mass, weight);  
+            } else {
+                if(isbg==0) {
+                    hfgdiff_JetTrgPt80_100_raw[(int)ipt]->Fill(mass, weight);  
+                    hfgdiff_JetTrgPt80_100[(int)ipt]->Fill(mass, weight);  
+                } else {
+                    hbgdiff_JetTrgPt80_100_raw[(int)ipt]->Fill(mass, weight);
+                    hbgdiff_JetTrgPt80_100[(int)ipt]->Fill(mass, weight);
+                }
+            }
+        } else if(itrg==205) {
+            if(noRandFire && sqrt(pow(eta-maxJetTrgEta,2)+ pow(phi-maxJetTrgPhi, 2))>dRjet )
+                continue;
+
+            if(ich!=0) {
+                hfg_JetTrgPt100above_raw[(int)ipt]->Fill(mass, weight);  
+                hfg_JetTrgPt100above[(int)ipt]->Fill(mass, weight);  
+            } else {
+                if(isbg==0) {
+                    hfgdiff_JetTrgPt100above_raw[(int)ipt]->Fill(mass, weight);  
+                    hfgdiff_JetTrgPt100above[(int)ipt]->Fill(mass, weight);  
+                } else {
+                    hbgdiff_JetTrgPt100above_raw[(int)ipt]->Fill(mass, weight);
+                    hbgdiff_JetTrgPt100above[(int)ipt]->Fill(mass, weight);
                 }
             }
         }

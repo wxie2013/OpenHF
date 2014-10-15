@@ -45,8 +45,12 @@ const float mup[NCH] = {0.154, 2.1, 2.1, 2.1, 2.1};
 const int nTrkMax = 10000;
 const int NFullTrkTrg = 4; //.. number of Full Trk trigger, including minbias in UPC
 const float TrkTrgOffThres[NFullTrkTrg] = {0, 14, 22, 32}; //.. offline fully efficient
-//
+
 const float maxDiff = 1e-3; //.. for identical quantity comparison
+
+const float dRjet = 0.4; //.. window for jet D meson association 
+
+const float pTMinbiasMax = 24; //.. no clear signal after this and Jet20 eff is 100%. Do not contribute to trigger combination
 
 //.. trigger combination andf merging 
 // note: the bin width need to be the integer number of dPt
@@ -92,7 +96,7 @@ const float ptRebin[NptRebin+1] = {
 };
 */
 
-const int NTRG = 5; //.. including Track and minbias trigger
+const int NTRG = 13; //.. including Track and minbias trigger
 //produced by make_code_to_read_hlt_name_pscl.txt.pl
 //.. all Run2013 pPb triggers. Most are useless. Here is to check which
 //.. one has most of the D mesons. 
@@ -103,7 +107,15 @@ const char* const trg_name[NTRG] = {
     "HLT_PAFullTrack12",   //.. base: L1_SingleJet12_BptxAND w/ prescl=1
     "HLT_PAFullTrack20",   //.. base: L1_SingleJet16_BptxAND w/ prescl=1
     "HLT_PAFullTrack30",   //.. base: L1_SingleJet16_BptxAND w/ prescl=1
-    "L1_ZeroBias"
+    "HLT_PAJet20_NoJetID",   //.. base: L1_SingleJet16_BptxAND
+    "HLT_PAJet40_NoJetID",   //.. base: L1_SingleJet16_BptxAND
+    "HLT_PAJet60_NoJetID",   //.. base: L1_SingleJet36
+    "HLT_PAJet80_NoJetID",   //.. base: L1_SingleJet36
+    "HLT_PAJet100_NoJetID",   //.. base: L1_SingleJet36
+    "L1_ZeroBias",
+    "L1_SingleJet12_BptxAND",
+    "L1_SingleJet16_BptxAND",
+    "L1_SingleJet36"
 };
 
 #endif
