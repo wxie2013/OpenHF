@@ -230,7 +230,12 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
         TString trigName = triggerNames.triggerName(itrig);
         HltTree->Branch(trigName,trigflag+itrig,trigName+"/I");
         HltTree->Branch(trigName+"_Prescl",trigPrescl+itrig,trigName+"_Prescl/I");
-        HltTree->Branch(trigName+"_trigObject",trigObject+itrig);
+
+        TSubString found = trigName.SubString("HLT_PAJet");
+        if(!found.IsNull()){
+            HltTree->Branch(trigName+"_trigObject",trigObject+itrig);
+        }
+
       }
 
       int itdum = ntrigs;
@@ -283,6 +288,10 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       const unsigned int triggerIndex(hltConfig_.triggerIndex(trigName));
       const vector<string>& moduleLabels(hltConfig_.moduleLabels(triggerIndex));
       for(unsigned int im=0; im<hltConfig_.moduleLabels(trigName).size(); im++){
+
+          std::size_t found = trigName.find("HLT_PAJet");
+          if(found == std::string::npos) continue;
+
           const string& moduleLabel(moduleLabels[im]);
           const string  moduleType(hltConfig_.moduleType(moduleLabel));
 
